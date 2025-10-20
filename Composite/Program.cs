@@ -60,7 +60,7 @@ namespace Composite
             // Create a parser that feeds from the token stream
             calculatorParser parser = new calculatorParser(tokenStream);
             // Ask the parser to start parsing at rule 'compilationUnit'
-            IParseTree  syntaxTree = parser.compilationUnit();
+            IParseTree  syntaxTree = parser.translation_unit();
             // Print the tree in LISP format
             Console.WriteLine(syntaxTree.ToStringTree());
         }
