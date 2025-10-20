@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Antlr4 Include="calculator.g" />
+    <Antlr4 Include="CGrammarParser.g" />
   </ItemGroup>
 
   <ItemGroup>
