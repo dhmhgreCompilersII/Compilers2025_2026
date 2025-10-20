@@ -8,13 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="CGrammarLexer.g" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="CGrammarLexer.g" />
     <Antlr4 Include="CGrammarParser.g" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="obj\Debug\net9.0\calculatorBaseListener.cs" />
     <Compile Include="obj\Debug\net9.0\calculatorBaseVisitor.cs" />
-    <Compile Include="obj\Debug\net9.0\calculatorLexer.cs" />
     <Compile Include="obj\Debug\net9.0\calculatorListener.cs" />
     <Compile Include="obj\Debug\net9.0\calculatorParser.cs" />
     <Compile Include="obj\Debug\net9.0\calculatorVisitor.cs" />

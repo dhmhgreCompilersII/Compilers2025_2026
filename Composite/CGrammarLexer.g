@@ -3,6 +3,15 @@ lexer grammar CGrammarLexer;
 
 // Lexer rules
 
+
+fragment DIGIT:	[0-9];
+fragment LETTER: [a-zA-Z_];
+fragment ALPHANUMERIC : [a-fA-F0-9];
+fragment EXPONENT :	[Ee][+-]?DIGIT+;
+FLOATSPECIFIER :('f'|'F'|'l'|'L');
+INTEGERSPECIFIER:('u'|'U'|'l'|'L')*;
+
+
 AUTO : 'auto';		
 BREAK : 'break';
 CASE : 'case';
@@ -83,12 +92,15 @@ CARET : '^';
 OR : '|';
 QMARK :'?';
 
-{L}({L}|{D})*		{ count(); return(check_type()); }
+IDENTIFIER :{LETTER}({LETTER}|{DIGIT})*;
 
-0[xX]{H}+{IS}?		{ count(); return(CONSTANT); }
-0{D}+{IS}?		{ count(); return(CONSTANT); }
-{D}+{IS}?		{ count(); return(CONSTANT); }
-L?'(\\.|[^\\'])+'	{ count(); return(CONSTANT); }
+CONSTANT : '0'[xX]ALPHANUMERIC+INTEGERSPECIFIER? |
+			'0'DIGIT+{INTEGERSPECIFIER}?	|
+			DIGIT+INTEGERSPECIFIER? |
+			'L'?'(('\\'.)|[^\\'])+;	
+			;
+
+
 
 {D}+{E}{FS}?		{ count(); return(CONSTANT); }
 {D}*"."{D}+({E})?{FS}?	{ count(); return(CONSTANT); }

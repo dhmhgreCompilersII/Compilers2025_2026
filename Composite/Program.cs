@@ -57,7 +57,6 @@ namespace Composite
             calculatorLexer lexer = new calculatorLexer(inputStream);
             // Create a token stream that feeds from the lexer
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-            // Create a parser that feeds from the token stream
             calculatorParser parser = new calculatorParser(tokenStream);
             // Ask the parser to start parsing at rule 'compilationUnit'
             IParseTree  syntaxTree = parser.translation_unit();
