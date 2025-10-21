@@ -2,7 +2,7 @@
 using Antlr4.Runtime.Tree;
 
 
-namespace Composite
+namespace CParser
 {
 
 

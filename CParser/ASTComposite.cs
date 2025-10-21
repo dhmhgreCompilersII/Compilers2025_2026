@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Composite {
+namespace CParser {
 
     public abstract class ASTElement {
         private uint m_type; // type of AST element ( addition, multiplication, etc)
