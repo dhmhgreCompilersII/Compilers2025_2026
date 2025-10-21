@@ -17,15 +17,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="obj\Debug\net9.0\calculatorBaseListener.cs" />
-    <Compile Include="obj\Debug\net9.0\calculatorBaseVisitor.cs" />
-    <Compile Include="obj\Debug\net9.0\calculatorListener.cs" />
-    <Compile Include="obj\Debug\net9.0\calculatorParser.cs" />
-    <Compile Include="obj\Debug\net9.0\calculatorVisitor.cs" />
+    <Compile Include="obj\Debug\net9.0\CGrammarLexer.cs" />
+    <Compile Include="obj\Debug\net9.0\CGrammarParser.cs" />
+    <Compile Include="obj\Debug\net9.0\CGrammarParserBaseListener.cs" />
+    <Compile Include="obj\Debug\net9.0\CGrammarParserBaseVisitor.cs" />
+    <Compile Include="obj\Debug\net9.0\CGrammarParserListener.cs" />
+    <Compile Include="obj\Debug\net9.0\CGrammarParserVisitor.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="bin\Debug\net9.0\test.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="obj\Debug\net9.0\CGrammarParser.tokens" />
   </ItemGroup>
 
   <ItemGroup>

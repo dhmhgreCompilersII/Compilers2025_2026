@@ -164,7 +164,7 @@ initializer_list: initializer (COMMA initializer)*
 	;
 
 declarator
-	: POINTER direct_declarator
+	: ASTERISK direct_declarator
 	| direct_declarator
 	;
 
@@ -236,7 +236,7 @@ type_specifier :  VOID
 	| UNSIGNED
 	| struct_or_union_specifier
 	| enum_specifier
-	| TYPE_NAME
+	//| TYPE_NAME
 	;
 
 struct_or_union_specifier
@@ -250,7 +250,7 @@ struct_or_union
 	;
 
 struct_declaration
-	: specifier_qualifier_list struct_declarator_list SEMICOLN
+	: specifier_qualifier_list struct_declarator_list SEMICOLON
 	;
 
 specifier_qualifier_list : (type_specifier | type_qualifier )+

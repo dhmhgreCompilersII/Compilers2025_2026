@@ -8,8 +8,9 @@ fragment DIGIT:	[0-9];
 fragment LETTER: [a-zA-Z_];
 fragment ALPHANUMERIC : [a-fA-F0-9];
 fragment EXPONENT :	[Ee][+-]?DIGIT+;
-FLOATSPECIFIER :('f'|'F'|'l'|'L');
-INTEGERSPECIFIER:('u'|'U'|'l'|'L')*;
+fragment FLOATSPECIFIER :  ('f'|'F'|'l'|'L');
+fragment INTEGERSPECIFIER: ('u'|'U'|'l'|'L')*;
+fragment HEXDIGIT    : [0-9a-fA-F];
 
 
 AUTO : 'auto';		
@@ -17,7 +18,7 @@ BREAK : 'break';
 CASE : 'case';
 CHAR : 'char';
 CONST : 'const';
-CONTNUE : 'continue';
+CONTINUE : 'continue';
 DEFAULT : 'default';
 DO :'do';
 DOUBLE : 'double';
@@ -92,11 +93,11 @@ CARET : '^';
 OR : '|';
 QMARK :'?';
 
-IDENTIFIER :LETTER(LETTER|DIGIT)*;
+IDENTIFIER :LETTER(LETTER|DIGIT)* ;
 
-CONSTANT : '0'[xX]ALPHANUMERIC+INTEGERSPECIFIER? |
-			'0'DIGIT+{INTEGERSPECIFIER}?	|
-			DIGIT+INTEGERSPECIFIER? |
+CONSTANT : '0'[xX]HEXDIGIT+INTEGERSPECIFIER? |
+			'0'DIGIT+INTEGERSPECIFIER?	|
+			DIGIT+ INTEGERSPECIFIER? |
 			'L'?('\\'.|[^\\'])+ |
 			DIGIT+ EXPONENT FLOATSPECIFIER? |
 			DIGIT*'.'DIGIT+EXPONENT?FLOATSPECIFIER? |
@@ -106,10 +107,8 @@ CONSTANT : '0'[xX]ALPHANUMERIC+INTEGERSPECIFIER? |
 STRING_LITERAL : 'L'?'"'('\\'.|[^\\"])*'"' ;
 
 
-COMMENT
-	:	'//'.*?('\n'|'\r'|'\r\n')	{ skip(); }
-	|	'/*' ( options {greedy=false;} : . )*  '*/'	{ skip(); }
-	;
+LINECOMMENT :	'//'.*?('\n'|'\r'|'\r\n') ->skip ;
+MULTIPLELINECOMMENT : 	'/*' ('\n'|.)*?  '*/' -> skip ; 
 
 
 WHITESPACE :[ \t\r\n\f] -> skip ;
