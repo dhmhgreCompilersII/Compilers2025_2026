@@ -92,26 +92,24 @@ CARET : '^';
 OR : '|';
 QMARK :'?';
 
-IDENTIFIER :{LETTER}({LETTER}|{DIGIT})*;
+IDENTIFIER :LETTER(LETTER|DIGIT)*;
 
 CONSTANT : '0'[xX]ALPHANUMERIC+INTEGERSPECIFIER? |
 			'0'DIGIT+{INTEGERSPECIFIER}?	|
 			DIGIT+INTEGERSPECIFIER? |
-			'L'?'(('\\'.)|[^\\'])+;	
+			'L'?('\\'.|[^\\'])+ |
+			DIGIT+ EXPONENT FLOATSPECIFIER? |
+			DIGIT*'.'DIGIT+EXPONENT?FLOATSPECIFIER? |
+			DIGIT+'.'DIGIT*EXPONENT?FLOATSPECIFIER?
 			;
 
+STRING_LITERAL : 'L'?'"'('\\'.|[^\\"])*'"' ;
 
 
-{D}+{E}{FS}?		{ count(); return(CONSTANT); }
-{D}*"."{D}+({E})?{FS}?	{ count(); return(CONSTANT); }
-{D}+"."{D}*({E})?{FS}?	{ count(); return(CONSTANT); }
-
-L?\"(\\.|[^\\"])*\"	{ count(); return(STRING_LITERAL); }
-
+COMMENT
+	:	'//'.*?('\n'|'\r'|'\r\n')	{ skip(); }
+	|	'/*' ( options {greedy=false;} : . )*  '*/'	{ skip(); }
+	;
 
 
-
-"/*"			{ comment(); }
-
-[ \t\v\n\f]		{ count(); }
-.			{ /* ignore bad characters */ }
+WHITESPACE :[ \t\r\n\f] -> skip ;
