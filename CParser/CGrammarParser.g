@@ -213,7 +213,7 @@ direct_abstract_declarator
 	;
 
 
-function_definition	: declaration_specifiers declarator compound_statement
+function_definition	: declaration_specifiers  declarator  compound_statement
 					;
 
 declaration_specifiers : (storage_class_specifier|type_specifier|type_qualifier)+
@@ -236,7 +236,7 @@ type_specifier :  VOID
 	| UNSIGNED
 	| struct_or_union_specifier
 	| enum_specifier
-	//| TYPE_NAME
+	| TYPE_NAME
 	;
 
 struct_or_union_specifier
@@ -283,7 +283,11 @@ type_qualifier	: CONST
 	;
 
 
-parameter_type_list : declaration ( COMMA declaration )* (COMMA ELLIPSIS)?
+parameter_type_list : parameter_declaration ( COMMA parameter_declaration )* (COMMA ELLIPSIS)?
+	;
+
+parameter_declaration : declaration_specifiers declarator
+	| declaration_specifiers abstract_declarator?
 	;
 	
 compound_statement : LBRACE declaration* statement+ RBRACE

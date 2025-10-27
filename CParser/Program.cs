@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using Antlr4.Runtime.Atn;
 
 
 namespace CParser
@@ -21,11 +22,27 @@ namespace CParser
             CGrammarLexer lexer = new CGrammarLexer(inputStream);
             // Create a token stream that feeds from the lexer
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+
+
+            tokenStream.Fill();
+            Console.WriteLine("TOKENS:");
+            foreach (var t in tokenStream.GetTokens()) {
+                var name = lexer.Vocabulary.GetSymbolicName(t.Type)
+                           ?? lexer.Vocabulary.GetDisplayName(t.Type);
+                Console.WriteLine($"{name,-16} '{t.Text}'");
+            }
             CGrammarParser parser = new CGrammarParser(tokenStream);
+
+            
             // Ask the parser to start parsing at rule 'compilationUnit'
+            parser.Profile = true;
             IParseTree  syntaxTree = parser.translation_unit();
             // Print the tree in LISP format
             Console.WriteLine(syntaxTree.ToStringTree());
+
+            
+
+
         }
 
 

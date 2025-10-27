@@ -1,5 +1,12 @@
 lexer grammar CGrammarLexer;
 
+@lexer::members{
+	public bool IsTypedef =false;
+
+	Dictionary<string, int> typedefs = new Dictionary<string, int>();
+}
+
+tokens { TYPE_NAME }
 
 // Lexer rules
 
@@ -39,7 +46,7 @@ SIZEOF: 'sizeof';
 STATIC : 'static';
 STRUCT :'struct';
 SWITCH :'switch';
-TYPEDEF :'typedef';
+TYPEDEF :'typedef' {IsTypedef =true; };
 UNION : 'union';
 UNSIGNED :'unsigned';
 VOID :'void';
@@ -93,7 +100,19 @@ CARET : '^';
 OR : '|';
 QMARK :'?';
 
-IDENTIFIER :LETTER(LETTER|DIGIT)* ;
+
+IDENTIFIER :LETTER(LETTER|DIGIT)* {
+									if (IsTypedef){
+									IsTypedef = false;
+										Type=TYPE_NAME;
+										if (!typedefs.ContainsKey(Text)){
+											typedefs.Add(Text, TYPE_NAME);
+										}
+									}
+									else if (typedefs.ContainsKey(Text)){
+										Type=TYPE_NAME;
+									}
+								  };
 
 CONSTANT : '0'[xX]HEXDIGIT+INTEGERSPECIFIER? |
 			'0'DIGIT+INTEGERSPECIFIER?	|
@@ -111,4 +130,4 @@ LINECOMMENT :	'//'.*?('\n'|'\r'|'\r\n') ->skip ;
 MULTIPLELINECOMMENT : 	'/*' ('\n'|.)*?  '*/' -> skip ; 
 
 
-WHITESPACE :[ \t\r\n\f] -> skip ;
+WHITESPACE :[ \t\r\n\f]+ -> skip ;
