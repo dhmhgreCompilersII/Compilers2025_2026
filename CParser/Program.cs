@@ -38,7 +38,7 @@ namespace CParser
             parser.Profile = true;
             IParseTree  syntaxTree = parser.translation_unit();
             // Print the tree in LISP format
-            Console.WriteLine(syntaxTree.ToStringTree());
+            //Console.WriteLine(syntaxTree.ToStringTree());
 
             
 
