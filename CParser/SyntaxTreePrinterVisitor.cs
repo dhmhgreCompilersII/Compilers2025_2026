@@ -70,15 +70,20 @@ namespace CParser {
 
             RuleContext ruleContext = tree as RuleContext;
 
-            // 1. Print an edge from parent to this node
-            string nodeName = CGrammarParser.ruleNames[ruleContext.RuleIndex] + "_" + ms_nodeCounter++;
-            m_streamWriter.WriteLine($"\"{m_parentsNames.Peek()}\"->\"{nodeName}\"");
-            m_parentsNames.Push(nodeName);
-            // 2. Visit children
-            base.Visit(tree);
-            m_parentsNames.Pop();
-            
-            return 0;
+            if (ruleContext.RuleIndex == CGrammarParser.RULE_translation_unit) {
+                return VisitTranslation_unit(ruleContext as CGrammarParser.Translation_unitContext);
+            }
+            else {
+                // 1. Print an edge from parent to this node
+                string nodeName = CGrammarParser.ruleNames[ruleContext.RuleIndex] + "_" + ms_nodeCounter++;
+                m_streamWriter.WriteLine($"\"{m_parentsNames.Peek()}\"->\"{nodeName}\"");
+                m_parentsNames.Push(nodeName);
+                // 2. Visit children
+                base.Visit(tree);
+                m_parentsNames.Pop();
+
+                return 0;
+            }
         }
     }
 }
