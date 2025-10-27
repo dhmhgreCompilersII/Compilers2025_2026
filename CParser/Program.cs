@@ -24,13 +24,13 @@ namespace CParser
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 
 
-            tokenStream.Fill();
+            /*tokenStream.Fill();
             Console.WriteLine("TOKENS:");
             foreach (var t in tokenStream.GetTokens()) {
                 var name = lexer.Vocabulary.GetSymbolicName(t.Type)
                            ?? lexer.Vocabulary.GetDisplayName(t.Type);
                 Console.WriteLine($"{name,-16} '{t.Text}'");
-            }
+            }*/
             CGrammarParser parser = new CGrammarParser(tokenStream);
 
             
@@ -40,7 +40,10 @@ namespace CParser
             // Print the tree in LISP format
             //Console.WriteLine(syntaxTree.ToStringTree());
 
-            
+            SyntaxTreePrinterVisitor syntaxTreePrinterVisitor = 
+                new SyntaxTreePrinterVisitor("test");
+            syntaxTreePrinterVisitor.Visit(syntaxTree);
+
 
 
         }

@@ -19,6 +19,10 @@ namespace CParser {
             m_name = name;
             m_serialNumber = m_serialNumberCounter++;
         }
+
+
+
+
     }
 
     public abstract class ASTComposite : ASTElement {
