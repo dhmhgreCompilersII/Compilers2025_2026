@@ -10,7 +10,7 @@ tokens { TYPE_NAME }
 
 // Lexer rules
 
-
+fragment ESC : '\\"' | '\\\\' ; // 2-char sequences \" and \\
 fragment DIGIT:	[0-9];
 fragment LETTER: [a-zA-Z_];
 fragment ALPHANUMERIC : [a-fA-F0-9];
@@ -123,7 +123,7 @@ CONSTANT : '0'[xX]HEXDIGIT+INTEGERSPECIFIER? |
 			DIGIT+'.'DIGIT*EXPONENT?FLOATSPECIFIER?
 			;
 
-STRING_LITERAL : 'L'?'"'('\\'.|[^\\"])*'"' ;
+STRING_LITERAL : '"' (ESC|.)*? '"' ;
 
 
 LINECOMMENT :	'//'.*?('\n'|'\r'|'\r\n') ->skip ;
