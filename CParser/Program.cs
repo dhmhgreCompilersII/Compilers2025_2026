@@ -41,7 +41,7 @@ namespace CParser
             //Console.WriteLine(syntaxTree.ToStringTree());
 
             SyntaxTreePrinterVisitor syntaxTreePrinterVisitor = 
-                new SyntaxTreePrinterVisitor("test");
+                new SyntaxTreePrinterVisitor("test.dot");
             syntaxTreePrinterVisitor.Visit(syntaxTree);
 
 

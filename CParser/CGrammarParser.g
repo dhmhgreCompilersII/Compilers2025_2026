@@ -164,7 +164,7 @@ initializer_list: initializer (COMMA initializer)*
 	;
 
 declarator
-	: ASTERISK direct_declarator
+	: pointer direct_declarator
 	| direct_declarator
 	;
 
