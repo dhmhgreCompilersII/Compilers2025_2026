@@ -10,6 +10,11 @@ namespace CParser{
         private uint m_type; // type of AST element ( addition, multiplication, etc)
         private string m_name; // for use in debugging
         ASTElement? m_parent; // parent of this AST element
+        public uint MType => m_type;
+
+        public string MName => m_name;
+
+        public ASTElement? MParent => m_parent;
 
         private uint m_serialNumber; // unique serial number of this AST element to distinguish it
 
@@ -18,11 +23,11 @@ namespace CParser{
 
         public ASTElement(uint type, string name) {
             m_type = type;
-            m_name = name;
             m_serialNumber = m_serialNumberCounter++;
+            m_name = name+ $"_{m_serialNumberCounter}";
         }
 
-        public abstract Result Accept<Result>(BaseASTVisitor<Result> visitor);
+        public abstract Result Accept<Result,INFO>(BaseASTVisitor<Result,INFO> visitor,INFO info=default(INFO));
 
     }
 
@@ -67,15 +72,28 @@ namespace CParser{
 
     public class TranslationUnitAST : ASTComposite{
 
-        public const int FUNCTION_DEFINITION_CONTEXT = 0, DECLARATIONS = 1;
+        public const int FUNCTION_DEFINITION = 0, DECLARATIONS = 1;
 
         public TranslationUnitAST() :
             base(2, 0, "TranslationUnitAST") {
         }
 
-        public override Result Accept<Result>(BaseASTVisitor<Result> visitor) {
-            return visitor.VisitTranslationUnit(this);
+        
+        public override Result Accept<Result,INFO>(BaseASTVisitor<Result,INFO> visitor,INFO info=default(INFO)) {
+            return visitor.VisitTranslationUnit(this,info);
+        }
+
+    }
+
+    public class DeclarationAST : ASTComposite{
+        public const int DECLARATION_STORAGE_CLASS = 0, 
+            DECLARATION_TYPE=1, DECLARATORS=2;
+        public DeclarationAST() :
+            base(3, 1, "DeclarationAST") {
         }
         
+        public override Result Accept<Result,INFO>(BaseASTVisitor<Result,INFO> visitor, INFO info=default(INFO)) {
+            return visitor.VisitDeclaration(this,info);
+        }
     }
 }

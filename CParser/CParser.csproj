@@ -29,12 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\net9.0\ast.dot.gif" />
     <Content Include="bin\Debug\net9.0\test.dot.gif" />
     <Content Include="bin\Debug\net9.0\test.txt" />
     <Content Include="bin\debug\net9.0\test1.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="bin\Debug\net9.0\ast.dot" />
     <None Include="bin\Debug\net9.0\test.dot" />
     <None Include="obj\Debug\net9.0\CGrammarParser.tokens" />
   </ItemGroup>

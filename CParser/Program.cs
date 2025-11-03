@@ -49,8 +49,8 @@ namespace CParser
 
 
 
-            ASTPrinterVisitor astPrinterVisitor = new ASTPrinterVisitor();
-            astPrinterVisitor.Visit(anltrst2AstGenerationVisitor.Root);
+            ASTPrinterVisitor astPrinterVisitor = new ASTPrinterVisitor("ast.dot");
+            astPrinterVisitor.Visit(anltrst2AstGenerationVisitor.Root,null);
 
         }
 
