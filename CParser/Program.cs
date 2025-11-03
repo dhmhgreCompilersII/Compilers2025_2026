@@ -44,7 +44,13 @@ namespace CParser
                 new SyntaxTreePrinterVisitor("test.dot");
             syntaxTreePrinterVisitor.Visit(syntaxTree);
 
+            ANLTRST2ASTGenerationVisitor anltrst2AstGenerationVisitor = new ANLTRST2ASTGenerationVisitor();
+            anltrst2AstGenerationVisitor.Visit(syntaxTree);
 
+
+
+            ASTPrinterVisitor astPrinterVisitor = new ASTPrinterVisitor();
+            astPrinterVisitor.Visit(anltrst2AstGenerationVisitor.Root);
 
         }
 
