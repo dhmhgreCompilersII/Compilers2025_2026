@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Antlr4.Runtime.Tree;
 
 namespace CParser {
     public class ANLTRST2ASTGenerationVisitor : CGrammarParserBaseVisitor<int>{
@@ -49,6 +50,62 @@ namespace CParser {
             m_parents.Pop();
 
             return 0;
+        }
+
+        public override int VisitPointer(CGrammarParser.PointerContext context) {
+
+            ASTComposite parent = m_parents.Peek();
+
+            PointerTypeAST pointerNode = new PointerTypeAST();
+
+            parent.AddChild(pointerNode, parent.GetContextForChild(context)); // assuming context POINTER_TARGER for simplicity
+
+            m_parents.Push(pointerNode);
+            base.VisitPointer(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitFunctionWithNOArguments(CGrammarParser.FunctionWithNOArgumentsContext context) {
+
+            ASTComposite parent = m_parents.Peek();
+
+            FunctionTypeAST funcTypeNode = new FunctionTypeAST();
+
+            parent.AddChild(funcTypeNode, parent.GetContextForChild(context)); // assuming context FUNCTION_TYPE for simplicity
+
+            m_parents.Push(funcTypeNode);
+            base.VisitFunctionWithNOArguments(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitFunctionWithArguments(CGrammarParser.FunctionWithArgumentsContext context) {
+            ASTComposite parent = m_parents.Peek();
+
+            FunctionTypeAST funcTypeNode = new FunctionTypeAST();
+
+            parent.AddChild(funcTypeNode, parent.GetContextForChild(context)); // assuming context FUNCTION_TYPE for simplicity
+
+            m_parents.Push(funcTypeNode);
+            base.VisitFunctionWithArguments(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitArrayDimensionWithSIZE(CGrammarParser.ArrayDimensionWithSIZEContext context) {
+            return base.VisitArrayDimensionWithSIZE(context);
+        }
+
+        public override int VisitArrayDimensionWithNOSIZE(CGrammarParser.ArrayDimensionWithNOSIZEContext context) {
+            return base.VisitArrayDimensionWithNOSIZE(context);
+        }
+
+        public override int VisitTerminal(ITerminalNode node) {
+            return base.VisitTerminal(node);
         }
 
         public override int VisitFunction_definition(CGrammarParser.Function_definitionContext context) {

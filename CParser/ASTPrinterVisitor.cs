@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 
 namespace CParser {
-    public class ASTPrinterVisitor : BaseASTVisitor<int, ASTComposite> {
+    public class ASTPrinterVisitor : BaseASTVisitor<int, ASTComposite>{
         private string m_astDOTFilename;
         StreamWriter m_writer;
         private static uint ms_clusternumber = 0;
@@ -67,8 +67,17 @@ namespace CParser {
 
         public override int VisitDeclaration(DeclarationAST node, ASTComposite parent) {
 
-            // 1. Print graphviz edge from parent to this node
+
+            // 1.Create context clusters
+            CreateContext(node, DeclarationAST.DECLARATORS, "Declarators");
+            CreateContext(node, DeclarationAST.DECLARATION_TYPE, "Type Specifier");
+            CreateContext(node, DeclarationAST.DECLARATION_STORAGE_CLASS, "Storage Class Specifier");
+
+            // . Print graphviz edge from parent to this node
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+
+            // 3. Visit children and print AST nodes and edges
+            VisitChildren(node, node);
 
 
             return 0;
@@ -77,6 +86,20 @@ namespace CParser {
         public override int VisitFunctionDefinition(FunctionDefinitionAST node, ASTComposite parent) {
             // 1. Print graphviz edge from parent to this node
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitPointerType(PointerTypeAST node, ASTComposite parent) {
+            // 1. Print graphviz edge from parent to this node
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+        public override int VisitFunctionType(FunctionTypeAST node, ASTComposite parent) {
+            // 1. Print graphviz edge from parent to this node
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
             return 0;
         }
     }

@@ -104,18 +104,127 @@ namespace CParser {
     public class DeclarationAST : ASTComposite {
         public const int DECLARATION_STORAGE_CLASS = 0,
             DECLARATION_TYPE = 1, DECLARATORS = 2;
+
+        public enum TYPE {
+            VOID,
+            CHAR,
+            SHORT,
+            INT,
+            LONG,
+            FLOAT,
+            DOUBLE,
+            SIGNED,
+            UNSIGNED,
+            STRUCT,
+            UNION,
+            ENUM
+        }
+
+        public enum STORAGE_CLASS {
+            STATIC,
+            EXTERN,
+            AUTO,
+            REGISTER
+        }
+
+        public enum TYPE_QUALIFIER {
+            CONST,
+            RESTRICT,
+            VOLATILE,
+            ATOMIC
+        }
+
+        private TYPE m_type;
+        private STORAGE_CLASS m_class;
+        private TYPE_QUALIFIER m_qualifier;
+
+        public TYPE MType1 {
+            get => m_type;
+            internal set => m_type = value;
+        }
+
+        public STORAGE_CLASS MClass {
+            get => m_class;
+            internal set => m_class = value;
+        }
+
+        public TYPE_QUALIFIER MQualifier {
+            get => m_qualifier;
+            internal set => m_qualifier = value;
+        }
+
         public DeclarationAST() :
             base(3, 1, "DeclarationAST") {
         }
 
         public override uint GetContextForChild(ParserRuleContext child) {
-            throw new NotImplementedException();
+            switch (child.RuleIndex) {
+                case CGrammarParser.RULE_type_specifier:
+                    return DECLARATION_TYPE;
+                    break;
+                case CGrammarParser.RULE_pointer:
+                case CGrammarParser.RULE_direct_declarator:
+                    return DECLARATORS;
+                    break;
+                case CGrammarParser.RULE_storage_class_specifier:
+                    return DECLARATION_STORAGE_CLASS;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+
+            }
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitDeclaration(this, info);
         }
     }
+
+
+    public class PointerTypeAST : ASTComposite {
+        public const int POINTER_TARGER = 1;
+        public enum QUALIFIER {
+            CONST,
+            RESTRICT,
+            VOLATILE,
+            ATOMIC
+        }
+        public PointerTypeAST() :
+            base(1, 4, "PointerTypeAST") {
+        }
+        public override uint GetContextForChild(ParserRuleContext child) {
+            switch (child.RuleIndex) {
+                case CGrammarParser.RULE_direct_declarator:
+                    return POINTER_TARGER;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+            }
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitPointerType(this, info);
+        }
+    }
+
+    public class FunctionTypeAST : ASTComposite {
+        public const int FUNCTION_TYPE = 0, FUNCTION_PARAMETERS = 1;
+
+
+        public FunctionTypeAST() :
+            base(2, 5, "FunctionTypeAST") {
+        }
+        public override uint GetContextForChild(ParserRuleContext child) {
+            switch (child.RuleIndex) {
+                case CGrammarParser.RULE_pointer:
+                    return FUNCTION_TYPE;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+            }
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitFunctionType(this, info);
+        }
+    }
+
 
     public class FunctionDefinitionAST : ASTComposite {
         public const int DECLARATION_SPECIFIERS = 0,

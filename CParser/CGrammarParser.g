@@ -169,12 +169,12 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER
-	| LPAREN declarator RPAREN
-	| direct_declarator LBRACKET constant_expression RBRACKET
-	| direct_declarator LBRACKET RBRACKET
-	| direct_declarator LPAREN parameter_type_list RPAREN
-	| direct_declarator LPAREN RPAREN
+	: IDENTIFIER												#IDENTIFIER
+	| LPAREN declarator RPAREN									#Parenthesis
+	| direct_declarator LBRACKET constant_expression RBRACKET	#ArrayDimensionWithSIZE
+	| direct_declarator LBRACKET RBRACKET						#ArrayDimensionWithNOSIZE
+	| direct_declarator LPAREN parameter_type_list RPAREN		#FunctionWithArguments
+	| direct_declarator LPAREN RPAREN							#FunctionWithNOArguments
 	;
 
 type_name
