@@ -3,15 +3,12 @@ using Antlr4.Runtime.Tree;
 using Antlr4.Runtime.Atn;
 
 
-namespace CParser
-{
+namespace CParser {
 
 
 
-    public class Program
-    {
-        static void Main(string[] args)
-        {
+    public class Program {
+        static void Main(string[] args) {
             // C# class to read from a text file
             StreamReader streamReader = new StreamReader(args[0]);
             // Read the entire file and place it in a string
@@ -33,14 +30,14 @@ namespace CParser
             }*/
             CGrammarParser parser = new CGrammarParser(tokenStream);
 
-            
+
             // Ask the parser to start parsing at rule 'compilationUnit'
             parser.Profile = true;
-            IParseTree  syntaxTree = parser.translation_unit();
+            IParseTree syntaxTree = parser.translation_unit();
             // Print the tree in LISP format
             //Console.WriteLine(syntaxTree.ToStringTree());
 
-            SyntaxTreePrinterVisitor syntaxTreePrinterVisitor = 
+            SyntaxTreePrinterVisitor syntaxTreePrinterVisitor =
                 new SyntaxTreePrinterVisitor("test.dot");
             syntaxTreePrinterVisitor.Visit(syntaxTree);
 
@@ -50,7 +47,9 @@ namespace CParser
 
 
             ASTPrinterVisitor astPrinterVisitor = new ASTPrinterVisitor("ast.dot");
-            astPrinterVisitor.Visit(anltrst2AstGenerationVisitor.Root,null);
+            astPrinterVisitor.Visit(anltrst2AstGenerationVisitor.Root, null);
+
+
 
         }
 

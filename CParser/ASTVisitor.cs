@@ -25,12 +25,15 @@ namespace CParser {
         }
 
         
-
         public virtual Result VisitTranslationUnit(TranslationUnitAST node,INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitDeclaration(DeclarationAST node,INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitFunctionDefinition(FunctionDefinitionAST node,INFO info) {
             return VisitChildren(node, info);
         }
 
