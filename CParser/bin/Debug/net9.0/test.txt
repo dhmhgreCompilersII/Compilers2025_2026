@@ -1,0 +1,9 @@
+int foo;
+int i ;
+
+void main ( int argc , char** argv ) {
+    i=1;
+	j=2;
+	printf ( "Hello, World!\n" ) ;
+	return 0 ;
+}
