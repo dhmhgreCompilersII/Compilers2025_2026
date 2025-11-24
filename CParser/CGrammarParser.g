@@ -290,7 +290,7 @@ parameter_declaration : declaration_specifiers declarator
 	| declaration_specifiers abstract_declarator?
 	;
 	
-compound_statement : LBRACE declaration* statement+ RBRACE
+compound_statement : LBRACE declaration* statement* RBRACE
 	;
 
 statement
