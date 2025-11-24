@@ -101,7 +101,12 @@ namespace CParser {
         }
 
         public override int VisitPointerType(PointerTypeAST node, ASTComposite parent) {
-            // 1. Print graphviz edge from parent to this node
+
+            // 1.Create context clusters
+            CreateContext(node, PointerTypeAST.POINTER_TARGER, "Target");
+
+
+            // 2. Print graphviz edge from parent to this node
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             VisitChildren(node, node);
             return 0;
