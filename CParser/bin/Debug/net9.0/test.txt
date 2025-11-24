@@ -1,2 +1,4 @@
-int *(*foo)(int a), a, *b;
+int ***(*foo)(int a,int *b), a, *b;
+int c;
+int foo1(int **x, char y);
 	

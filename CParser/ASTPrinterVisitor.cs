@@ -64,6 +64,16 @@ namespace CParser {
         }
 
 
+        public override int VisitParameterDeclaration(ParameterDeclarationAST node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, ParameterDeclarationAST.DECLARATOR, "Declarators");
+            CreateContext(node, ParameterDeclarationAST.DECLARATION_SPECIFIERS, "Type Specifier");
+
+            // . Print graphviz edge from parent to this node
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+
+            return base.VisitParameterDeclaration(node, node);
+        }
 
         public override int VisitDeclaration(DeclarationAST node, ASTComposite parent) {
 
@@ -96,11 +106,28 @@ namespace CParser {
             VisitChildren(node, node);
             return 0;
         }
+
         public override int VisitFunctionType(FunctionTypeAST node, ASTComposite parent) {
-            // 1. Print graphviz edge from parent to this node
+
+            // 1.Create context clusters
+            CreateContext(node, FunctionTypeAST.FUNCTION_NAME, "Function Name");
+            CreateContext(node, FunctionTypeAST.FUNCTION_TYPE, "Declarator");
+            CreateContext(node, FunctionTypeAST.FUNCTION_PARAMETERS, "Function Parameters");
+
+            // 2. Print graphviz edge from parent to this node
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             VisitChildren(node, node);
             return 0;
+        }
+
+        public override int VisitIdentifier(IDENTIFIER node, ASTComposite parent) {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitIdentifier(node, parent);
+        }
+
+        public override int VisitIntegerType(IntegerTypeAST node, ASTComposite parent) {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitIntegerType(node, parent);
         }
     }
 }

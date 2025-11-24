@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 
 namespace CParser {
 
@@ -60,7 +61,7 @@ namespace CParser {
             m_children[context].Add(child);
         }
 
-        public abstract uint GetContextForChild(ParserRuleContext child);
+        public abstract uint GetContextForChild(IParseTree child);
     }
 
     public abstract class ASTLeaf : ASTElement {
@@ -81,18 +82,24 @@ namespace CParser {
             base(2, 0, "TranslationUnitAST") {
         }
 
-        public override uint GetContextForChild(ParserRuleContext child) {
+        public override uint GetContextForChild(IParseTree child) {
 
-            switch (child.RuleIndex) {
-                case CGrammarParser.RULE_declaration:
-                    return DECLARATIONS;
-                    break;
-                case CGrammarParser.RULE_function_definition:
-                    return FUNCTION_DEFINITION;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+            ParserRuleContext prc = child as ParserRuleContext;
+            if (prc != null) {
+                switch (prc.RuleIndex) {
+                    case CGrammarParser.RULE_declaration:
+                        return DECLARATIONS;
+                        break;
+                    case CGrammarParser.RULE_function_definition:
+                        return FUNCTION_DEFINITION;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+                }
+            } else {
+                throw new ArgumentOutOfRangeException("child", "Child is not a ParserRuleContext");
             }
+
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -157,21 +164,36 @@ namespace CParser {
             base(3, 1, "DeclarationAST") {
         }
 
-        public override uint GetContextForChild(ParserRuleContext child) {
-            switch (child.RuleIndex) {
-                case CGrammarParser.RULE_type_specifier:
-                    return DECLARATION_TYPE;
-                    break;
-                case CGrammarParser.RULE_pointer:
-                case CGrammarParser.RULE_direct_declarator:
-                    return DECLARATORS;
-                    break;
-                case CGrammarParser.RULE_storage_class_specifier:
-                    return DECLARATION_STORAGE_CLASS;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-
+        public override uint GetContextForChild(IParseTree child) {
+            ParserRuleContext prc = child as ParserRuleContext;
+            ITerminalNode ttn = child as ITerminalNode;
+            if (prc != null) {
+                switch (prc.RuleIndex) {
+                    case CGrammarParser.RULE_type_specifier:
+                        return DECLARATION_TYPE;
+                        break;
+                    case CGrammarParser.RULE_pointer:
+                    case CGrammarParser.RULE_direct_declarator:
+                        return DECLARATORS;
+                        break;
+                    case CGrammarParser.RULE_storage_class_specifier:
+                        return DECLARATION_STORAGE_CLASS;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+                }
+            } else if (ttn != null) {
+                switch (ttn.Symbol.Type) {
+                    case CGrammarLexer.IDENTIFIER:
+                        return DECLARATORS;
+                    case CGrammarLexer.INT:
+                        return DECLARATION_TYPE;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+                }
+            } else {
+                throw new ArgumentOutOfRangeException("child", "Child is not a ParserRuleContext");
             }
         }
 
@@ -180,9 +202,18 @@ namespace CParser {
         }
     }
 
+    public class IntegerTypeAST : ASTLeaf {
+        public IntegerTypeAST(string lexeme) :
+            base(lexeme, 7, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitIntegerType(this, info);
+        }
+    }
+
 
     public class PointerTypeAST : ASTComposite {
-        public const int POINTER_TARGER = 1;
+        public const int POINTER_TARGER = 0;
         public enum QUALIFIER {
             CONST,
             RESTRICT,
@@ -192,12 +223,26 @@ namespace CParser {
         public PointerTypeAST() :
             base(1, 4, "PointerTypeAST") {
         }
-        public override uint GetContextForChild(ParserRuleContext child) {
-            switch (child.RuleIndex) {
-                case CGrammarParser.RULE_direct_declarator:
-                    return POINTER_TARGER;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+        public override uint GetContextForChild(IParseTree child) {
+            ParserRuleContext prc = child as ParserRuleContext;
+            ITerminalNode ttn = child as ITerminalNode;
+            if (prc != null) {
+                switch (prc.RuleIndex) {
+                    case CGrammarParser.RULE_pointer:
+                    case CGrammarParser.RULE_direct_declarator:
+                        return POINTER_TARGER;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+                }
+            } else if (ttn != null) {
+                switch (ttn.Symbol.Type) {
+                    case CGrammarLexer.IDENTIFIER:
+                        return POINTER_TARGER;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+                }
+            } else {
+                throw new ArgumentOutOfRangeException("child", "Child is not a ParserRuleContext");
             }
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -205,19 +250,73 @@ namespace CParser {
         }
     }
 
+    public class ParameterDeclarationAST : ASTComposite{
+        public const int DECLARATION_SPECIFIERS = 0, DECLARATOR = 1;
+        public ParameterDeclarationAST() :
+            base(2, 8, "ParameterDeclaration") {
+        }
+        public override uint GetContextForChild(IParseTree child) {
+            ParserRuleContext prc = child as ParserRuleContext;
+            ITerminalNode ttn = child as ITerminalNode;
+            if (ttn != null) {
+                switch (ttn.Symbol.Type) {
+                    case CGrammarLexer.INT:
+                        return DECLARATION_SPECIFIERS;
+                    case CGrammarLexer.IDENTIFIER:
+                        return DECLARATOR;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+
+                }
+            } else if (prc != null) {
+                switch (prc.RuleIndex) {
+                    case CGrammarParser.RULE_pointer:
+                    case CGrammarParser.RULE_direct_declarator:
+                        return DECLARATOR;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+                }
+            } else {
+                throw new ArgumentOutOfRangeException("child", "Child is not a ParserRuleContext");
+            }
+
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitParameterDeclaration(this, info);
+        }
+    }
+
     public class FunctionTypeAST : ASTComposite {
-        public const int FUNCTION_TYPE = 0, FUNCTION_PARAMETERS = 1;
+        public const int FUNCTION_TYPE = 0, FUNCTION_NAME = 1, FUNCTION_PARAMETERS = 2;
 
 
         public FunctionTypeAST() :
-            base(2, 5, "FunctionTypeAST") {
+            base(3, 5, "FunctionTypeAST") {
         }
-        public override uint GetContextForChild(ParserRuleContext child) {
-            switch (child.RuleIndex) {
-                case CGrammarParser.RULE_pointer:
-                    return FUNCTION_TYPE;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+        public override uint GetContextForChild(IParseTree child) {
+            ParserRuleContext prc = child as ParserRuleContext;
+            ITerminalNode ttn = child as ITerminalNode;
+            if (prc != null) {
+                switch (prc.RuleIndex) {
+                    case CGrammarParser.RULE_pointer:
+                        return FUNCTION_TYPE;
+                    case CGrammarParser.RULE_parameter_declaration:
+                        return FUNCTION_PARAMETERS;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+                }
+            } else if (ttn != null) {
+                switch (ttn.Symbol.Type) {
+                    case CGrammarLexer.IDENTIFIER:
+                        return FUNCTION_NAME;
+                    default:
+                        throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+                }
+            } else {
+                throw new ArgumentOutOfRangeException("child", "Child is not a ParserRuleContext");
+
+
             }
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -233,11 +332,22 @@ namespace CParser {
             base(4, 2, "FunctionDefinitionAST") {
         }
 
-        public override uint GetContextForChild(ParserRuleContext child) {
+        public override uint GetContextForChild(IParseTree child) {
             throw new NotImplementedException();
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitFunctionDefinition(this, info);
+        }
+    }
+
+
+
+    public class IDENTIFIER : ASTLeaf {
+        public IDENTIFIER(string lexeme) :
+            base(lexeme, 6, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitIdentifier(this, info);
         }
     }
 }

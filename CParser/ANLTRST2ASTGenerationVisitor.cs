@@ -10,7 +10,7 @@ namespace CParser {
 
         ASTComposite m_root;
         private Stack<ASTComposite> m_parents = new Stack<ASTComposite>();
-
+        PointerTypeAST m_currentPointerBottom = null;
 
         public ASTComposite Root {
             get => m_root;
@@ -52,15 +52,21 @@ namespace CParser {
             return 0;
         }
 
+
+
+
         public override int VisitPointer(CGrammarParser.PointerContext context) {
 
             ASTComposite parent = m_parents.Peek();
 
             PointerTypeAST pointerNode = new PointerTypeAST();
-
             parent.AddChild(pointerNode, parent.GetContextForChild(context)); // assuming context POINTER_TARGER for simplicity
-
             m_parents.Push(pointerNode);
+
+            if (context.pointer() == null) {
+                m_currentPointerBottom = pointerNode;
+            }
+
             base.VisitPointer(context);
             m_parents.Pop();
 
@@ -96,6 +102,43 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitParameter_declaration(CGrammarParser.Parameter_declarationContext context) {
+            ASTComposite parent = m_parents.Peek();
+            ParameterDeclarationAST pardecl = new ParameterDeclarationAST();
+            parent.AddChild(pardecl, parent.GetContextForChild(context)); // assuming context PARAMETER_DECLARATION for simplicity
+            m_parents.Push(pardecl);
+            base.VisitParameter_declaration(context);
+            m_parents.Pop();
+            return 0;
+        }
+
+
+        public override int VisitDeclarator(CGrammarParser.DeclaratorContext context) {
+
+
+            // 1. Visit Pointer if exists and derived the pointer chain as a tree
+            if ( context.pointer() != null) {
+                Visit(context.pointer());
+                // 2. Make the bottom of the pointer chain the current parent
+                m_parents.Push(m_currentPointerBottom);
+            }
+
+            
+            // 3. Visit DirectDeclarator to link the rest of the declarator
+            // at the bottom of the pointer chain
+            Visit(context.direct_declarator());
+
+            // 4. If pointer was visited, pop the pointer chain bottom
+            if (context.pointer() != null) {
+                m_parents.Pop();
+                m_currentPointerBottom = null;
+            }
+
+
+
+            return 0;
+        }
+
         public override int VisitArrayDimensionWithSIZE(CGrammarParser.ArrayDimensionWithSIZEContext context) {
             return base.VisitArrayDimensionWithSIZE(context);
         }
@@ -105,8 +148,31 @@ namespace CParser {
         }
 
         public override int VisitTerminal(ITerminalNode node) {
+
+            switch (node.Symbol.Type) {
+                case CGrammarParser.IDENTIFIER:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        IDENTIFIER idNode = new IDENTIFIER(node.GetText());
+                        parent.AddChild(idNode, parent.GetContextForChild(node)); // assuming context IDENTIFIER for simplicity
+                    }
+                    break;
+                case CGrammarParser.INT:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        IntegerTypeAST intNode = new IntegerTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
+                }
+                break;
+                // Handle other terminal types as needed
+                default:
+                    break;
+            }
+
             return base.VisitTerminal(node);
         }
+
+        
 
         public override int VisitFunction_definition(CGrammarParser.Function_definitionContext context) {
 

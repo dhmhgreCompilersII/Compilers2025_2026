@@ -35,12 +35,23 @@ namespace CParser {
         public virtual Result VisitPointerType(PointerTypeAST node, INFO info) {
             return VisitChildren(node, info);
         }
+        public virtual Result VisitIntegerType(IntegerTypeAST node , INFO info) {
+            return default(Result);
+        }
         public virtual Result VisitFunctionType(FunctionTypeAST node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitParameterDeclaration(ParameterDeclarationAST node,INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitFunctionDefinition(FunctionDefinitionAST node,INFO info) {
             return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitIdentifier( IDENTIFIER node,INFO info) {
+            return default(Result);
         }
 
 
