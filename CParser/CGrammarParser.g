@@ -5,10 +5,10 @@ options { tokenVocab = CGrammarLexer; }
 // Parser rules
 
 primary_expression
-	: IDENTIFIER
-	| CONSTANT
-	| STRING_LITERAL
-	| LPAREN expression RPAREN
+	: IDENTIFIER				#primary_expression_Identifier
+	| CONSTANT					#primary_expression_Constant
+	| STRING_LITERAL			#primary_expression_StringLiteral
+	| LPAREN expression RPAREN  #primary_expression_ParenthesizedExpression
 	;
 
 postfix_expression
@@ -294,12 +294,12 @@ compound_statement : LBRACE declaration* statement* RBRACE
 	;
 
 statement
-	: labeled_statement
-	| compound_statement
-	| expression_statement
-	| selection_statement
-	| iteration_statement
-	| jump_statement
+	: labeled_statement			#statement_LabeledStatement
+	| compound_statement		#statement_CompoundStatement
+	| expression_statement		#statement_ExpressionStatement
+	| selection_statement		#statement_SelectionStatement
+	| iteration_statement		#statement_IterationStatement
+	| jump_statement			#statement_JumpStatement
 	;
 
 labeled_statement

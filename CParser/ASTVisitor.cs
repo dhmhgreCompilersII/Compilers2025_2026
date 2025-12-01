@@ -49,6 +49,30 @@ namespace CParser {
         public virtual Result VisitFunctionDefinition(FunctionDefinitionAST node,INFO info) {
             return VisitChildren(node, info);
         }
+        public virtual Result VisitCompoundStatement(CompoundStatement node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitExpressionStatement(ExpressionStatement node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitExpressionIdentifier(Expression_Identifier node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitExpressionAssignment(Expression_Assignment node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitExpressionAddition(Expression_Addition node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitExpressionNumber(Expression_Number node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
 
         public virtual Result VisitIdentifier( IDENTIFIER node,INFO info) {
             return default(Result);

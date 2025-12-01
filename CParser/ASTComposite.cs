@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
+using SharpCompress.Common;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
+using CParser;
 
 namespace CParser {
 
@@ -19,6 +20,11 @@ namespace CParser {
         public ASTElement? MParent => m_parent;
 
         private uint m_serialNumber; // unique serial number of this AST element to distinguish it
+
+        public T GetActualNodeType<T>(uint t) where T: Enum {
+            // This will throw if the value is not a valid enum value, but the cast itself is fine
+            return (T)Enum.ToObject(typeof(T), t);
+        }
 
         // from other AST elements of the same type
         private static uint m_serialNumberCounter = 0; // static counter to generate unique serial numbers
@@ -84,13 +90,23 @@ namespace CParser {
         }
     }
 
-
+    
     public class TranslationUnitAST : ASTComposite {
+
+        public enum NodeTypes {
+            TRANSLATION_UNIT = 0, DECLARATION = 1, FUNCTION_DEFINITION = 2,
+            COMPOUNDSTATEMENT = 3, POINTER_TYPE = 4, FUNCTION_TYPE = 5,
+            IDENTIFIER = 6, INTEGER_TYPE = 7, PARAMETER_DECLARATION = 8, 
+            EXPRESSION_STATEMENT = 9, EXPRESSION_IDENTIFIER = 10,
+            EXPRESSION_ASSIGNMENT = 11, EXPRESSION_NUMBER = 12,
+            EXPRESSION_ADDITION = 13
+        }
+        
 
         public const int FUNCTION_DEFINITION = 0, DECLARATIONS = 1;
 
         public TranslationUnitAST() :
-            base(2, 0, "TranslationUnitAST") {
+            base(2, (uint)TranslationUnitAST.NodeTypes.TRANSLATION_UNIT, "TranslationUnitAST") {
         }
 
         protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
@@ -170,7 +186,7 @@ namespace CParser {
         }
 
         public DeclarationAST() :
-            base(3, 1, "DeclarationAST") {
+            base(3, (uint)TranslationUnitAST.NodeTypes.DECLARATION, "DeclarationAST") {
         }
 
         protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
@@ -209,7 +225,7 @@ namespace CParser {
 
     public class IntegerTypeAST : ASTLeaf {
         public IntegerTypeAST(string lexeme) :
-            base(lexeme, 7, lexeme) {
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.INTEGER_TYPE, lexeme) {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitIntegerType(this, info);
@@ -226,7 +242,7 @@ namespace CParser {
             ATOMIC
         }
         public PointerTypeAST() :
-            base(1, 4, "PointerTypeAST") {
+            base(1, (uint)TranslationUnitAST.NodeTypes.POINTER_TYPE, "PointerTypeAST") {
         }
 
         protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
@@ -256,7 +272,7 @@ namespace CParser {
     public class ParameterDeclarationAST : ASTComposite {
         public const int DECLARATION_SPECIFIERS = 0, DECLARATOR = 1;
         public ParameterDeclarationAST() :
-            base(2, 8, "ParameterDeclaration") {
+            base(2, (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION, "ParameterDeclaration") {
         }
 
         protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
@@ -291,7 +307,7 @@ namespace CParser {
 
 
         public FunctionTypeAST() :
-            base(3, 5, "FunctionTypeAST") {
+            base(3, (uint)TranslationUnitAST.NodeTypes.FUNCTION_TYPE, "FunctionTypeAST") {
         }
 
         protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
@@ -324,7 +340,75 @@ namespace CParser {
         public const int DECLARATION_SPECIFIERS = 0,
             DECLARATOR = 1, PARAMETER_DECLARATIONS = 3, FUNCTION_BODY = 4;
         public FunctionDefinitionAST() :
-            base(4, 2, "FunctionDefinitionAST") {
+            base(4, (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION, "FunctionDefinitionAST") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            switch (prc.RuleIndex) {
+                case CGrammarParser.RULE_pointer:
+                case CGrammarParser.RULE_direct_declarator:
+                    return DECLARATOR;
+                case CGrammarParser.RULE_parameter_declaration:
+                    return PARAMETER_DECLARATIONS;
+                case CGrammarParser.RULE_compound_statement:
+                    return FUNCTION_BODY;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+            }
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            switch (ttn.Symbol.Type) {
+                case CGrammarLexer.IDENTIFIER:
+                    return DECLARATOR;
+                case CGrammarLexer.INT:
+                    return DECLARATION_SPECIFIERS;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+            }
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitFunctionDefinition(this, info);
+        }
+    }
+
+
+    public abstract class CExpression : ASTComposite {
+        public CExpression(uint numcontexts, uint type, string name) :
+            base(numcontexts, type, name) {
+        }
+    }
+
+    public class Expression_Identifier : CExpression {
+        
+        public const int IDENTIFIER = 0;
+
+        public Expression_Identifier() : base(1,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_IDENTIFIER, "Expression_Identifier") {
+        }
+        
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionIdentifier(this, info);
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            if ( ttn.Symbol.Type == CGrammarParser.IDENTIFIER) {
+                return IDENTIFIER;
+            } else {
+                throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+            }
+        }
+    }
+
+    public class Expression_Number : CExpression{
+        public const int NUMBER = 0;
+        public Expression_Number(uint numcontexts, uint type, string name) :
+            base(1, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_NUMBER, name) {
         }
 
         protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
@@ -336,15 +420,108 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            return visitor.VisitFunctionDefinition(this, info);
+            return visitor.VisitExpressionNumber(this, info);
+        }
+    }
+
+    public class Expression_Assignment : CExpression{
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_Assignment() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT, "Expression_Assignment") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignment(this, info);
+        }
+    }
+
+    public class Expression_Addition : CExpression{
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_Addition() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ADDITION, "Expression_Addition") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionAddition (this, info);
         }
     }
 
 
 
+
+    public abstract class Statement : ASTComposite {
+        public Statement(uint numcontexts, uint type, string name) :
+            base(numcontexts, type, name) {
+        }
+    }
+
+    public class  CompoundStatement : Statement{
+        public const int STATEMENTS = 0, DECLARATIONS = 1;
+        public CompoundStatement() : base(2, 
+            (uint)TranslationUnitAST.NodeTypes.COMPOUNDSTATEMENT, "CompoundStatement") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            switch (prc.RuleIndex) {
+                case CGrammarParser.RULE_compound_statement:
+                    return STATEMENTS;
+                default: 
+                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+            }
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new ArgumentOutOfRangeException("child", "CompoundStatement child cannot be terminal");
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitCompoundStatement(this, info);
+        }
+    }
+
+    public class ExpressionStatement : Statement {
+        public const int EXPRESSION = 0;
+        public ExpressionStatement() : base(1,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_STATEMENT, "ExpressionStatement") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            return EXPRESSION;
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            return EXPRESSION;
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionStatement(this, info);
+        }
+    }
+
+
+
+
     public class IDENTIFIER : ASTLeaf {
         public IDENTIFIER(string lexeme) :
-            base(lexeme, 6, lexeme) {
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.IDENTIFIER, lexeme) {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitIdentifier(this, info);
