@@ -1,10 +1,5 @@
-int ***(*foo)(int a,int *b), a, *b;
-int c;
-int foo1(int **x, char y);
-
-
 int main(int argc, char **argv) {
 	int a;
-	int **b, c;
+	a=1+a;
 }
 	

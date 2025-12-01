@@ -12,26 +12,26 @@ primary_expression
 	;
 
 postfix_expression
-	: primary_expression
-	| postfix_expression LBRACKET expression RBRACKET
-	| postfix_expression LPAREN RPAREN
-	| postfix_expression LPAREN argument_expression_list RPAREN
-	| postfix_expression MEMBEROP IDENTIFIER
-	| postfix_expression PTR_OP IDENTIFIER
-	| postfix_expression INC_OP
-	| postfix_expression DEC_OP
+	: primary_expression										#postfix_expression_PrimaryExpression
+	| postfix_expression LBRACKET expression RBRACKET			#postfix_expression_ArraySubscript
+	| postfix_expression LPAREN RPAREN							#postfix_expression_FunctionCallNoArgs
+	| postfix_expression LPAREN argument_expression_list RPAREN #postfix_expression_FunctionCallWithArgs
+	| postfix_expression MEMBEROP IDENTIFIER					#postfix_expression_MemberAccess
+	| postfix_expression PTR_OP IDENTIFIER						#postfix_expression_PointerMemberAccess
+	| postfix_expression INC_OP									#postfix_expression_Increment
+	| postfix_expression DEC_OP									#postfix_expression_Decrement
 	;
 
 argument_expression_list : assignment_expression (COMMA assignment_expression)*
 	;
 
 unary_expression
-	: postfix_expression
-	| INC_OP unary_expression
-	| DEC_OP unary_expression
-	| unary_operator cast_expression
-	| SIZEOF unary_expression
-	| SIZEOF LPAREN type_name RPAREN
+	: postfix_expression				#unary_expression_PostfixExpression
+	| INC_OP unary_expression			#unary_expression_Increment
+	| DEC_OP unary_expression			#unary_expression_Decrement
+	| unary_operator cast_expression	#unary_expression_UnaryOperator
+	| SIZEOF unary_expression			#unary_expression_SizeofExpression
+	| SIZEOF LPAREN type_name RPAREN	#unary_expression_SizeofTypeName
 	;
 
 unary_operator
@@ -44,76 +44,76 @@ unary_operator
 	;
 
 cast_expression
-	: unary_expression
-	| LPAREN type_name RPAREN cast_expression
+	: unary_expression							#cast_expression_UnaryExpression
+	| LPAREN type_name RPAREN cast_expression	#cast_expression_Cast
 	;
 
 multiplicative_expression
-	: cast_expression
-	| multiplicative_expression ASTERISK cast_expression
-	| multiplicative_expression SLASH cast_expression
-	| multiplicative_expression PERCENT cast_expression
+	: cast_expression										#multiplicative_expression_CastExpression
+	| multiplicative_expression ASTERISK cast_expression	#multiplicative_expression_Multiplication
+	| multiplicative_expression SLASH cast_expression		#multiplicative_expression_Division
+	| multiplicative_expression PERCENT cast_expression		#multiplicative_expression_Modulus
 	;
 
 additive_expression
-	: multiplicative_expression
-	| additive_expression PLUS multiplicative_expression
-	| additive_expression HYPHEN multiplicative_expression
+	: multiplicative_expression								#additive_expression_MultiplicativeExpression
+	| additive_expression PLUS multiplicative_expression	#additive_expression_Addition
+	| additive_expression HYPHEN multiplicative_expression	#additive_expression_Subtraction
 	;
 
 shift_expression
-	: additive_expression
-	| shift_expression LEFT_OP additive_expression
-	| shift_expression RIGHT_OP additive_expression
+	: additive_expression									#shift_expression_AdditiveExpression
+	| shift_expression LEFT_OP additive_expression			#shift_expression_LeftShift
+	| shift_expression RIGHT_OP additive_expression			#shift_expression_RightShift
 	;
 
 relational_expression
-	: shift_expression
-	| relational_expression LESS shift_expression
-	| relational_expression GREATER shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	: shift_expression										#relational_expression_ShiftExpression
+	| relational_expression LESS shift_expression			#relational_expression_LessThan
+	| relational_expression GREATER shift_expression		#relational_expression_GreaterThan
+	| relational_expression LE_OP shift_expression			#relational_expression_LessThanOrEqual
+	| relational_expression GE_OP shift_expression			#relational_expression_GreaterThanOrEqual
 	;
 
 equality_expression
-	: relational_expression
-	| equality_expression EQ_OP relational_expression
-	| equality_expression NE_OP relational_expression
+	: relational_expression									#equality_expression_RelationalExpression
+	| equality_expression EQ_OP relational_expression		#equality_expression_Equal
+	| equality_expression NE_OP relational_expression		#equality_expression_NotEqual
 	;
 
 and_expression
-	: equality_expression
-	| and_expression AMBERSAND equality_expression
+	: equality_expression									#and_expression_EqualityExpression
+	| and_expression AMBERSAND equality_expression			#and_expression_BitwiseAND
 	;
 
 exclusive_or_expression
-	: and_expression
-	| exclusive_or_expression CARET and_expression
+	: and_expression										#exclusive_or_expression_AndExpression
+	| exclusive_or_expression CARET and_expression			#exclusive_or_expression_BitwiseXOR
 	;
 
 inclusive_or_expression
-	: exclusive_or_expression
-	| inclusive_or_expression OR exclusive_or_expression
+	: exclusive_or_expression								#inclusive_or_expression_ExclusiveOrExpression
+	| inclusive_or_expression OR exclusive_or_expression	#inclusive_or_expression_BitwiseOR
 	;
 
 logical_and_expression
-	: inclusive_or_expression
-	| logical_and_expression AND_OP inclusive_or_expression
+	: inclusive_or_expression								#logical_and_expression_InclusiveOrExpression
+	| logical_and_expression AND_OP inclusive_or_expression	#logical_and_expression_LogicalAND
 	;
 
 logical_or_expression
-	: logical_and_expression
-	| logical_or_expression OR_OP logical_and_expression
+	: logical_and_expression								#logical_or_expression_InclusiveOrExpression
+	| logical_or_expression OR_OP logical_and_expression	#logical_or_expression_LogicalOR
 	;
 
 conditional_expression
-	: logical_or_expression
-	| logical_or_expression QMARK expression COLON conditional_expression
+	: logical_or_expression													#conditional_expression_LogicalOrExpression
+	| logical_or_expression QMARK expression COLON conditional_expression	#conditional_expression_Conditional
 	;
 
 assignment_expression
-	: conditional_expression
-	| unary_expression assignment_operator assignment_expression
+	: conditional_expression										#assignment_expression_ConditionalExpression
+	| unary_expression assignment_operator assignment_expression	#assignment_expression_Assignment
 	;
 
 assignment_operator
@@ -131,8 +131,8 @@ assignment_operator
 	;
 
 expression
-	: assignment_expression
-	| expression COMMA assignment_expression
+	: assignment_expression						#expression_AssignmentExpression
+	| expression COMMA assignment_expression	#expression_CommaExpression
 	;
 
 constant_expression
