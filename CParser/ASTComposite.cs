@@ -116,7 +116,8 @@ namespace CParser
             IDENTIFIER = 6, INTEGER_TYPE = 7, PARAMETER_DECLARATION = 8,
             EXPRESSION_STATEMENT = 9, EXPRESSION_IDENTIFIER = 10,
             EXPRESSION_ASSIGNMENT = 11, EXPRESSION_NUMBER = 12,
-            EXPRESSION_ADDITION = 13, EXPRESSION_STRINGLITERAL = 14,
+            EXPRESSION_ADDITION = 13, 
+            EXPRESSION_STRINGLITERAL = 14,
             EXPRESSION_MULTIPLICATION = 15, EXPRESSION_SUBTRACTION = 16,
             EXPRESSION_DIVISION = 17, EXPRESSION_MODULO = 18,
             EXPRESSION_EQUALITY_EQUAL = 19, EXPRESSION_EQUALITY_NOTEQUAL = 20,
@@ -125,7 +126,18 @@ namespace CParser
             POSTFIX_EXPRESSION_ARRAYSUBSCRIPT = 24, POSTFIX_EXPRESSION_FUNCTIONCALLNOARGS = 25,
             POSTFIX_EXPRESSION_FUNCTIONCALLWITHARGS = 26, POSTFIX_EXPRESSION_MEMBERACCESS = 27,
             POSTFIX_EXPRESSION_POINTERMEMBERACCESS = 28, POSTFIX_EXPRESSION_INCREMENT = 29,
-            POSTFIX_EXPRESSION_DECREMENT = 30, EXPRESSION_COMMAEXPRESSION = 31, 
+            POSTFIX_EXPRESSION_DECREMENT = 30, EXPRESSION_COMMAEXPRESSION = 31,
+
+            UNARY_EXPRESSION_INCREMENT = 32,
+            UNARY_EXPRESSION_DECREMENT = 33, UNARY_EXPRESSION_UNARY_OPERATOR = 34,
+            UNARY_EXPRESSION_SIZEOF = 35, UNARY_EXPRESSION_SIZEOF_TYPE = 36,
+            EXPRESSION_RELATIONAL_SHIFT = 37, EXPRESSION_RELATIONAL_LESS = 38,
+            EXPRESSION_RELATIONAL_GREATER = 39, EXPRESSION_RELATIONAL_LESS_OR_EQUAL = 40,
+            EXPRESSION_RELATIONAL_GREATER_OR_EQUAL = 41, EXPRESSION_LOGICAL_AND_INCLUSIVE_OR = 42,
+            EXPRESSION_LOGICAL_AND = 43, EXPRESSION_LOGICAL_OR_INCLUSIVE_OR = 44,
+            EXPRESSION_LOGICAL_OR = 45, CONDITIONAL_EXPRESSION_OR = 46,
+            CONDITIONAL_EXPRESSION = 47, ASSIGNMENT_EXPRESSION_CONDITIONAL = 48,
+            ASSIGNMENT_EXPRESSION = 49
 
         }
 
@@ -829,8 +841,360 @@ namespace CParser
         }
     }
 
+    public class UnaryExpressionIncrement : CExpression
+    {
+        public UnaryExpressionIncrement(): base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_INCREMENT, "UnaryExpressionIncrement")
+        {
 
+        }
 
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class UnaryExpressionDecrement : CExpression
+    {
+        public UnaryExpressionDecrement() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_DECREMENT, "UnaryExpressionDecrement")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class UnaryExpressionUnaryOperator : CExpression
+    {
+        public UnaryExpressionUnaryOperator() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR, "UnaryExpressionUnaryOperator")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class UnaryExpressionSizeOfExpression : CExpression
+    {
+        public UnaryExpressionSizeOfExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF, "UnaryExpressionSizeOf")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class UnaryExpressionSizeOfTypeName : CExpression
+    {
+        public UnaryExpressionSizeOfTypeName() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF_TYPE, "UnaryExpressionSizeOfType")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionRelationalShift : CExpression
+    {
+        public ExpressionRelationalShift() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFT, "ExpressionRelationalShift")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionRelationalLess : CExpression
+    {
+        public ExpressionRelationalLess() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS, "ExpressionRelationalLess")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionRelationalGreater : CExpression
+    {
+        public ExpressionRelationalGreater() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER, "ExpressionRelationalGreater")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionRelationalLessOrEqual : CExpression
+    {
+        public ExpressionRelationalLessOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS_OR_EQUAL, "ExpressionRelationalLessOrEqual")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionRelationalGreaterOrEqual : CExpression
+    {
+        public ExpressionRelationalGreaterOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, "ExpressionRelationalGreaterOrEqual")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionLogicalAndInclusiveOr : CExpression
+    {
+        public ExpressionLogicalAndInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND_INCLUSIVE_OR, "ExpressionLogicalAndInclusiveOr")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionLogicalAnd : CExpression
+    {
+        public ExpressionLogicalAnd() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND, "ExpressionLogicalAnd")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionLogicalOrInclusiveOr : CExpression
+    {
+        public ExpressionLogicalOrInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR_INCLUSIVE_OR, "ExpressionLogicalOrInclusiveOr")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionLogicalOr : CExpression
+    {
+        public ExpressionLogicalOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR, "ExpressionLogicalOr")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ConditionalExpressionOr : CExpression
+    {
+        public ConditionalExpressionOr() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION_OR, "ConditionalExpressionOr")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ConditionalExpression : CExpression
+    {
+        public ConditionalExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression")
+        {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AssignmentExpressionConditional : CExpression
+    {
+        public AssignmentExpressionConditional() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.ASSIGNMENT_EXPRESSION_CONDITIONAL, "assignment_expression_conditional")
+        {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AssignmentExpression : CExpression
+    {
+        public AssignmentExpression() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.ASSIGNMENT_EXPRESSION, "assignment_expression")
+        {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     public class IDENTIFIER : ASTLeaf
     {
