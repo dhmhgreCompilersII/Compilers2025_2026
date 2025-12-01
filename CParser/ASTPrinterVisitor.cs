@@ -7,20 +7,24 @@ using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 
 namespace CParser {
-    public class ASTPrinterVisitor : BaseASTVisitor<int, ASTComposite>{
+    public class ASTPrinterVisitor : BaseASTVisitor<int, ASTComposite>
+    {
         private string m_astDOTFilename;
         StreamWriter m_writer;
         private static uint ms_clusternumber = 0;
 
-        public ASTPrinterVisitor(string dotFilename) {
+        public ASTPrinterVisitor(string dotFilename)
+        {
             m_astDOTFilename = dotFilename;
         }
 
-        public void CreateContext(ASTComposite node, uint context, string ContextName) {
+        public void CreateContext(ASTComposite node, uint context, string ContextName)
+        {
             m_writer.WriteLine($"subgraph cluster{ms_clusternumber++} {{");
             m_writer.WriteLine($"\t node [style=filled, color=white]; ");
             m_writer.WriteLine($"\t style=filled; color=lightgrey;");
-            foreach (var child in node.MChildren[context]) {
+            foreach (var child in node.MChildren[context])
+            {
                 m_writer.Write($"{child.MName};");
             }
 
@@ -30,7 +34,8 @@ namespace CParser {
         }
 
 
-        public override int VisitTranslationUnit(TranslationUnitAST node, ASTComposite parent) {
+        public override int VisitTranslationUnit(TranslationUnitAST node, ASTComposite parent)
+        {
 
             // 1. Open DOT file for writing
             m_writer = new StreamWriter(m_astDOTFilename);
@@ -64,7 +69,8 @@ namespace CParser {
         }
 
 
-        public override int VisitParameterDeclaration(ParameterDeclarationAST node, ASTComposite parent) {
+        public override int VisitParameterDeclaration(ParameterDeclarationAST node, ASTComposite parent)
+        {
             // 1.Create context clusters
             CreateContext(node, ParameterDeclarationAST.DECLARATOR, "Declarators");
             CreateContext(node, ParameterDeclarationAST.DECLARATION_SPECIFIERS, "Type Specifier");
@@ -75,7 +81,8 @@ namespace CParser {
             return base.VisitParameterDeclaration(node, node);
         }
 
-        public override int VisitDeclaration(DeclarationAST node, ASTComposite parent) {
+        public override int VisitDeclaration(DeclarationAST node, ASTComposite parent)
+        {
 
 
             // 1.Create context clusters
@@ -93,7 +100,8 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitFunctionDefinition(FunctionDefinitionAST node, ASTComposite parent) {
+        public override int VisitFunctionDefinition(FunctionDefinitionAST node, ASTComposite parent)
+        {
 
             // 1.Create context clusters
             CreateContext(node, FunctionDefinitionAST.DECLARATION_SPECIFIERS, "Declaration Specifier");
@@ -108,7 +116,8 @@ namespace CParser {
         }
 
 
-        public override int VisitCompoundStatement(CompoundStatement node, ASTComposite parent) {
+        public override int VisitCompoundStatement(CompoundStatement node, ASTComposite parent)
+        {
 
             // 1.Create context clusters
             CreateContext(node, CompoundStatement.DECLARATIONS, "Declarations");
@@ -121,7 +130,8 @@ namespace CParser {
         }
 
 
-        public override int VisitPointerType(PointerTypeAST node, ASTComposite parent) {
+        public override int VisitPointerType(PointerTypeAST node, ASTComposite parent)
+        {
 
             // 1.Create context clusters
             CreateContext(node, PointerTypeAST.POINTER_TARGER, "Target");
@@ -133,7 +143,8 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitFunctionType(FunctionTypeAST node, ASTComposite parent) {
+        public override int VisitFunctionType(FunctionTypeAST node, ASTComposite parent)
+        {
 
             // 1.Create context clusters
             CreateContext(node, FunctionTypeAST.FUNCTION_NAME, "Function Name");
@@ -146,18 +157,63 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitIdentifier(IDENTIFIER node, ASTComposite parent) {
+        public override int VisitIdentifier(IDENTIFIER node, ASTComposite parent)
+        {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIdentifier(node, parent);
         }
 
-        public override int VisitIntegerType(IntegerTypeAST node, ASTComposite parent) {
+        public override int VisitIntegerType(IntegerTypeAST node, ASTComposite parent)
+        {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIntegerType(node, parent);
         }
-        public override int VisitCharType(CharTypeAST node, ASTComposite parent) {
+        public override int VisitCharType(CharTypeAST node, ASTComposite parent)
+        {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitCharType(node, parent);
+        }
+
+        public override int VisitDoubleType(DoubleTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitDoubleType(node, parent);
+        }
+
+        public override int VisitFloatType(FloatTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitFloatType(node, parent);
+        }
+
+        public override int VisitVoidType(VoidTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitVoidType(node, parent);
+        }
+
+        public override int VisitShortType(ShortTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitShortType(node, parent);
+        }
+
+        public override int VisitLongType(LongTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitLongType(node, parent);
+        }
+
+        public override int VisitSignedType(SignedTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitSignedType(node, parent);
+        }
+
+        public override int VisitUnsignedType(UnsignedTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitUnsignedType(node, parent);
         }
     }
 }

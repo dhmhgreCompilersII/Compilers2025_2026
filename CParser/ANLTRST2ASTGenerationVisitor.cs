@@ -167,31 +167,94 @@ namespace CParser {
 
         public override int VisitTerminal(ITerminalNode node) {
 
-            switch (node.Symbol.Type) {
-                case CGrammarParser.IDENTIFIER: {
-                    ASTComposite parent = m_parents.Peek();
-                    IDENTIFIER idNode = new IDENTIFIER(node.GetText());
-                    parent.AddChild(idNode, parent.GetContextForChild(node)); // assuming context IDENTIFIER for simplicity
-                }
+            switch (node.Symbol.Type)
+            {
+                case CGrammarParser.IDENTIFIER:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        IDENTIFIER idNode = new IDENTIFIER(node.GetText());
+                        parent.AddChild(idNode, parent.GetContextForChild(node)); // assuming context IDENTIFIER for simplicity
+                    }
+                    break;
+                case CGrammarParser.INT:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        IntegerTypeAST intNode = new IntegerTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
+                    }
+                    break;
+                case CGrammarParser.CHAR:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        CharTypeAST intNode = new CharTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context CHAR for simplicity
+                    }
+                    break;
+
+                case CGrammarParser.DOUBLE:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        DoubleTypeAST intNode = new DoubleTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context DOUBLE for simplicity
+                    }
+                    break;
+
+                case CGrammarParser.FLOAT:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        FloatTypeAST intNode = new FloatTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context FLOAT for simplicity
+                    }
+                    break;
+
+                case CGrammarParser.VOID:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        VoidTypeAST intNode = new VoidTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context VOID for simplicity
+                    }
+                    break;
+
+                case CGrammarParser.SHORT:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        ShortTypeAST intNode = new ShortTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context SHORT for simplicity
+                    }
                 break;
-                case CGrammarParser.INT: {
-                    ASTComposite parent = m_parents.Peek();
-                    IntegerTypeAST intNode = new IntegerTypeAST(node.GetText());
-                    parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
-                }
+
+                case CGrammarParser.LONG:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        LongTypeAST intNode = new LongTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context LONG for simplicity
+                    }
                 break;
-                case CGrammarParser.CHAR: {
-                    ASTComposite parent = m_parents.Peek();
-                    CharTypeAST intNode = new CharTypeAST(node.GetText());
-                    parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
-                }
+
+                case CGrammarParser.UNSIGNED:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        UnsignedTypeAST intNode = new UnsignedTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context UNSIGNED for simplicity
+                    }
                 break;
+
+                case CGrammarParser.SIGNED:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        SignedTypeAST intNode = new SignedTypeAST(node.GetText());
+                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context SIGNED for simplicity
+                    }
+                break;
+
                 // Handle other terminal types as needed
                 default:
                     break;
-            }
 
+            }
             return base.VisitTerminal(node);
+
+
         }
 
         public override int VisitFunction_definition(CGrammarParser.Function_definitionContext context) {

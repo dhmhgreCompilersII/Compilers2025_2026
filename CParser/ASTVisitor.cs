@@ -54,6 +54,34 @@ namespace CParser {
         public virtual Result VisitCharType(CharTypeAST node, INFO info) {
             return default(Result);
         }
+        public virtual Result VisitDoubleType(DoubleTypeAST node, INFO info) {
+            return default(Result);
+        }
+        public virtual Result VisitFloatType(FloatTypeAST node, INFO info) {
+            return default(Result);
+        }
+
+        public virtual Result VisitVoidType(VoidTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+        public virtual Result VisitShortType(ShortTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+        public virtual Result VisitLongType(LongTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+        public virtual Result VisitUnsignedType(UnsignedTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+        public virtual Result VisitSignedType(SignedTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+
         public virtual Result VisitFunctionType(FunctionTypeAST node, INFO info)
         {
             return VisitChildren(node, info);

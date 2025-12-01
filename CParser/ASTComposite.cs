@@ -111,35 +111,67 @@ namespace CParser
 
         public enum NodeTypes
         {
-            TRANSLATION_UNIT = 0, DECLARATION = 1, FUNCTION_DEFINITION = 2,
-            COMPOUNDSTATEMENT = 3, POINTER_TYPE = 4, FUNCTION_TYPE = 5,
-            IDENTIFIER = 6, INTEGER_TYPE = 7, PARAMETER_DECLARATION = 8,
-            EXPRESSION_STATEMENT = 9, EXPRESSION_IDENTIFIER = 10,
-            EXPRESSION_ASSIGNMENT = 11, EXPRESSION_NUMBER = 12,
-            EXPRESSION_ADDITION = 13, 
-            EXPRESSION_STRINGLITERAL = 14,
-            EXPRESSION_MULTIPLICATION = 15, EXPRESSION_SUBTRACTION = 16,
-            EXPRESSION_DIVISION = 17, EXPRESSION_MODULO = 18,
-            EXPRESSION_EQUALITY_EQUAL = 19, EXPRESSION_EQUALITY_NOTEQUAL = 20,
-            EXPRESSION_BITWISE_AND = 21, EXPRESSION_BITWISE_OR = 22, EXPRESSION_BITWISE_XOR = 23,
-
-            POSTFIX_EXPRESSION_ARRAYSUBSCRIPT = 24, POSTFIX_EXPRESSION_FUNCTIONCALLNOARGS = 25,
-            POSTFIX_EXPRESSION_FUNCTIONCALLWITHARGS = 26, POSTFIX_EXPRESSION_MEMBERACCESS = 27,
-            POSTFIX_EXPRESSION_POINTERMEMBERACCESS = 28, POSTFIX_EXPRESSION_INCREMENT = 29,
-            POSTFIX_EXPRESSION_DECREMENT = 30, EXPRESSION_COMMAEXPRESSION = 31,
-
-            UNARY_EXPRESSION_INCREMENT = 32,
-            UNARY_EXPRESSION_DECREMENT = 33, UNARY_EXPRESSION_UNARY_OPERATOR = 34,
-            UNARY_EXPRESSION_SIZEOF = 35, UNARY_EXPRESSION_SIZEOF_TYPE = 36,
-            EXPRESSION_RELATIONAL_SHIFT = 37, EXPRESSION_RELATIONAL_LESS = 38,
-            EXPRESSION_RELATIONAL_GREATER = 39, EXPRESSION_RELATIONAL_LESS_OR_EQUAL = 40,
-            EXPRESSION_RELATIONAL_GREATER_OR_EQUAL = 41, EXPRESSION_LOGICAL_AND_INCLUSIVE_OR = 42,
-            EXPRESSION_LOGICAL_AND = 43, EXPRESSION_LOGICAL_OR_INCLUSIVE_OR = 44,
-            EXPRESSION_LOGICAL_OR = 45, CONDITIONAL_EXPRESSION_OR = 46,
-            CONDITIONAL_EXPRESSION = 47, ASSIGNMENT_EXPRESSION_CONDITIONAL = 48,
-            ASSIGNMENT_EXPRESSION = 49,
-
-            CHAR_TYPE = 50
+            TRANSLATION_UNIT = 0, 
+            DECLARATION = 1, 
+            FUNCTION_DEFINITION = 2,
+            COMPOUNDSTATEMENT = 3, 
+            POINTER_TYPE = 4, 
+            FUNCTION_TYPE = 5,
+            PARAMETER_DECLARATION = 6, 
+            EXPRESSION_STATEMENT = 7, 
+            EXPRESSION_IDENTIFIER = 8, 
+            EXPRESSION_ASSIGNMENT = 9, 
+            EXPRESSION_NUMBER = 10, 
+            EXPRESSION_ADDITION = 11, 
+            EXPRESSION_STRINGLITERAL = 12, 
+            EXPRESSION_MULTIPLICATION = 13, 
+            EXPRESSION_SUBTRACTION = 14, 
+            EXPRESSION_DIVISION = 15, 
+            EXPRESSION_MODULO = 16, 
+            EXPRESSION_EQUALITY_EQUAL = 17, 
+            EXPRESSION_EQUALITY_NOTEQUAL = 18, 
+            EXPRESSION_BITWISE_AND = 19, 
+            EXPRESSION_BITWISE_OR = 20, 
+            EXPRESSION_BITWISE_XOR = 21,
+            POSTFIX_EXPRESSION_ARRAYSUBSCRIPT = 22, 
+            POSTFIX_EXPRESSION_FUNCTIONCALLNOARGS = 23,
+            POSTFIX_EXPRESSION_FUNCTIONCALLWITHARGS = 24, 
+            POSTFIX_EXPRESSION_MEMBERACCESS = 25,
+            POSTFIX_EXPRESSION_POINTERMEMBERACCESS = 26, 
+            POSTFIX_EXPRESSION_INCREMENT = 27,
+            POSTFIX_EXPRESSION_DECREMENT = 28, 
+            EXPRESSION_COMMAEXPRESSION = 29,
+            UNARY_EXPRESSION_INCREMENT = 30, 
+            UNARY_EXPRESSION_DECREMENT = 31, 
+            UNARY_EXPRESSION_UNARY_OPERATOR = 32,
+            UNARY_EXPRESSION_SIZEOF = 33, 
+            UNARY_EXPRESSION_SIZEOF_TYPE = 34, 
+            EXPRESSION_RELATIONAL_SHIFT = 35, 
+            EXPRESSION_RELATIONAL_LESS = 36, 
+            EXPRESSION_RELATIONAL_GREATER = 37, 
+            EXPRESSION_RELATIONAL_LESS_OR_EQUAL = 38, 
+            EXPRESSION_RELATIONAL_GREATER_OR_EQUAL = 39, 
+            EXPRESSION_LOGICAL_AND_INCLUSIVE_OR = 40, 
+            EXPRESSION_LOGICAL_AND = 41, 
+            EXPRESSION_LOGICAL_OR_INCLUSIVE_OR = 42, 
+            EXPRESSION_LOGICAL_OR = 43, 
+            CONDITIONAL_EXPRESSION_OR = 44, 
+            CONDITIONAL_EXPRESSION = 45, 
+            ASSIGNMENT_EXPRESSION_CONDITIONAL = 46, 
+            ASSIGNMENT_EXPRESSION = 47, 
+            IDENTIFIER = 48, 
+            INTEGER_TYPE = 49, 
+            CHAR_TYPE = 50, 
+            DOUBLE_Type = 51, 
+            FLOAT_TYPE = 52, 
+            VOID_TYPE = 53,
+            SHORT_TYPE = 54, 
+            LONG_TYPE = 55, 
+            UNSIGNED_TYPE = 56, 
+            SIGNED_TYPE = 57, 
+            STRUCT_TYPE = 58,
+            UNION_TYPE = 59, 
+            ENUM_TYPE = 60
 
         }
 
@@ -269,8 +301,15 @@ namespace CParser
                 case CGrammarLexer.IDENTIFIER:
                     return DECLARATORS;
                 case CGrammarLexer.INT:
+                case CGrammarLexer.CHAR:
+                case CGrammarLexer.DOUBLE:
+                case CGrammarLexer.FLOAT:
+                case CGrammarLexer.VOID:
+                case CGrammarLexer.SHORT:
+                case CGrammarLexer.LONG:
+                case CGrammarLexer.UNSIGNED:
+                case CGrammarLexer.SIGNED:
                     return DECLARATION_TYPE;
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
             }
@@ -302,6 +341,96 @@ namespace CParser
             return visitor.VisitCharType(this, info);
         }
     }
+
+    public class DoubleTypeAST : ASTLeaf {
+        public DoubleTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.DOUBLE_Type, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitDoubleType(this, info);
+        }
+    }
+
+    public class FloatTypeAST : ASTLeaf {
+        public FloatTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.FLOAT_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitFloatType(this, info);
+        }
+    }
+
+    public class VoidTypeAST : ASTLeaf {
+        public VoidTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.VOID_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitVoidType(this, info);
+        }
+    }
+
+    public class ShortTypeAST : ASTLeaf {
+        public ShortTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.SHORT_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitShortType(this, info);
+        }
+    }
+
+    public class LongTypeAST : ASTLeaf {
+        public LongTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.LONG_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitLongType(this, info);
+        }
+    }
+
+    public class UnsignedTypeAST : ASTLeaf {
+        public UnsignedTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.UNSIGNED_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitUnsignedType(this, info);
+        }
+    }
+
+    public class SignedTypeAST : ASTLeaf {
+        public SignedTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.SIGNED_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitSignedType(this, info);
+        }
+    }
+
+    /*public class StructTypeAST : ASTLeaf {
+        public StructTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.STRUCT_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitStructType(this, info);
+        }
+    }
+
+    public class UnionTypeAST : ASTLeaf {
+        public UnionTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.UNION_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitUnionType(this, info);
+        }
+    }
+
+    public class EnumTypeAST : ASTLeaf {
+        public EnumTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.ENUM_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitEnumType(this, info);
+        }
+    }*/
 
 
     public class PointerTypeAST : ASTComposite
@@ -374,6 +503,13 @@ namespace CParser
             {
                 case CGrammarLexer.INT:
                 case CGrammarLexer.CHAR:
+                case CGrammarLexer.DOUBLE:
+                case CGrammarLexer.FLOAT:
+                case CGrammarLexer.VOID:
+                case CGrammarLexer.SHORT:
+                case CGrammarLexer.LONG:
+                case CGrammarLexer.UNSIGNED:
+                case CGrammarLexer.SIGNED:
                     return DECLARATION_SPECIFIERS;
                 case CGrammarLexer.IDENTIFIER:
                     return DECLARATOR;
@@ -462,6 +598,14 @@ namespace CParser
                 case CGrammarLexer.IDENTIFIER:
                     return DECLARATOR;
                 case CGrammarLexer.INT:
+                case CGrammarLexer.CHAR:
+                case CGrammarLexer.DOUBLE:
+                case CGrammarLexer.FLOAT:
+                case CGrammarLexer.VOID:
+                case CGrammarLexer.SHORT:
+                case CGrammarLexer.LONG:
+                case CGrammarLexer.UNSIGNED:
+                case CGrammarLexer.SIGNED:
                     return DECLARATION_SPECIFIERS;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
