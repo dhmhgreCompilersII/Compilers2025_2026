@@ -99,7 +99,12 @@ namespace CParser {
             IDENTIFIER = 6, INTEGER_TYPE = 7, PARAMETER_DECLARATION = 8, 
             EXPRESSION_STATEMENT = 9, EXPRESSION_IDENTIFIER = 10,
             EXPRESSION_ASSIGNMENT = 11, EXPRESSION_NUMBER = 12,
-            EXPRESSION_ADDITION = 13
+            EXPRESSION_ADDITION = 13, EXPRESSION_STRINGLITERAL = 14,
+            EXPRESSION_MULTIPLICATION = 15, EXPRESSION_SUBTRACTION = 16,
+            EXPRESSION_DIVISION = 17, EXPRESSION_MODULO = 18,
+            EXPRESSION_EQUALITY_EQUAL = 19, EXPRESSION_EQUALITY_NOTEQUAL = 20,
+            EXPRESSION_BITWISE_AND = 21, EXPRESSION_BITWISE_OR = 22, EXPRESSION_BITWISE_XOR = 23
+
         }
         
 
@@ -424,6 +429,22 @@ namespace CParser {
         }
     }
 
+    public class Expression_StringLiteral : CExpression{
+        public const int STRING = 0;
+        public Expression_StringLiteral() : base(1, 
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_STRINGLITERAL, "StringLiteral") {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            return STRING;
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionStringLiteral(this, info);
+        }
+    }
+
     public class Expression_Assignment : CExpression{
         public const int LEFT = 0, RIGHT = 1;
 
@@ -463,6 +484,188 @@ namespace CParser {
             return visitor.VisitExpressionAddition (this, info);
         }
     }
+
+    public class Expression_Multiplication : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_Multiplication() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MULTIPLICATION, "Expression_Multiplication") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionMultiplication(this, info);
+        }
+    }
+
+    public class Expression_Division : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_Division() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_DIVISION, "Expression_Division") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionDivision(this, info);
+        }
+    }
+
+    public class Expression_Modulo : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_Modulo() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MODULO, "Expression_Modulo") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionModulo(this, info);
+        }
+    }
+
+    public class Expression_Subtraction : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_Subtraction() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_SUBTRACTION, "Expression_Subtraction") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionSubtraction(this, info);
+        }
+    }
+
+    public class Expression_EqualityEqual : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_EqualityEqual() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_EQUALITY_EQUAL, "Expression_Equality_Equal") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionEqualityEqual(this, info);
+        }
+    }
+
+    public class Expression_EqualityNotEqual : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_EqualityNotEqual() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_EQUALITY_NOTEQUAL, "Expression_Equality_NotEqual") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionEqualityNotEqual(this, info);
+        }
+    }
+
+    public class Expression_BitwiseAND : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_BitwiseAND() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_BITWISE_AND, "Expression_Bitwise_AND") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionBitwiseAND(this, info);
+        }
+    }
+
+    public class Expression_BitwiseOR : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_BitwiseOR() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_BITWISE_OR, "Expression_Bitwise_OR") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionBitwiseOR(this, info);
+        }
+    }
+
+
+    public class Expression_BitwiseXOR : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
+
+        public Expression_BitwiseXOR() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_BITWISE_XOR, "Expression_Bitwise_XOR") {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionBitwiseXOR(this, info);
+        }
+    }
+
 
 
 
