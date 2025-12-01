@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
+using static CParser.Expression_Assignment;
 
 namespace CParser {
     public class BaseASTVisitor<Result, INFO>
@@ -122,9 +123,7 @@ namespace CParser {
             return VisitChildren(node, info);
         }
 
-
-        public virtual Result VisitExpressionNumber(Expression_Number node, INFO info) {
-        public virtual Result VisitExpressionNumber(Expression_Number node, INFO info)
+       public virtual Result VisitExpressionNumber(Expression_Number node, INFO info)
         {
             return VisitChildren(node, info);
         }
