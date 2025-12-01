@@ -137,7 +137,9 @@ namespace CParser
             EXPRESSION_LOGICAL_AND = 43, EXPRESSION_LOGICAL_OR_INCLUSIVE_OR = 44,
             EXPRESSION_LOGICAL_OR = 45, CONDITIONAL_EXPRESSION_OR = 46,
             CONDITIONAL_EXPRESSION = 47, ASSIGNMENT_EXPRESSION_CONDITIONAL = 48,
-            ASSIGNMENT_EXPRESSION = 49
+            ASSIGNMENT_EXPRESSION = 49,
+
+            CHAR_TYPE = 50
 
         }
 
@@ -292,6 +294,15 @@ namespace CParser
         }
     }
 
+    public class CharTypeAST : ASTLeaf {
+        public CharTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.CHAR_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitCharType(this, info);
+        }
+    }
+
 
     public class PointerTypeAST : ASTComposite
     {
@@ -362,6 +373,7 @@ namespace CParser
             switch (ttn.Symbol.Type)
             {
                 case CGrammarLexer.INT:
+                case CGrammarLexer.CHAR:
                     return DECLARATION_SPECIFIERS;
                 case CGrammarLexer.IDENTIFIER:
                     return DECLARATOR;
@@ -421,7 +433,7 @@ namespace CParser
     public class FunctionDefinitionAST : ASTComposite
     {
         public const int DECLARATION_SPECIFIERS = 0,
-            DECLARATOR = 1, PARAMETER_DECLARATIONS = 3, FUNCTION_BODY = 4;
+            DECLARATOR = 1, PARAMETER_DECLARATIONS = 2, FUNCTION_BODY = 3;
         public FunctionDefinitionAST() :
             base(4, (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION, "FunctionDefinitionAST")
         {
@@ -801,6 +813,8 @@ namespace CParser
             {
                 case CGrammarParser.RULE_compound_statement:
                     return STATEMENTS;
+                case CGrammarParser.RULE_declaration:
+                    return DECLARATIONS;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
             }

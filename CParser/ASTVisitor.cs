@@ -50,6 +50,10 @@ namespace CParser {
         {
             return default(Result);
         }
+
+        public virtual Result VisitCharType(CharTypeAST node, INFO info) {
+            return default(Result);
+        }
         public virtual Result VisitFunctionType(FunctionTypeAST node, INFO info)
         {
             return VisitChildren(node, info);
