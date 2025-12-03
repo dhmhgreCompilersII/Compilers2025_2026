@@ -82,6 +82,31 @@ namespace CParser {
             return default(Result);
         }
 
+        public virtual Result VisitStructOrUnionSpecifier(StructOrUnionSpecifierAST node, INFO info)
+        {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitUnionType(UnionTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+
+        public virtual Result VisitEnumType(EnumTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+
+        public virtual Result VisitStructType(StructTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+
+        public virtual Result VisitStructDeclaration(StructDeclarationAST node, INFO info)
+        {
+            return VisitChildren(node, info);
+        }
+
         public virtual Result VisitFunctionType(FunctionTypeAST node, INFO info)
         {
             return VisitChildren(node, info);

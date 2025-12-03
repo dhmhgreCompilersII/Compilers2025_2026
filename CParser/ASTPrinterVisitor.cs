@@ -215,5 +215,25 @@ namespace CParser {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitUnsignedType(node, parent);
         }
+
+        public override int VisitStructOrUnionSpecifier(StructOrUnionSpecifierAST node, ASTComposite parent)
+        {
+            // Create context clusters
+            CreateContext(node, StructOrUnionSpecifierAST.STRUCT_UNION_TYPE, "Struct/Union Type");
+            CreateContext(node, StructOrUnionSpecifierAST.IDENTIFIER, "Name");
+            CreateContext(node, StructOrUnionSpecifierAST.STRUCT_DECLARATIONS, "Struct Declarations");
+
+            // Print edge from parent to this node
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitStructType(StructTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitStructType(node, parent);
+        }
     }
 }

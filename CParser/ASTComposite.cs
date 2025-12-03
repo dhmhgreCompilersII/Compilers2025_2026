@@ -169,9 +169,11 @@ namespace CParser
             LONG_TYPE = 55, 
             UNSIGNED_TYPE = 56, 
             SIGNED_TYPE = 57, 
-            STRUCT_TYPE = 58,
-            UNION_TYPE = 59, 
-            ENUM_TYPE = 60
+            STRUCT_OR_UNION_SPECIFIER = 58,
+            STRUCT_DECLARATION = 59,
+            STRUCT_TYPE = 60,
+            UNION_TYPE = 61, 
+            ENUM_TYPE = 62
 
         }
 
@@ -289,6 +291,9 @@ namespace CParser
                 case CGrammarParser.RULE_storage_class_specifier:
                     return DECLARATION_STORAGE_CLASS;
                     break;
+                case CGrammarParser.RULE_struct_or_union_specifier:
+                    return DECLARATION_TYPE;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
             }
@@ -309,6 +314,9 @@ namespace CParser
                 case CGrammarLexer.LONG:
                 case CGrammarLexer.UNSIGNED:
                 case CGrammarLexer.SIGNED:
+                case CGrammarLexer.STRUCT:
+                case CGrammarLexer.UNION:
+                case CGrammarLexer.ENUM:
                     return DECLARATION_TYPE;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
@@ -405,7 +413,90 @@ namespace CParser
         }
     }
 
-    /*public class StructTypeAST : ASTLeaf {
+    public class StructOrUnionSpecifierAST : ASTComposite
+    {
+        public const int STRUCT_UNION_TYPE = 0, IDENTIFIER = 1, STRUCT_DECLARATIONS = 2;
+
+        public StructOrUnionSpecifierAST() :
+            base(3, (uint)TranslationUnitAST.NodeTypes.STRUCT_OR_UNION_SPECIFIER, "StructOrUnionSpecifierAST")
+        {
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            switch (prc.RuleIndex)
+            {
+                case CGrammarParser.RULE_struct_or_union:
+                    return STRUCT_UNION_TYPE;
+                case CGrammarParser.RULE_struct_declaration:
+                    return STRUCT_DECLARATIONS;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+            }
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            switch (ttn.Symbol.Type)
+            {
+                case CGrammarLexer.IDENTIFIER:
+                    return IDENTIFIER;
+                case CGrammarLexer.STRUCT:
+                case CGrammarLexer.UNION:
+                    return STRUCT_UNION_TYPE;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+            }
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            return visitor.VisitStructOrUnionSpecifier(this, info);
+        }
+    }
+
+    public class StructDeclarationAST : ASTComposite {
+        public const int DECLARATION_SPECIFIERS = 0,
+            DECLARATOR = 1;
+        public StructDeclarationAST() :
+            base(2, (uint)TranslationUnitAST.NodeTypes.STRUCT_DECLARATION, "StructDeclarationAST") {
+        }
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            switch (prc.RuleIndex) {
+                case CGrammarParser.RULE_pointer:
+                case CGrammarParser.RULE_direct_declarator:
+                    return DECLARATOR;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
+            }
+        }
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            switch (ttn.Symbol.Type) {
+                case CGrammarLexer.IDENTIFIER:
+                    return DECLARATOR;
+                case CGrammarLexer.INT:
+                case CGrammarLexer.CHAR:
+                case CGrammarLexer.DOUBLE:
+                case CGrammarLexer.FLOAT:
+                case CGrammarLexer.VOID:
+                case CGrammarLexer.SHORT:
+                case CGrammarLexer.LONG:
+                case CGrammarLexer.UNSIGNED:
+                case CGrammarLexer.SIGNED:
+                case CGrammarLexer.STRUCT:
+                case CGrammarLexer.UNION:
+                case CGrammarLexer.ENUM:
+                    return DECLARATION_SPECIFIERS;
+                default:
+                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
+            }
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitStructDeclaration(this, info);
+        }
+    }
+
+    public class StructTypeAST : ASTLeaf {
         public StructTypeAST(string lexeme) :
             base(lexeme, (uint)TranslationUnitAST.NodeTypes.STRUCT_TYPE, lexeme) {
         }
@@ -430,7 +521,7 @@ namespace CParser
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitEnumType(this, info);
         }
-    }*/
+    }
 
 
     public class PointerTypeAST : ASTComposite
@@ -510,6 +601,9 @@ namespace CParser
                 case CGrammarLexer.LONG:
                 case CGrammarLexer.UNSIGNED:
                 case CGrammarLexer.SIGNED:
+                case CGrammarLexer.STRUCT:
+                case CGrammarLexer.UNION:
+                case CGrammarLexer.ENUM:
                     return DECLARATION_SPECIFIERS;
                 case CGrammarLexer.IDENTIFIER:
                     return DECLARATOR;
@@ -606,6 +700,9 @@ namespace CParser
                 case CGrammarLexer.LONG:
                 case CGrammarLexer.UNSIGNED:
                 case CGrammarLexer.SIGNED:
+                case CGrammarLexer.STRUCT:
+                case CGrammarLexer.UNION:
+                case CGrammarLexer.ENUM:
                     return DECLARATION_SPECIFIERS;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");

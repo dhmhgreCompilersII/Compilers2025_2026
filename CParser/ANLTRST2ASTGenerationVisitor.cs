@@ -247,6 +247,22 @@ namespace CParser {
                     }
                 break;
 
+                case CGrammarParser.STRUCT:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        StructTypeAST structNode = new StructTypeAST(node.GetText());
+                        parent.AddChild(structNode, parent.GetContextForChild(node));
+                    }
+                break;
+
+                case CGrammarParser.UNION:
+                    {
+                        ASTComposite parent = m_parents.Peek();
+                        UnionTypeAST unionNode = new UnionTypeAST(node.GetText());
+                        parent.AddChild(unionNode, parent.GetContextForChild(node));
+                    }
+                break;
+
                 // Handle other terminal types as needed
                 default:
                     break;
@@ -293,5 +309,39 @@ namespace CParser {
 
             return 0;
         }
+
+        public override int VisitStruct_or_union_specifier(CGrammarParser.Struct_or_union_specifierContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            StructOrUnionSpecifierAST structNode = new StructOrUnionSpecifierAST();
+            parent.AddChild(structNode, parent.GetContextForChild(context));
+
+            m_parents.Push(structNode);
+            base.VisitStruct_or_union_specifier(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitStruct_declaration(CGrammarParser.Struct_declarationContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            StructDeclarationAST structDeclNode = new StructDeclarationAST();
+            parent.AddChild(structDeclNode, parent.GetContextForChild(context));
+
+            m_parents.Push(structDeclNode);
+            base.VisitStruct_declaration(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitStruct_or_union(CGrammarParser.Struct_or_unionContext context)
+        {
+            return base.VisitStruct_or_union(context);
+        }
     }
+
 }
