@@ -35,12 +35,7 @@ unary_expression
 	;
 
 unary_operator
-	: AMBERSAND
-	| ASTERISK
-	| PLUS
-	| HYPHEN
-	| TILDE
-	| NOT
+	: op= (AMBERSAND	| ASTERISK	| PLUS 	| HYPHEN | TILDE| NOT)
 	;
 
 cast_expression

@@ -232,31 +232,181 @@ namespace CParser {
         }
 
         public override int VisitPostfix_expression_ArraySubscript(CGrammarParser.Postfix_expression_ArraySubscriptContext context) {
-            return base.VisitPostfix_expression_ArraySubscript(context);
+
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Postfixexpression_ArraySubscript arrsbArraySubscript = new Postfixexpression_ArraySubscript();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(arrsbArraySubscript, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(arrsbArraySubscript);
+            base.VisitPostfix_expression_ArraySubscript(context);
+            m_parents.Pop();
+
+            return 0;
         }
 
-        public override int VisitPostfix_expression_Decrement(CGrammarParser.Postfix_expression_DecrementContext context) {
-            return base.VisitPostfix_expression_Decrement(context);
+        public override int VisitPostfix_expression_Decrement(
+            CGrammarParser.Postfix_expression_DecrementContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Postfixexpression_Decrement postfixexpressionDecrement = new Postfixexpression_Decrement();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(postfixexpressionDecrement, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(postfixexpressionDecrement);
+            base.VisitPostfix_expression_Decrement(context);
+            m_parents.Pop();
+
+            return 0;
         }
 
-        public override int VisitPostfix_expression_Increment(CGrammarParser.Postfix_expression_IncrementContext context) {
-            return base.VisitPostfix_expression_Increment(context);
+        public override int VisitPostfix_expression_Increment(
+            CGrammarParser.Postfix_expression_IncrementContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Postfixexpression_Increment postfixexpressionIncrement = new Postfixexpression_Increment();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(postfixexpressionIncrement, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(postfixexpressionIncrement);
+            base.VisitPostfix_expression_Increment(context);
+            m_parents.Pop();
+
+            return 0;
         }
 
-        public override int VisitPostfix_expression_FunctionCallNoArgs(CGrammarParser.Postfix_expression_FunctionCallNoArgsContext context) {
-            return base.VisitPostfix_expression_FunctionCallNoArgs(context);
+        public override int VisitPostfix_expression_FunctionCallNoArgs(
+            CGrammarParser.Postfix_expression_FunctionCallNoArgsContext context) {
+
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Postfixexpression_FunctionCallNoArgs postfixexpressionFunctionCallNoArgs =
+                new Postfixexpression_FunctionCallNoArgs();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(postfixexpressionFunctionCallNoArgs, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(postfixexpressionFunctionCallNoArgs);
+            base.VisitPostfix_expression_FunctionCallNoArgs(context);
+            m_parents.Pop();
+
+            return 0;
         }
 
         public override int VisitPostfix_expression_FunctionCallWithArgs(CGrammarParser.Postfix_expression_FunctionCallWithArgsContext context) {
-            return base.VisitPostfix_expression_FunctionCallWithArgs(context);
+
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Postfixexpression_FunctionCallWithArgs postfixexpressionFunctionCallWithArgs =
+                new Postfixexpression_FunctionCallWithArgs();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(postfixexpressionFunctionCallWithArgs, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(postfixexpressionFunctionCallWithArgs);
+            base.VisitPostfix_expression_FunctionCallWithArgs(context);
+            m_parents.Pop();
+
+            return 0;
         }
 
         public override int VisitPostfix_expression_PointerMemberAccess(CGrammarParser.Postfix_expression_PointerMemberAccessContext context) {
-            return base.VisitPostfix_expression_PointerMemberAccess(context);
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Postfixexpression_PointerMemberAccess pointerMemberAccess =
+                new Postfixexpression_PointerMemberAccess();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(pointerMemberAccess, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(pointerMemberAccess);
+            base.VisitPostfix_expression_PointerMemberAccess(context);
+            m_parents.Pop();
+
+            return 0;
         }
 
         public override int VisitPostfix_expression_MemberAccess(CGrammarParser.Postfix_expression_MemberAccessContext context) {
-            return base.VisitPostfix_expression_MemberAccess(context);
+
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Postfixexpression_MemberAccess memberAccess =
+                new Postfixexpression_MemberAccess();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(memberAccess, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(memberAccess);
+            base.VisitPostfix_expression_MemberAccess(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitUnary_expression_UnaryOperator(CGrammarParser.Unary_expression_UnaryOperatorContext context) {
+
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            var uoperator = context.unary_operator();
+            ASTComposite unaryOperatorNode = null;
+            switch (uoperator.op.Type) {
+                case CGrammarLexer.AMBERSAND:
+                    unaryOperatorNode =
+                        new UnaryExpressionUnaryOperatorAmbersand();
+                    break;
+                case CGrammarLexer.ASTERISK:
+                    unaryOperatorNode =
+                        new UnaryExpressionUnaryOperatorAsterisk();
+                    break;
+                case CGrammarLexer.PLUS:
+                    unaryOperatorNode =
+                        new UnaryExpressionUnaryOperatorPLUS();
+                    break;
+                case CGrammarLexer.HYPHEN:
+                    unaryOperatorNode =
+                        new UnaryExpressionUnaryOperatorMINUS();
+                    break;
+                case CGrammarLexer.TILDE:
+                    unaryOperatorNode =
+                        new UnaryExpressionUnaryOperatorTilde();
+                    break;
+                case CGrammarLexer.NOT:
+                    unaryOperatorNode =
+                        new UnaryExpressionUnaryOperatorNOT();
+                    break;
+                default:
+                    throw new NotImplementedException("Unhandled unary operator type");
+
+            }
+            
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(unaryOperatorNode, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(unaryOperatorNode);
+            base.VisitUnary_expression_UnaryOperator(context);
+            m_parents.Pop();
+
+            return 0;
         }
     }
 
