@@ -132,7 +132,8 @@ namespace CParser {
             ASSIGNMENT_EXPRESSION = 54,
 
             CHAR_TYPE = 55,
-            UNARY_EXPRESSION_CAST = 56
+            UNARY_EXPRESSION_CAST = 56,
+            EXPRESSION_ASSIGNMENT_MULTIPLCATION= 57
 
         }
 
@@ -1336,6 +1337,26 @@ namespace CParser {
     public class ExpressionModulus : CExpression {
         public ExpressionModulus() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MODULO,
+            "ExpressionModulo") {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpressionAssignmentMultiplcation : CExpression {
+        public ExpressionAssignmentMultiplcation() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_MULTIPLCATION,
             "ExpressionModulo") {
 
         }
