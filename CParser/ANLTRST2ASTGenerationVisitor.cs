@@ -630,26 +630,11 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitCast_expression_UnaryExpression(CGrammarParser.Cast_expression_UnaryExpressionContext context)
-        {
-            ASTComposite parent = m_parents.Peek();
-
-            CastExpressionUnaryExpression node = new CastExpressionUnaryExpression();
-
-            parent.AddChild(node, parent.GetContextForChild(context));
-
-            m_parents.Push(node);
-            base.VisitCast_expression_UnaryExpression(context);
-            m_parents.Pop();
-
-            return 0;
-        }
-
         public override int VisitCast_expression_Cast(CGrammarParser.Cast_expression_CastContext context)
         {
             ASTComposite parent = m_parents.Peek();
 
-            CastExpressionCast node = new CastExpressionCast();
+            Expression_Cast node = new Expression_Cast();
 
             parent.AddChild(node, parent.GetContextForChild(context));
 
@@ -660,26 +645,12 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitMultiplicative_expression_CastExpression(CGrammarParser.Multiplicative_expression_CastExpressionContext context)
-        {
-            ASTComposite parent = m_parents.Peek();
-
-            MultiplicativeExpressionCastExpression node = new MultiplicativeExpressionCastExpression();
-
-            parent.AddChild(node, parent.GetContextForChild(context));
-
-            m_parents.Push(node);
-            base.VisitMultiplicative_expression_CastExpression(context);
-            m_parents.Pop();
-
-            return 0;
-        }
-
+        
         public override int VisitMultiplicative_expression_Division(CGrammarParser.Multiplicative_expression_DivisionContext context)
         {
             ASTComposite parent = m_parents.Peek();
 
-            MultiplicationExpressionDivision node = new MultiplicationExpressionDivision();
+            ExpressionDivision node = new ExpressionDivision();
 
             parent.AddChild(node, parent.GetContextForChild(context));
 
@@ -694,7 +665,7 @@ namespace CParser {
         {
             ASTComposite parent = m_parents.Peek();
 
-            MultiplicationExpressionMultiplication node = new MultiplicationExpressionMultiplication();
+            ExpressionMultiplication node = new ExpressionMultiplication();
 
             parent.AddChild(node, parent.GetContextForChild(context));
 
@@ -709,7 +680,7 @@ namespace CParser {
         {
             ASTComposite parent = m_parents.Peek();
 
-            MultiplicationExpressionModulus node = new MultiplicationExpressionModulus();
+            ExpressionModulus node = new ExpressionModulus();
 
             parent.AddChild(node, parent.GetContextForChild(context));
 
