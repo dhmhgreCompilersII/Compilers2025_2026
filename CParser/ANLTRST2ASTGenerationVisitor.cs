@@ -592,7 +592,8 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitEquality_expression_NotEqual(CGrammarParser.Equality_expression_NotEqualContext context) {
+        public override int VisitEquality_expression_NotEqual(
+            CGrammarParser.Equality_expression_NotEqualContext context) {
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
 
@@ -602,6 +603,14 @@ namespace CParser {
 
             // 3. Add FunctionDefinitionAST node to parent
             parent.AddChild(notequal, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(notequal);
+            base.VisitEquality_expression_NotEqual(context);
+            m_parents.Pop();
+            return 0;
+
+        }
+
         public override int VisitAnd_expression_BitwiseAND(CGrammarParser.And_expression_BitwiseANDContext context) {
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
@@ -654,13 +663,5 @@ namespace CParser {
             return 0;
         }
 
-
-    }
-
-            m_parents.Push(notequal);
-            base.VisitEquality_expression_NotEqual(context);
-            m_parents.Pop();
-            return 0;
-        }
     }
 }
