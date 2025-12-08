@@ -230,5 +230,35 @@ namespace CParser {
 
             return 0;
         }
+
+        public override int VisitPostfix_expression_ArraySubscript(CGrammarParser.Postfix_expression_ArraySubscriptContext context) {
+            return base.VisitPostfix_expression_ArraySubscript(context);
+        }
+
+        public override int VisitPostfix_expression_Decrement(CGrammarParser.Postfix_expression_DecrementContext context) {
+            return base.VisitPostfix_expression_Decrement(context);
+        }
+
+        public override int VisitPostfix_expression_Increment(CGrammarParser.Postfix_expression_IncrementContext context) {
+            return base.VisitPostfix_expression_Increment(context);
+        }
+
+        public override int VisitPostfix_expression_FunctionCallNoArgs(CGrammarParser.Postfix_expression_FunctionCallNoArgsContext context) {
+            return base.VisitPostfix_expression_FunctionCallNoArgs(context);
+        }
+
+        public override int VisitPostfix_expression_FunctionCallWithArgs(CGrammarParser.Postfix_expression_FunctionCallWithArgsContext context) {
+            return base.VisitPostfix_expression_FunctionCallWithArgs(context);
+        }
+
+        public override int VisitPostfix_expression_PointerMemberAccess(CGrammarParser.Postfix_expression_PointerMemberAccessContext context) {
+            return base.VisitPostfix_expression_PointerMemberAccess(context);
+        }
+
+        public override int VisitPostfix_expression_MemberAccess(CGrammarParser.Postfix_expression_MemberAccessContext context) {
+            return base.VisitPostfix_expression_MemberAccess(context);
+        }
     }
+
+
 }
