@@ -835,13 +835,17 @@ namespace CParser {
             var aoperator = context.assignment_operator();
             ASTComposite aOperatorNode = null;
             switch (aoperator.op.Type) {
+                case CGrammarLexer.ASSIGN:
+                    aOperatorNode =
+                        new AssignmentExpression();
+                    break;
                 case CGrammarLexer.MUL_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorAmbersand();
+                        new ExpressionAssignmentMultiplication();
                     break;
                 case CGrammarLexer.DIV_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorAsterisk();
+                        new ExpressionAssignmentDivision();
                     break;
                 case CGrammarLexer.PLUS:
                     aOperatorNode =
@@ -849,27 +853,27 @@ namespace CParser {
                     break;
                 case CGrammarLexer.MOD_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorMINUS();
+                        new ExpressionAssignmentModulo();
                     break;
                 case CGrammarLexer.LEFT_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorTilde();
+                        new Expression_AssignmentLeft();
                     break;
                 case CGrammarLexer.RIGHT_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorNOT();
+                        new Expression_AssignmentRight();
                     break;
                 case CGrammarLexer.OR_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorNOT();
+                        new Expression_AssignmentOr();
                     break;
                 case CGrammarLexer.AND_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorNOT();
+                        new Expression_AssignmentAnd();
                     break;
                 case CGrammarLexer.XOR_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorNOT();
+                        new Expression_AssignmentXor();
                     break;
                 default:
                     throw new NotImplementedException("Unhandled unary operator type");

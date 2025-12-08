@@ -278,22 +278,22 @@ namespace CParser {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentDiv(ExpressionAssignmentDiv node, INFO info)
+        public virtual Result VisitExpressionAssignmentDiv(ExpressionAssignmentDivision node, INFO info)
         {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentMod(ExpressionAssignmentMod node, INFO info)
+        public virtual Result VisitExpressionAssignmentMod(ExpressionAssignmentModulo node, INFO info)
         {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentAdd(ExpressionAssignmentAdd node, INFO info)
+        public virtual Result VisitExpressionAssignmentAdd(ExpressionAssignmentAddition node, INFO info)
         {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentSub(ExpressionAssignmentSub node, INFO info)
+        public virtual Result VisitExpressionAssignmentSub(ExpressionAssignmentSubtraction node, INFO info)
         {
             return VisitChildren(node, info);
         }
