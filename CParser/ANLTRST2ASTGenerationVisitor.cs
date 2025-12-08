@@ -825,5 +825,64 @@ namespace CParser {
 
             return 0;
         }
+
+        public override int VisitAssignment_expression_Assignment(
+            CGrammarParser.Assignment_expression_AssignmentContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            var aoperator = context.assignment_operator();
+            ASTComposite aOperatorNode = null;
+            switch (aoperator.op.Type) {
+                case CGrammarLexer.MUL_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorAmbersand();
+                    break;
+                case CGrammarLexer.DIV_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorAsterisk();
+                    break;
+                case CGrammarLexer.PLUS:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorPLUS();
+                    break;
+                case CGrammarLexer.MOD_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorMINUS();
+                    break;
+                case CGrammarLexer.LEFT_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorTilde();
+                    break;
+                case CGrammarLexer.RIGHT_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorNOT();
+                    break;
+                case CGrammarLexer.OR_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorNOT();
+                    break;
+                case CGrammarLexer.AND_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorNOT();
+                    break;
+                case CGrammarLexer.XOR_ASSIGN:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorNOT();
+                    break;
+                default:
+                    throw new NotImplementedException("Unhandled unary operator type");
+
+            }
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(aOperatorNode, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(aOperatorNode);
+            base.VisitAssignment_expression_Assignment(context);
+            m_parents.Pop();
+
+            return 0;
+        }
     }
 }
