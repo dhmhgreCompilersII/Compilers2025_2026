@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 using CParser;
 
 namespace CParser {
@@ -130,8 +131,11 @@ namespace CParser {
             CONDITIONAL_EXPRESSION = 52, ASSIGNMENT_EXPRESSION_CONDITIONAL = 53,
             ASSIGNMENT_EXPRESSION = 54,
 
-            CHAR_TYPE = 55
+            CHAR_TYPE = 55, CAST_EXPRESSION_UNARY_EXPRESSION = 56,
+            CAST_EXPRESSION_CAST = 57, CAST_EXPRESSION_MULTIPLICATIVE_EXPRESSION = 58,
 
+            MULTIPLICATION_EXRESSION_DIVISION = 60, MULTIPLICATION_EXPRESSION_MULTIPLICATION = 61,
+            MULTIPLICATION_EXPRESSION_MUDULUS = 62
         }
 
 
@@ -1271,6 +1275,153 @@ namespace CParser {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionCommaExpression(this, info);
+        }
+    }
+
+    public class CastExpressionUnaryExpression : CExpression
+    {
+        public CastExpressionUnaryExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.CAST_EXPRESSION_UNARY_EXPRESSION,
+        "UnaryExpressionCastExpression")
+        {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class CastExpressionCast : CExpression
+    {
+        public CastExpressionCast() : base(2, (uint)TranslationUnitAST.NodeTypes.ASSIGNMENT_EXPRESSION_CONDITIONAL,
+            "CastExpressionCast")
+        {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
+    public class MultiplicativeExpressionCastExpression : CExpression{
+        public MultiplicativeExpressionCastExpression() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.CAST_EXPRESSION_MULTIPLICATIVE_EXPRESSION,
+            "MultiplicativeExpressionCastExpression")
+        {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MultiplicationExpressionMultiplication : CExpression
+    {
+        public MultiplicationExpressionMultiplication() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.MULTIPLICATION_EXPRESSION_MULTIPLICATION,
+            "MultiplicationExpressionMultiplication")
+        {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MultiplicationExpressionDivision : CExpression
+    {
+        public MultiplicationExpressionDivision() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.MULTIPLICATION_EXRESSION_DIVISION,
+            "MultiplicationExpressionDivision")
+        {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MultiplicationExpressionModulus : CExpression
+    {
+        public MultiplicationExpressionModulus() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.MULTIPLICATION_EXPRESSION_MUDULUS,
+            "MultiplicationExpressionModulus")
+        {
+
+        }
+
+        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            throw new NotImplementedException();
         }
     }
 }
