@@ -230,5 +230,49 @@ namespace CParser {
 
             return 0;
         }
+
+        public override int VisitUnary_expression_Increment(CGrammarParser.Unary_expression_IncrementContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            UnaryExpressionIncrement compStmtNode = new UnaryExpressionIncrement();
+
+            parent.AddChild(compStmtNode, parent.GetContextForChild(context));
+            m_parents.Push(compStmtNode);
+            base.VisitUnary_expression_Increment(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitUnary_expression_Decrement(CGrammarParser.Unary_expression_DecrementContext context)
+        {
+            return base.VisitUnary_expression_Decrement(context);
+        }
+
+        public override int VisitUnary_expression_UnaryOperator(CGrammarParser.Unary_expression_UnaryOperatorContext context)
+        {
+            return base.VisitUnary_expression_UnaryOperator(context);
+        }
+
+        public override int VisitUnary_expression_SizeofExpression(CGrammarParser.Unary_expression_SizeofExpressionContext context)
+        {
+            return base.VisitUnary_expression_SizeofExpression(context);
+        }
+
+        public override int VisitUnary_expression_SizeofTypeName(CGrammarParser.Unary_expression_SizeofTypeNameContext context)
+        {
+            return base.VisitUnary_expression_SizeofTypeName(context);
+        }
+
+        public override int VisitUnary_operator(CGrammarParser.Unary_operatorContext context)
+        {
+            return base.VisitUnary_operator(context);
+        }
+
+        public override int VisitCast_expression_UnaryExpression(CGrammarParser.Cast_expression_UnaryExpressionContext context)
+        {
+            return base.VisitCast_expression_UnaryExpression(context);
+        }
     }
 }
