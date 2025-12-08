@@ -398,7 +398,6 @@ namespace CParser {
                     throw new NotImplementedException("Unhandled unary operator type");
 
             }
-            
             // 3. Add FunctionDefinitionAST node to parent
             parent.AddChild(unaryOperatorNode, parent.GetContextForChild(context)); // assuming context
 
@@ -408,7 +407,109 @@ namespace CParser {
 
             return 0;
         }
+
+        public override int VisitRelational_expression_LessThan(
+            CGrammarParser.Relational_expression_LessThanContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            ExpressionRelationalLess less =
+                new ExpressionRelationalLess();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(less, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(less);
+            base.VisitRelational_expression_LessThan(context);
+            m_parents.Pop();
+            return 0;
+        }
+
+        public override int VisitRelational_expression_GreaterThan(CGrammarParser.Relational_expression_GreaterThanContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            ExpressionRelationalGreater greater =
+                new ExpressionRelationalGreater();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(greater, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(greater);
+            base.VisitRelational_expression_GreaterThan(context);
+            m_parents.Pop();
+            return 0;
+        }
+
+        public override int VisitRelational_expression_GreaterThanOrEqual(
+            CGrammarParser.Relational_expression_GreaterThanOrEqualContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            ExpressionRelationalGreaterOrEqual greaterOrEqual =
+                new ExpressionRelationalGreaterOrEqual();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(greaterOrEqual, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(greaterOrEqual);
+            base.VisitRelational_expression_GreaterThanOrEqual(context);
+            m_parents.Pop();
+            return 0;
+        }
+
+        public override int VisitRelational_expression_LessThanOrEqual(CGrammarParser.Relational_expression_LessThanOrEqualContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            ExpressionRelationalLessOrEqual lessOrEqual =
+                new ExpressionRelationalLessOrEqual();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(lessOrEqual, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(lessOrEqual);
+            base.VisitRelational_expression_LessThanOrEqual(context);
+            m_parents.Pop();
+            return 0;
+        }
+
+        public override int VisitEquality_expression_Equal(CGrammarParser.Equality_expression_EqualContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Expression_EqualityEqual equal =
+                new Expression_EqualityEqual();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(equal, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(equal);
+            base.VisitEquality_expression_Equal(context);
+            m_parents.Pop();
+            return 0;
+        }
+
+        public override int VisitEquality_expression_NotEqual(CGrammarParser.Equality_expression_NotEqualContext context) {
+            // 1. Get current parent node
+            ASTComposite parent = m_parents.Peek();
+
+            // 2. Create FunctionDefinitionAST node
+            Expression_EqualityNotEqual notequal =
+                new Expression_EqualityNotEqual();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(notequal, parent.GetContextForChild(context)); // assuming context
+
+            m_parents.Push(notequal);
+            base.VisitEquality_expression_NotEqual(context);
+            m_parents.Pop();
+            return 0;
+        }
     }
-
-
 }

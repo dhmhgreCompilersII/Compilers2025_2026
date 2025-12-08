@@ -35,7 +35,7 @@ unary_expression
 	;
 
 unary_operator
-	: op= (AMBERSAND	| ASTERISK	| PLUS 	| HYPHEN | TILDE| NOT)
+	: op= (AMBERSAND | ASTERISK	| PLUS 	| HYPHEN | TILDE| NOT)
 	;
 
 cast_expression
@@ -112,7 +112,7 @@ assignment_expression
 	;
 
 assignment_operator
-	: ASSIGN
+	: op=(ASSIGN 
 	| MUL_ASSIGN
 	| DIV_ASSIGN
 	| MOD_ASSIGN
@@ -122,7 +122,7 @@ assignment_operator
 	| RIGHT_ASSIGN
 	| AND_ASSIGN
 	| XOR_ASSIGN
-	| OR_ASSIGN
+	| OR_ASSIGN)
 	;
 
 expression

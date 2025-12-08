@@ -1254,8 +1254,6 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-
-
     }
 
     public class Expression_CommaExpression : CExpression {
