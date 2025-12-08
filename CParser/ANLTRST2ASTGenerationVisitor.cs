@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -628,40 +630,229 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitExclusive_or_expression_BitwiseXOR(CGrammarParser.Exclusive_or_expression_BitwiseXORContext context) {
-            // 1. Get current parent node
+        public override int VisitCast_expression_UnaryExpression(CGrammarParser.Cast_expression_UnaryExpressionContext context)
+        {
             ASTComposite parent = m_parents.Peek();
 
-            // 2. Create FunctionDefinitionAST node
-            Expression_BitwiseXOR XORExpression = new Expression_BitwiseXOR();
+            CastExpressionUnaryExpression node = new CastExpressionUnaryExpression();
 
-            // 3. Add FunctionDefinitionAST node to parent
-            parent.AddChild(XORExpression, parent.GetContextForChild(context)); // assuming context
+            parent.AddChild(node, parent.GetContextForChild(context));
 
-            m_parents.Push(XORExpression);
-            base.VisitExclusive_or_expression_BitwiseXOR(context);
+            m_parents.Push(node);
+            base.VisitCast_expression_UnaryExpression(context);
             m_parents.Pop();
 
             return 0;
         }
 
-        public override int VisitInclusive_or_expression_BitwiseOR(CGrammarParser.Inclusive_or_expression_BitwiseORContext context) {
+        public override int VisitCast_expression_Cast(CGrammarParser.Cast_expression_CastContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            CastExpressionCast node = new CastExpressionCast();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitCast_expression_Cast(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitMultiplicative_expression_CastExpression(CGrammarParser.Multiplicative_expression_CastExpressionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            MultiplicativeExpressionCastExpression node = new MultiplicativeExpressionCastExpression();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitMultiplicative_expression_CastExpression(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitMultiplicative_expression_Division(CGrammarParser.Multiplicative_expression_DivisionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            MultiplicationExpressionDivision node = new MultiplicationExpressionDivision();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitMultiplicative_expression_Division(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitMultiplicative_expression_Multiplication(CGrammarParser.Multiplicative_expression_MultiplicationContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            MultiplicationExpressionMultiplication node = new MultiplicationExpressionMultiplication();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitMultiplicative_expression_Multiplication(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitMultiplicative_expression_Modulus(CGrammarParser.Multiplicative_expression_ModulusContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            MultiplicationExpressionModulus node = new MultiplicationExpressionModulus();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitMultiplicative_expression_Modulus(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitAdditive_expression_Addition(CGrammarParser.Additive_expression_AdditionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            Expression_Addition node = new Expression_Addition();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitAdditive_expression_Addition(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitAdditive_expression_MultiplicativeExpression(CGrammarParser.Additive_expression_MultiplicativeExpressionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            Expression_Multiplication node = new Expression_Multiplication();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitAdditive_expression_MultiplicativeExpression(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitAdditive_expression_Subtraction(CGrammarParser.Additive_expression_SubtractionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            Expression_Subtraction node = new Expression_Subtraction();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitAdditive_expression_Subtraction(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitLogical_and_expression_InclusiveOrExpression(CGrammarParser.Logical_and_expression_InclusiveOrExpressionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            ExpressionLogicalAndInclusiveOr node = new ExpressionLogicalAndInclusiveOr();
             
-            // 1. Get current parent node
-            ASTComposite parent = m_parents.Peek();
+            parent.AddChild(node, parent.GetContextForChild(context));
 
-            // 2. Create FunctionDefinitionAST node
-            Expression_BitwiseOR ORExpression = new Expression_BitwiseOR();
-
-            // 3. Add FunctionDefinitionAST node to parent
-            parent.AddChild(ORExpression, parent.GetContextForChild(context)); // assuming context
-
-            m_parents.Push(ORExpression);
-            base.VisitInclusive_or_expression_BitwiseOR(context);
+            m_parents.Push(node);
+            base.VisitLogical_and_expression_InclusiveOrExpression(context);
             m_parents.Pop();
 
             return 0;
         }
 
+        public override int VisitLogical_and_expression_LogicalAND(CGrammarParser.Logical_and_expression_LogicalANDContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            ExpressionLogicalAnd node = new ExpressionLogicalAnd();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitLogical_and_expression_LogicalAND(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitLogical_or_expression_InclusiveOrExpression(CGrammarParser.Logical_or_expression_InclusiveOrExpressionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            ExpressionLogicalOrInclusiveOr node = new ExpressionLogicalOrInclusiveOr();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitLogical_or_expression_InclusiveOrExpression(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitLogical_or_expression_LogicalOR(CGrammarParser.Logical_or_expression_LogicalORContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            ExpressionLogicalOr node = new ExpressionLogicalOr();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitLogical_or_expression_LogicalOR(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitConditional_expression_LogicalOrExpression(CGrammarParser.Conditional_expression_LogicalOrExpressionContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            ConditionalExpressionOr node = new ConditionalExpressionOr();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitConditional_expression_LogicalOrExpression(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitConditional_expression_Conditional(CGrammarParser.Conditional_expression_ConditionalContext context)
+        {
+            ASTComposite parent = m_parents.Peek();
+
+            ConditionalExpression node = new ConditionalExpression();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitConditional_expression_Conditional(context);
+            m_parents.Pop();
+
+            return 0;
+        }
     }
 }
