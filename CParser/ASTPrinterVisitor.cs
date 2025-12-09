@@ -107,6 +107,23 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitStatementExpression(Statement_Expression node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, Statement_Expression.EXPRESSION, "EXPRESSION_BODY");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitExpressionAssignment(Expression_Assignment node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, Expression_Assignment.LEFT, "L_VALUE");
+            CreateContext(node, Expression_Assignment.RIGHT, "R_VALUE");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
 
         public override int VisitCompoundStatement(CompoundStatement node, ASTComposite parent) {
 
@@ -150,6 +167,8 @@ namespace CParser {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIdentifier(node, parent);
         }
+
+
 
         public override int VisitIntegerType(IntegerTypeAST node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");

@@ -8,25 +8,21 @@ using System.Threading.Tasks;
 using Antlr4.Runtime.Tree;
 
 namespace CParser {
-    public class ANLTRST2ASTGenerationVisitor : CGrammarParserBaseVisitor<int>
-    {
+    public class ANLTRST2ASTGenerationVisitor : CGrammarParserBaseVisitor<int> {
 
         ASTComposite m_root;
         private Stack<ASTComposite> m_parents = new Stack<ASTComposite>();
         PointerTypeAST m_currentPointerBottom = null;
 
-        public ASTComposite Root
-        {
+        public ASTComposite Root {
             get => m_root;
         }
 
-        public ANLTRST2ASTGenerationVisitor()
-        {
+        public ANLTRST2ASTGenerationVisitor() {
             m_root = null;
         }
 
-        public override int VisitTranslation_unit(CGrammarParser.Translation_unitContext context)
-        {
+        public override int VisitTranslation_unit(CGrammarParser.Translation_unitContext context) {
 
             // 1. Create TranslationUnitAST node
             TranslationUnitAST tuNode = new TranslationUnitAST();
@@ -40,8 +36,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitDeclaration(CGrammarParser.DeclarationContext context)
-        {
+        public override int VisitDeclaration(CGrammarParser.DeclarationContext context) {
 
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
@@ -62,8 +57,7 @@ namespace CParser {
 
 
 
-        public override int VisitPointer(CGrammarParser.PointerContext context)
-        {
+        public override int VisitPointer(CGrammarParser.PointerContext context) {
 
             ASTComposite parent = m_parents.Peek();
 
@@ -71,8 +65,7 @@ namespace CParser {
             parent.AddChild(pointerNode, parent.GetContextForChild(context)); // assuming context POINTER_TARGER for simplicity
             m_parents.Push(pointerNode);
 
-            if (context.pointer() == null)
-            {
+            if (context.pointer() == null) {
                 m_currentPointerBottom = pointerNode;
             }
 
@@ -82,14 +75,12 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitFunctionWithNOArguments(CGrammarParser.FunctionWithNOArgumentsContext context)
-        {
+        public override int VisitFunctionWithNOArguments(CGrammarParser.FunctionWithNOArgumentsContext context) {
 
             ASTComposite parent = m_parents.Peek();
 
 
-            switch (parent.MType)
-            {
+            switch (parent.MType) {
                 case (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION:
                     base.VisitFunctionWithNOArguments(context);
                     break;
@@ -107,12 +98,10 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitFunctionWithArguments(CGrammarParser.FunctionWithArgumentsContext context)
-        {
+        public override int VisitFunctionWithArguments(CGrammarParser.FunctionWithArgumentsContext context) {
             ASTComposite parent = m_parents.Peek();
 
-            switch (parent.MType)
-            {
+            switch (parent.MType) {
                 case (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION:
                     base.VisitFunctionWithArguments(context);
                     break;
@@ -131,8 +120,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitParameter_declaration(CGrammarParser.Parameter_declarationContext context)
-        {
+        public override int VisitParameter_declaration(CGrammarParser.Parameter_declarationContext context) {
             ASTComposite parent = m_parents.Peek();
             ParameterDeclarationAST pardecl = new ParameterDeclarationAST();
             parent.AddChild(pardecl, parent.GetContextForChild(context)); // assuming context PARAMETER_DECLARATION for simplicity
@@ -143,13 +131,11 @@ namespace CParser {
         }
 
 
-        public override int VisitDeclarator(CGrammarParser.DeclaratorContext context)
-        {
+        public override int VisitDeclarator(CGrammarParser.DeclaratorContext context) {
 
 
             // 1. Visit Pointer if exists and derived the pointer chain as a tree
-            if (context.pointer() != null)
-            {
+            if (context.pointer() != null) {
                 Visit(context.pointer());
                 // 2. Make the bottom of the pointer chain the current parent
                 m_parents.Push(m_currentPointerBottom);
@@ -161,8 +147,7 @@ namespace CParser {
             Visit(context.direct_declarator());
 
             // 4. If pointer was visited, pop the pointer chain bottom
-            if (context.pointer() != null)
-            {
+            if (context.pointer() != null) {
                 m_parents.Pop();
                 m_currentPointerBottom = null;
             }
@@ -174,42 +159,42 @@ namespace CParser {
 
 
 
-        public override int VisitArrayDimensionWithSIZE(CGrammarParser.ArrayDimensionWithSIZEContext context)
-        {
+        public override int VisitArrayDimensionWithSIZE(CGrammarParser.ArrayDimensionWithSIZEContext context) {
             return base.VisitArrayDimensionWithSIZE(context);
         }
 
-        public override int VisitArrayDimensionWithNOSIZE(CGrammarParser.ArrayDimensionWithNOSIZEContext context)
-        {
+        public override int VisitArrayDimensionWithNOSIZE(CGrammarParser.ArrayDimensionWithNOSIZEContext context) {
             return base.VisitArrayDimensionWithNOSIZE(context);
         }
 
-        public override int VisitTerminal(ITerminalNode node)
-        {
+        public override int VisitTerminal(ITerminalNode node) {
 
-            switch (node.Symbol.Type)
-            {
-                case CGrammarParser.IDENTIFIER:
-                    {
-                        ASTComposite parent = m_parents.Peek();
-                        IDENTIFIER idNode = new IDENTIFIER(node.GetText());
-                        parent.AddChild(idNode, parent.GetContextForChild(node)); // assuming context IDENTIFIER for simplicity
-                    }
-                    break;
-                case CGrammarParser.INT:
-                    {
-                        ASTComposite parent = m_parents.Peek();
-                        IntegerTypeAST intNode = new IntegerTypeAST(node.GetText());
-                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
-                    }
-                    break;
-                case CGrammarParser.CHAR:
-                    {
-                        ASTComposite parent = m_parents.Peek();
-                        CharTypeAST intNode = new CharTypeAST(node.GetText());
-                        parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
-                    }
-                    break;
+            switch (node.Symbol.Type) {
+                case CGrammarParser.IDENTIFIER: {
+                    ASTComposite parent = m_parents.Peek();
+                    IDENTIFIER idNode = new IDENTIFIER(node.GetText());
+                    parent.AddChild(idNode, parent.GetContextForChild(node)); // assuming context IDENTIFIER for simplicity
+                }
+                break;
+                case CGrammarParser.CONSTANT: {
+                    ASTComposite parent = m_parents.Peek();
+                    INTEGER idNode = new INTEGER(node.GetText());
+                    parent.AddChild(idNode, parent.GetContextForChild(node)); // assuming context INTEGER for simplicity
+                }
+                break;
+
+                case CGrammarParser.INT: {
+                    ASTComposite parent = m_parents.Peek();
+                    IntegerTypeAST intNode = new IntegerTypeAST(node.GetText());
+                    parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
+                }
+                break;
+                case CGrammarParser.CHAR: {
+                    ASTComposite parent = m_parents.Peek();
+                    CharTypeAST intNode = new CharTypeAST(node.GetText());
+                    parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
+                }
+                break;
                 // Handle other terminal types as needed
                 default:
                     break;
@@ -218,8 +203,7 @@ namespace CParser {
             return base.VisitTerminal(node);
         }
 
-        public override int VisitFunction_definition(CGrammarParser.Function_definitionContext context)
-        {
+        public override int VisitFunction_definition(CGrammarParser.Function_definitionContext context) {
 
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
@@ -237,8 +221,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitCompound_statement(CGrammarParser.Compound_statementContext context)
-        {
+        public override int VisitCompound_statement(CGrammarParser.Compound_statementContext context) {
 
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
@@ -521,8 +504,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitUnary_expression_Increment(CGrammarParser.Unary_expression_IncrementContext context)
-        {
+        public override int VisitUnary_expression_Increment(CGrammarParser.Unary_expression_IncrementContext context) {
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
 
@@ -540,26 +522,24 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitUnary_expression_Decrement(CGrammarParser.Unary_expression_DecrementContext context)
-        {
+        public override int VisitUnary_expression_Decrement(CGrammarParser.Unary_expression_DecrementContext context) {
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
 
             // 2. Create FunctionDefinitionAST node
             UnaryExpressionDecrement unaryDecrement = new UnaryExpressionDecrement();
-            
+
             // 3. Add FunctionDefinitionAST node to parent
             parent.AddChild(unaryDecrement, parent.GetContextForChild(context)); // assuming context
-            
+
             m_parents.Push(unaryDecrement);
             base.VisitUnary_expression_Decrement(context);
             m_parents.Pop();
-            
+
             return 0;
         }
 
-        public override int VisitUnary_expression_SizeofExpression(CGrammarParser.Unary_expression_SizeofExpressionContext context)
-        {
+        public override int VisitUnary_expression_SizeofExpression(CGrammarParser.Unary_expression_SizeofExpressionContext context) {
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
 
@@ -576,8 +556,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitUnary_expression_SizeofTypeName(CGrammarParser.Unary_expression_SizeofTypeNameContext context)
-        {
+        public override int VisitUnary_expression_SizeofTypeName(CGrammarParser.Unary_expression_SizeofTypeNameContext context) {
             // 1. Get current parent node
             ASTComposite parent = m_parents.Peek();
 
@@ -586,11 +565,11 @@ namespace CParser {
 
             // 3. Add FunctionDefinitionAST node to parent
             parent.AddChild(UnarySizeOfType, parent.GetContextForChild(context)); // assuming context
-            
+
             m_parents.Push(UnarySizeOfType);
             base.VisitUnary_expression_SizeofTypeName(context);
             m_parents.Pop();
-            
+
             return 0;
         }
 
@@ -630,8 +609,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitCast_expression_Cast(CGrammarParser.Cast_expression_CastContext context)
-        {
+        public override int VisitCast_expression_Cast(CGrammarParser.Cast_expression_CastContext context) {
             ASTComposite parent = m_parents.Peek();
 
             Expression_Cast node = new Expression_Cast();
@@ -645,9 +623,8 @@ namespace CParser {
             return 0;
         }
 
-        
-        public override int VisitMultiplicative_expression_Division(CGrammarParser.Multiplicative_expression_DivisionContext context)
-        {
+
+        public override int VisitMultiplicative_expression_Division(CGrammarParser.Multiplicative_expression_DivisionContext context) {
             ASTComposite parent = m_parents.Peek();
 
             ExpressionDivision node = new ExpressionDivision();
@@ -661,8 +638,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitMultiplicative_expression_Multiplication(CGrammarParser.Multiplicative_expression_MultiplicationContext context)
-        {
+        public override int VisitMultiplicative_expression_Multiplication(CGrammarParser.Multiplicative_expression_MultiplicationContext context) {
             ASTComposite parent = m_parents.Peek();
 
             ExpressionMultiplication node = new ExpressionMultiplication();
@@ -676,8 +652,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitMultiplicative_expression_Modulus(CGrammarParser.Multiplicative_expression_ModulusContext context)
-        {
+        public override int VisitMultiplicative_expression_Modulus(CGrammarParser.Multiplicative_expression_ModulusContext context) {
             ASTComposite parent = m_parents.Peek();
 
             ExpressionModulus node = new ExpressionModulus();
@@ -691,8 +666,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitAdditive_expression_Addition(CGrammarParser.Additive_expression_AdditionContext context)
-        {
+        public override int VisitAdditive_expression_Addition(CGrammarParser.Additive_expression_AdditionContext context) {
             ASTComposite parent = m_parents.Peek();
 
             Expression_Addition node = new Expression_Addition();
@@ -706,23 +680,9 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitAdditive_expression_MultiplicativeExpression(CGrammarParser.Additive_expression_MultiplicativeExpressionContext context)
-        {
-            ASTComposite parent = m_parents.Peek();
 
-            Expression_Multiplication node = new Expression_Multiplication();
 
-            parent.AddChild(node, parent.GetContextForChild(context));
-
-            m_parents.Push(node);
-            base.VisitAdditive_expression_MultiplicativeExpression(context);
-            m_parents.Pop();
-
-            return 0;
-        }
-
-        public override int VisitAdditive_expression_Subtraction(CGrammarParser.Additive_expression_SubtractionContext context)
-        {
+        public override int VisitAdditive_expression_Subtraction(CGrammarParser.Additive_expression_SubtractionContext context) {
             ASTComposite parent = m_parents.Peek();
 
             Expression_Subtraction node = new Expression_Subtraction();
@@ -736,23 +696,9 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitLogical_and_expression_InclusiveOrExpression(CGrammarParser.Logical_and_expression_InclusiveOrExpressionContext context)
-        {
-            ASTComposite parent = m_parents.Peek();
 
-            ExpressionLogicalAndInclusiveOr node = new ExpressionLogicalAndInclusiveOr();
-            
-            parent.AddChild(node, parent.GetContextForChild(context));
 
-            m_parents.Push(node);
-            base.VisitLogical_and_expression_InclusiveOrExpression(context);
-            m_parents.Pop();
-
-            return 0;
-        }
-
-        public override int VisitLogical_and_expression_LogicalAND(CGrammarParser.Logical_and_expression_LogicalANDContext context)
-        {
+        public override int VisitLogical_and_expression_LogicalAND(CGrammarParser.Logical_and_expression_LogicalANDContext context) {
             ASTComposite parent = m_parents.Peek();
 
             ExpressionLogicalAnd node = new ExpressionLogicalAnd();
@@ -766,23 +712,9 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitLogical_or_expression_InclusiveOrExpression(CGrammarParser.Logical_or_expression_InclusiveOrExpressionContext context)
-        {
-            ASTComposite parent = m_parents.Peek();
 
-            ExpressionLogicalOrInclusiveOr node = new ExpressionLogicalOrInclusiveOr();
 
-            parent.AddChild(node, parent.GetContextForChild(context));
-
-            m_parents.Push(node);
-            base.VisitLogical_or_expression_InclusiveOrExpression(context);
-            m_parents.Pop();
-
-            return 0;
-        }
-
-        public override int VisitLogical_or_expression_LogicalOR(CGrammarParser.Logical_or_expression_LogicalORContext context)
-        {
+        public override int VisitLogical_or_expression_LogicalOR(CGrammarParser.Logical_or_expression_LogicalORContext context) {
             ASTComposite parent = m_parents.Peek();
 
             ExpressionLogicalOr node = new ExpressionLogicalOr();
@@ -796,23 +728,8 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitConditional_expression_LogicalOrExpression(CGrammarParser.Conditional_expression_LogicalOrExpressionContext context)
-        {
-            ASTComposite parent = m_parents.Peek();
 
-            ConditionalExpressionOr node = new ConditionalExpressionOr();
-
-            parent.AddChild(node, parent.GetContextForChild(context));
-
-            m_parents.Push(node);
-            base.VisitConditional_expression_LogicalOrExpression(context);
-            m_parents.Pop();
-
-            return 0;
-        }
-
-        public override int VisitConditional_expression_Conditional(CGrammarParser.Conditional_expression_ConditionalContext context)
-        {
+        public override int VisitConditional_expression_Conditional(CGrammarParser.Conditional_expression_ConditionalContext context) {
             ASTComposite parent = m_parents.Peek();
 
             ConditionalExpression node = new ConditionalExpression();
@@ -837,7 +754,7 @@ namespace CParser {
             switch (aoperator.op.Type) {
                 case CGrammarLexer.ASSIGN:
                     aOperatorNode =
-                        new AssignmentExpression();
+                        new Expression_Assignment();
                     break;
                 case CGrammarLexer.MUL_ASSIGN:
                     aOperatorNode =
@@ -884,6 +801,20 @@ namespace CParser {
 
             m_parents.Push(aOperatorNode);
             base.VisitAssignment_expression_Assignment(context);
+            m_parents.Pop();
+
+            return 0;
+        }
+
+        public override int VisitExpression_statement(CGrammarParser.Expression_statementContext context) {
+            ASTComposite parent = m_parents.Peek();
+
+            Statement_Expression node = new Statement_Expression();
+
+            parent.AddChild(node, parent.GetContextForChild(context));
+
+            m_parents.Push(node);
+            base.VisitExpression_statement(context);
             m_parents.Pop();
 
             return 0;
