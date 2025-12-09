@@ -21,7 +21,7 @@ namespace CParser {
             m_writer.WriteLine($"\t node [style=filled, color=white]; ");
             m_writer.WriteLine($"\t style=filled; color=lightgrey;");
             foreach (var child in node.MChildren[context]) {
-                m_writer.Write($"{child.MName};");
+                m_writer.Write($"\"{child.MName}\";");
             }
 
             m_writer.WriteLine();
@@ -168,7 +168,10 @@ namespace CParser {
             return base.VisitIdentifier(node, parent);
         }
 
-
+        public override int VisitInteger(INTEGER node, ASTComposite parent) {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitInteger(node, parent);
+        }
 
         public override int VisitIntegerType(IntegerTypeAST node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");

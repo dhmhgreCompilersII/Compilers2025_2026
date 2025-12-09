@@ -527,9 +527,9 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             switch (ttn.Symbol.Type) {
                 case CGrammarLexer.IDENTIFIER:
-                case CGrammarParser.CONSTANT:
                     return LEFT;
-
+                case CGrammarLexer.CONSTANT:
+                    return RIGHT;
                 default:
                     throw new NotImplementedException();
             }
