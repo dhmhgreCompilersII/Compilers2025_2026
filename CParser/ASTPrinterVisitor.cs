@@ -141,7 +141,7 @@ namespace CParser {
         public override int VisitPointerType(PointerTypeAST node, ASTComposite parent) {
 
             // 1.Create context clusters
-            CreateContext(node, PointerTypeAST.POINTER_TARGER, "Target");
+            CreateContext(node, PointerTypeAST.POINTER_TARGET, "Target");
 
 
             // 2. Print graphviz edge from parent to this node

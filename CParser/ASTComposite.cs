@@ -61,11 +61,11 @@ namespace CParser {
             m_contexts = numcontexts;
         }
 
-        public void AddChild(ASTElement child, uint context) {
-            if (context >= m_contexts) {
+        public void AddChild(ASTElement child, uint? context) {
+            if (context== null || context >= m_contexts) {
                 throw new ArgumentOutOfRangeException("context", "Context index out of range");
             }
-            m_children[context].Add(child);
+            m_children[(uint)context].Add(child);
         }
 
         public virtual uint GetContextForChild(IParseTree child) {
@@ -149,7 +149,7 @@ namespace CParser {
         }
 
 
-        public const int FUNCTION_DEFINITION = 0, DECLARATIONS = 1;
+        public const uint FUNCTION_DEFINITION = 0, DECLARATIONS = 1;
 
         public TranslationUnitAST() :
             base(2, (uint)TranslationUnitAST.NodeTypes.TRANSLATION_UNIT, "TranslationUnitAST") {
@@ -159,10 +159,8 @@ namespace CParser {
             switch (prc.RuleIndex) {
                 case CGrammarParser.RULE_declaration:
                     return DECLARATIONS;
-                    break;
                 case CGrammarParser.RULE_function_definition:
                     return FUNCTION_DEFINITION;
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
             }
@@ -240,14 +238,11 @@ namespace CParser {
             switch (prc.RuleIndex) {
                 case CGrammarParser.RULE_type_specifier:
                     return DECLARATION_TYPE;
-                    break;
                 case CGrammarParser.RULE_pointer:
                 case CGrammarParser.RULE_direct_declarator:
                     return DECLARATORS;
-                    break;
                 case CGrammarParser.RULE_storage_class_specifier:
                     return DECLARATION_STORAGE_CLASS;
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
             }
@@ -265,7 +260,8 @@ namespace CParser {
             }
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             return visitor.VisitDeclaration(this, info);
         }
     }
@@ -290,7 +286,7 @@ namespace CParser {
 
 
     public class PointerTypeAST : ASTComposite {
-        public const int POINTER_TARGER = 0;
+        public const int POINTER_TARGET = 0;
         public enum QUALIFIER {
             CONST,
             RESTRICT,
@@ -305,7 +301,7 @@ namespace CParser {
             switch (prc.RuleIndex) {
                 case CGrammarParser.RULE_pointer:
                 case CGrammarParser.RULE_direct_declarator:
-                    return POINTER_TARGER;
+                    return POINTER_TARGET;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
             }
@@ -314,7 +310,7 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             switch (ttn.Symbol.Type) {
                 case CGrammarLexer.IDENTIFIER:
-                    return POINTER_TARGER;
+                    return POINTER_TARGET;
                 default:
                     throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
             }
@@ -387,7 +383,8 @@ namespace CParser {
             }
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             return visitor.VisitFunctionType(this, info);
         }
     }
@@ -487,7 +484,8 @@ namespace CParser {
             }
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             return visitor.VisitExpressionNumber(this, info);
         }
     }
@@ -517,7 +515,8 @@ namespace CParser {
 
         protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
             switch (prc.RuleIndex) {
-                
+                case CGrammarParser.RULE_additive_expression:
+                    return RIGHT;
                 default:
                     throw new NotImplementedException();
 
@@ -552,7 +551,12 @@ namespace CParser {
         }
 
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
+            switch (ttn.Symbol.Type) {
+                case CGrammarLexer.IDENTIFIER:
+                    return LEFT;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -595,7 +599,8 @@ namespace CParser {
             throw new NotImplementedException();
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             return visitor.VisitExpressionDivision(this, info);
         }
     }
@@ -695,7 +700,8 @@ namespace CParser {
             throw new NotImplementedException();
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             return visitor.VisitExpressionBitwiseAND(this, info);
         }
     }
@@ -792,7 +798,8 @@ namespace CParser {
             return EXPRESSION;
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, 
+            INFO info = default(INFO)) {
             return visitor.VisitExpressionStatement(this, info);
         }
     }
@@ -878,7 +885,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -897,7 +905,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -916,7 +925,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -935,7 +945,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -949,7 +960,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -963,7 +975,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -977,7 +990,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -991,7 +1005,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1005,7 +1020,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1019,7 +1035,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1033,7 +1050,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1047,7 +1065,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1061,7 +1080,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1075,7 +1095,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1089,7 +1110,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1103,7 +1125,8 @@ namespace CParser {
         protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
             throw new NotImplementedException();
         }
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
@@ -1120,7 +1143,8 @@ namespace CParser {
             throw new NotImplementedException();
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
