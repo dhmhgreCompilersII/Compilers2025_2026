@@ -127,6 +127,15 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitExpressionAddition(Expression_Addition node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, Expression_Addition.LEFT, "LEFT");
+            CreateContext(node, Expression_Addition.RIGHT, "RIGHT");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
 
         public override int VisitCompoundStatement(CompoundStatement node, ASTComposite parent) {
 

@@ -116,7 +116,7 @@ namespace CParser {
             // 4. Visit Declarator
             p = new ASTGenerationBuildParameters() {
                 Parent = funcDefNode,
-                Context = FunctionDefinitionAST.DECLARATOR
+                Context = null
             };
             VisitChildInContext(context.declarator(), p);
 
@@ -168,7 +168,8 @@ namespace CParser {
             ASTGenerationBuildParameters parentContextParameters;
             if (context.type_specifier() != null && context.type_specifier().Length != 0) {
                 if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION ||
-                    parent.MType == (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION) {
+                    parent.MType == (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION ||
+                    parent.MType == (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION) {
                     parentContextParameters = new ASTGenerationBuildParameters() {
                         Parent = m_contexts.Peek().Parent,
                         Context = DeclarationAST.TYPE_SPECIFIER
@@ -179,7 +180,7 @@ namespace CParser {
 
             if (context.type_qualifier() != null && context.type_qualifier().Length != 0) {
                 if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION ||
-                    parent.MType == (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION) {
+                    parent.MType == (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION ) {
                     parentContextParameters = new ASTGenerationBuildParameters() {
                         Parent = m_contexts.Peek().Parent,
                         Context = DeclarationAST.TYPE_QUALIFIER
@@ -367,9 +368,6 @@ namespace CParser {
 
             return 0;
         }
-
-
-
         public override int VisitAssignment_expression_Assignment(
             CGrammarParser.Assignment_expression_AssignmentContext context) {
             // 1. Get current parent node
@@ -438,6 +436,35 @@ namespace CParser {
                 Context = Expression_Assignment.RIGHT
             };
             VisitChildInContext(context.assignment_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitAdditive_expression_Addition(CGrammarParser.Additive_expression_AdditionContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create Addition node
+            Expression_Addition addition = new Expression_Addition();
+
+            // 3. Add Addition node to parent
+            parent.AddChild(addition, currentContext.Context);
+
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = addition,
+                Context = Expression_Addition.LEFT
+            };
+            VisitChildInContext(context.additive_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = addition,
+                Context = Expression_Addition.RIGHT
+            };
+            VisitChildInContext(context.multiplicative_expression(), paramContext);
+
 
             return 0;
         }
@@ -909,19 +936,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitAdditive_expression_Addition(CGrammarParser.Additive_expression_AdditionContext context) {
-            ASTComposite parent = m_contexts.Peek();
-
-            Expression_Addition node = new Expression_Addition();
-
-            parent.AddChild(node, parent.GetContextForChild(context));
-
-            m_contexts.Push(node);
-            base.VisitAdditive_expression_Addition(context);
-            m_contexts.Pop();
-
-            return 0;
-        }
+        
 
 
 
