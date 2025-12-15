@@ -177,6 +177,14 @@ namespace CParser {
             return default(Result);
         }
 
+        public virtual Result VisitShiftExpression_Left(ExpressionRelationalShiftLeft node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitShiftExpression_Right(ExpressionRelationalShiftRight node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
         public virtual Result VisitPostfixExpression_ArraySubscript(Postfixexpression_ArraySubscript node, INFO info) {
             return VisitChildren(node, info);
         }

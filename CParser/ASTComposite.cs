@@ -62,7 +62,7 @@ namespace CParser {
         }
 
         public void AddChild(ASTElement child, uint? context) {
-            if (context== null || context >= m_contexts) {
+            if (context == null || context >= m_contexts) {
                 throw new ArgumentOutOfRangeException("context", "Context index out of range");
             }
             m_children[(uint)context].Add(child);
@@ -110,27 +110,28 @@ namespace CParser {
 
 
             UNARY_EXPRESSION_SIZEOF = 40, UNARY_EXPRESSION_SIZEOF_TYPE = 41,
-            EXPRESSION_RELATIONAL_SHIFT = 42, EXPRESSION_RELATIONAL_LESS = 43,
-            EXPRESSION_RELATIONAL_GREATER = 44, EXPRESSION_RELATIONAL_LESS_OR_EQUAL = 45,
-            EXPRESSION_RELATIONAL_GREATER_OR_EQUAL = 46, EXPRESSION_LOGICAL_AND_INCLUSIVE_OR = 47,
-            EXPRESSION_LOGICAL_AND = 48, EXPRESSION_LOGICAL_OR_INCLUSIVE_OR = 49,
-            EXPRESSION_LOGICAL_OR = 50, CONDITIONAL_EXPRESSION_OR = 51,
-            CONDITIONAL_EXPRESSION = 52, ASSIGNMENT_EXPRESSION_CONDITIONAL = 53,
-            ASSIGNMENT_EXPRESSION = 54,
+            EXPRESSION_RELATIONAL_SHIFTL, EXPRESSION_RELATIONAL_SHIFTR,
+            EXPRESSION_RELATIONAL_LESS,
+            EXPRESSION_RELATIONAL_GREATER, EXPRESSION_RELATIONAL_LESS_OR_EQUAL,
+            EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, EXPRESSION_LOGICAL_AND_INCLUSIVE_OR,
+            EXPRESSION_LOGICAL_AND, EXPRESSION_LOGICAL_OR_INCLUSIVE_OR,
+            EXPRESSION_LOGICAL_OR, CONDITIONAL_EXPRESSION_OR,
+            CONDITIONAL_EXPRESSION, ASSIGNMENT_EXPRESSION_CONDITIONAL,
+            ASSIGNMENT_EXPRESSION,
 
-            CHAR_TYPE = 55,
-            UNARY_EXPRESSION_CAST = 56,
-            EXPRESSION_ASSIGNMENT_MULTIPLICATION = 57, EXPRESSION_ASSIGNMENT_DIVISION = 58,
-            EXPRESSION_ASSIGNMENT_MODULO = 59, EXPRESSION_ASSIGNMENT_ADDITION = 60,
-            EXPRESSION_ASSIGNMENT_SUBTRACTION = 61,
-            EXPRESSION_ASSIGNMENT_LEFT = 62,
-            EXPRESSION_ASSIGNMENT_RIGHT = 63,
-            EXPRESSION_ASSIGNMENT_AND = 64,
-            EXPRESSION_ASSIGNMENT_XOR = 65,
-            EXPRESSION_ASSIGNMENT_OR = 66,
+            CHAR_TYPE,
+            UNARY_EXPRESSION_CAST,
+            EXPRESSION_ASSIGNMENT_MULTIPLICATION, EXPRESSION_ASSIGNMENT_DIVISION,
+            EXPRESSION_ASSIGNMENT_MODULO, EXPRESSION_ASSIGNMENT_ADDITION,
+            EXPRESSION_ASSIGNMENT_SUBTRACTION,
+            EXPRESSION_ASSIGNMENT_LEFT,
+            EXPRESSION_ASSIGNMENT_RIGHT,
+            EXPRESSION_ASSIGNMENT_AND,
+            EXPRESSION_ASSIGNMENT_XOR,
+            EXPRESSION_ASSIGNMENT_OR,
 
-            STATEMENT_EXPRESSION = 67,
-            INTEGER = 68
+            STATEMENT_EXPRESSION,
+            INTEGER
 
 
         }
@@ -149,7 +150,7 @@ namespace CParser {
     }
 
     public class DeclarationAST : ASTComposite {
-        public const int TYPE_SPECIFIER = 0, DECLARATORS = 1, TYPE_QUALIFIER=2, STORAGE_SPECIFIER=3;
+        public const int TYPE_SPECIFIER = 0, DECLARATORS = 1, TYPE_QUALIFIER = 2, STORAGE_SPECIFIER = 3;
 
         public enum TYPE_SPECIFIER_ENUM {
             VOID,
@@ -262,7 +263,7 @@ namespace CParser {
             base(3, (uint)TranslationUnitAST.NodeTypes.FUNCTION_TYPE, "FunctionTypeAST") {
         }
 
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             return visitor.VisitFunctionType(this, info);
@@ -306,7 +307,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionIdentifier(this, info);
         }
-        
+
     }
 
     public class Expression_Number : CExpression {
@@ -326,7 +327,7 @@ namespace CParser {
         public Expression_StringLiteral() : base(1,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_STRINGLITERAL, "StringLiteral") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionStringLiteral(this, info);
         }
@@ -493,7 +494,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_STATEMENT, "ExpressionStatement") {
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, 
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             return visitor.VisitExpressionStatement(this, info);
         }
@@ -512,7 +513,7 @@ namespace CParser {
     public class UnaryExpressionDecrement : CExpression {
         public UnaryExpressionDecrement() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_DECREMENT, "UnaryExpressionDecrement") {
         }
-       
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -525,7 +526,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_AMBERSAND,
                 "UnaryExpressionUnaryOperatorAmbersand") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -538,7 +539,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_ASTERISK,
                 "UnaryExpressionUnaryOperatorAsterisk") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -551,7 +552,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_PLUS,
                 "UnaryExpressionUnaryOperatorPLUS") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -566,7 +567,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_HYPHEN,
                 "UnaryExpressionUnaryOperatorMinus") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -581,7 +582,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_TILDE,
                 "UnaryExpressionUnaryOperatorTilde") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -596,7 +597,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_NOT,
                 "UnaryExpressionUnaryOperatorNOT") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -606,7 +607,7 @@ namespace CParser {
     public class UnaryExpressionSizeOfExpression : CExpression {
         public UnaryExpressionSizeOfExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF, "UnaryExpressionSizeOf") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -616,27 +617,37 @@ namespace CParser {
     public class UnaryExpressionSizeOfTypeName : CExpression {
         public UnaryExpressionSizeOfTypeName() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF_TYPE, "UnaryExpressionSizeOfType") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
     }
 
-    public class ExpressionRelationalShift : CExpression {
-        public ExpressionRelationalShift() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFT, "ExpressionRelationalShift") {
+    public class ExpressionRelationalShiftLeft : CExpression {
+        public ExpressionRelationalShiftLeft() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTL, "ExpressionRelationalShift") {
         }
-       
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitShiftExpression_Left(this, info);
+        }
+    }
+
+    public class ExpressionRelationalShiftRight : CExpression {
+        public ExpressionRelationalShiftRight() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTR, "ExpressionRelationalShift") {
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
+            return visitor.VisitShiftExpression_Right(this, info);
         }
     }
 
     public class ExpressionRelationalLess : CExpression {
         public ExpressionRelationalLess() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS, "ExpressionRelationalLess") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -646,7 +657,7 @@ namespace CParser {
     public class ExpressionRelationalGreater : CExpression {
         public ExpressionRelationalGreater() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER, "ExpressionRelationalGreater") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -656,7 +667,7 @@ namespace CParser {
     public class ExpressionRelationalLessOrEqual : CExpression {
         public ExpressionRelationalLessOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS_OR_EQUAL, "ExpressionRelationalLessOrEqual") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -666,7 +677,7 @@ namespace CParser {
     public class ExpressionRelationalGreaterOrEqual : CExpression {
         public ExpressionRelationalGreaterOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, "ExpressionRelationalGreaterOrEqual") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -676,7 +687,7 @@ namespace CParser {
     public class ExpressionLogicalAndInclusiveOr : CExpression {
         public ExpressionLogicalAndInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND_INCLUSIVE_OR, "ExpressionLogicalAndInclusiveOr") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -686,7 +697,7 @@ namespace CParser {
     public class ExpressionLogicalAnd : CExpression {
         public ExpressionLogicalAnd() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND, "ExpressionLogicalAnd") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -696,7 +707,7 @@ namespace CParser {
     public class ExpressionLogicalOrInclusiveOr : CExpression {
         public ExpressionLogicalOrInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR_INCLUSIVE_OR, "ExpressionLogicalOrInclusiveOr") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -706,7 +717,7 @@ namespace CParser {
     public class ExpressionLogicalOr : CExpression {
         public ExpressionLogicalOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR, "ExpressionLogicalOr") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -716,7 +727,7 @@ namespace CParser {
     public class ConditionalExpressionOr : CExpression {
         public ConditionalExpressionOr() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION_OR, "ConditionalExpressionOr") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -727,7 +738,7 @@ namespace CParser {
         public ConditionalExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression") {
         }
 
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -772,7 +783,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitPostfixExpression_ArraySubscript(this, info);
         }
-        
+
     }
 
     public class Postfixexpression_FunctionCallNoArgs : CExpression {
@@ -783,7 +794,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_FunctionCallNoArgs(this, info);
         }
-        
+
     }
 
     public class Postfixexpression_FunctionCallWithArgs : CExpression {
@@ -823,7 +834,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_PointerMemberAccess(this, info);
         }
-       
+
     }
 
     public class Postfixexpression_Increment : CExpression {
@@ -836,7 +847,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_Increment(this, info);
         }
-        
+
     }
 
     public class Postfixexpression_Decrement : CExpression {
@@ -849,7 +860,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_Decrement(this, info);
         }
-        
+
     }
 
     public class Expression_CommaExpression : CExpression {
@@ -857,7 +868,7 @@ namespace CParser {
         public Expression_CommaExpression() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_COMMAEXPRESSION, "Expression_CommaExpression") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionCommaExpression(this, info);
         }
@@ -917,7 +928,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_LEFT,
             "ExpressionAssignmentLeft") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -928,7 +939,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_RIGHT,
             "ExpressionAssignmentRight") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -952,7 +963,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_XOR,
             "ExpressionAssignmentXOR") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -963,7 +974,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_OR,
             "ExpressionAssignmentOR") {
         }
-        
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -976,7 +987,7 @@ namespace CParser {
 
         }
 
-       
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -990,7 +1001,7 @@ namespace CParser {
 
         }
 
-       
+
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
