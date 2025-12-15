@@ -326,24 +326,118 @@ namespace CParser {
                     parent.AddChild(charNode, currentContext.Context); // assuming context INT for simplicity
 
                     break;
-                /*case CGrammarParser.CONSTANT: {
-                    ASTComposite parent = m_contexts.Peek();
-                    INTEGER idNode = new INTEGER(node.GetText());
-                    parent.AddChild(idNode, parent.GetContextForChild(node)); // assuming context INTEGER for simplicity
-                }
+                case CGrammarParser.CONSTANT: 
+                    INTEGER conNode = new INTEGER(node.GetText());
+                    parent.AddChild(conNode, currentContext.Context); // assuming context INTEGER for simplicity
                     break;
-
-                
-                case CGrammarParser.CHAR: {
-                    ASTComposite parent = m_contexts.Peek();
-                    CharTypeAST intNode = new CharTypeAST(node.GetText());
-                    parent.AddChild(intNode, parent.GetContextForChild(node)); // assuming context INT for simplicity
-                }
-                    break;*/
-                // Handle other terminal types as needed
                 default:
                     break;
             }
+
+            return 0;
+        }
+
+
+        public override int VisitCompound_statement(CGrammarParser.Compound_statementContext context) {
+
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create FunctionDefinitionAST node
+            CompoundStatement compStmtNode = new CompoundStatement();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(compStmtNode, currentContext.Context); // assuming context
+
+
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = compStmtNode,
+                Context = CompoundStatement.DECLARATIONS
+            };
+            VisitChildrenInContext(context.declaration(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = compStmtNode,
+                Context = CompoundStatement.STATEMENTS
+            };
+            VisitChildrenInContext(context.statement(), paramContext);
+
+
+            return 0;
+        }
+
+
+
+        public override int VisitAssignment_expression_Assignment(
+            CGrammarParser.Assignment_expression_AssignmentContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create FunctionDefinitionAST node
+            var aoperator = context.assignment_operator();
+            ASTComposite aOperatorNode = null;
+            switch (aoperator.op.Type) {
+                case CGrammarLexer.ASSIGN:
+                    aOperatorNode =
+                        new Expression_Assignment();
+                    break;
+                case CGrammarLexer.MUL_ASSIGN:
+                    aOperatorNode =
+                        new ExpressionAssignmentMultiplication();
+                    break;
+                case CGrammarLexer.DIV_ASSIGN:
+                    aOperatorNode =
+                        new ExpressionAssignmentDivision();
+                    break;
+                case CGrammarLexer.PLUS:
+                    aOperatorNode =
+                        new UnaryExpressionUnaryOperatorPLUS();
+                    break;
+                case CGrammarLexer.MOD_ASSIGN:
+                    aOperatorNode =
+                        new ExpressionAssignmentModulo();
+                    break;
+                case CGrammarLexer.LEFT_ASSIGN:
+                    aOperatorNode =
+                        new Expression_AssignmentLeft();
+                    break;
+                case CGrammarLexer.RIGHT_ASSIGN:
+                    aOperatorNode =
+                        new Expression_AssignmentRight();
+                    break;
+                case CGrammarLexer.OR_ASSIGN:
+                    aOperatorNode =
+                        new Expression_AssignmentOr();
+                    break;
+                case CGrammarLexer.AND_ASSIGN:
+                    aOperatorNode =
+                        new Expression_AssignmentAnd();
+                    break;
+                case CGrammarLexer.XOR_ASSIGN:
+                    aOperatorNode =
+                        new Expression_AssignmentXor();
+                    break;
+                default:
+                    throw new NotImplementedException("Unhandled unary operator type");
+
+            }
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(aOperatorNode, currentContext.Context); // assuming context
+
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = aOperatorNode,
+                Context = Expression_Assignment.LEFT
+            };
+            VisitChildInContext(context.unary_expression(), paramContext);
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = aOperatorNode,
+                Context = Expression_Assignment.RIGHT
+            };
+            VisitChildInContext(context.assignment_expression(), paramContext);
 
             return 0;
         }
@@ -372,12 +466,7 @@ namespace CParser {
             return 0;
         }
 
-        
-
-       
-
-
-        
+          
 
 
 
@@ -388,29 +477,11 @@ namespace CParser {
         public override int VisitArrayDimensionWithNOSIZE(CGrammarParser.ArrayDimensionWithNOSIZEContext context) {
             return base.VisitArrayDimensionWithNOSIZE(context);
         }
+              
 
         
 
         
-
-        public override int VisitCompound_statement(CGrammarParser.Compound_statementContext context) {
-
-            // 1. Get current parent node
-            ASTComposite parent = m_contexts.Peek();
-
-            // 2. Create FunctionDefinitionAST node
-            CompoundStatement compStmtNode = new CompoundStatement();
-
-            // 3. Add FunctionDefinitionAST node to parent
-            parent.AddChild(compStmtNode, parent.GetContextForChild(context)); // assuming context
-
-            m_contexts.Push(compStmtNode);
-            base.VisitCompound_statement(context);
-            m_contexts.Pop();
-
-
-            return 0;
-        }
 
         public override int VisitPostfix_expression_ArraySubscript(CGrammarParser.Postfix_expression_ArraySubscriptContext context) {
 
@@ -915,68 +986,7 @@ namespace CParser {
             return 0;
         }
 
-        public override int VisitAssignment_expression_Assignment(
-            CGrammarParser.Assignment_expression_AssignmentContext context) {
-            // 1. Get current parent node
-            ASTComposite parent = m_contexts.Peek();
-
-            // 2. Create FunctionDefinitionAST node
-            var aoperator = context.assignment_operator();
-            ASTComposite aOperatorNode = null;
-            switch (aoperator.op.Type) {
-                case CGrammarLexer.ASSIGN:
-                    aOperatorNode =
-                        new Expression_Assignment();
-                    break;
-                case CGrammarLexer.MUL_ASSIGN:
-                    aOperatorNode =
-                        new ExpressionAssignmentMultiplication();
-                    break;
-                case CGrammarLexer.DIV_ASSIGN:
-                    aOperatorNode =
-                        new ExpressionAssignmentDivision();
-                    break;
-                case CGrammarLexer.PLUS:
-                    aOperatorNode =
-                        new UnaryExpressionUnaryOperatorPLUS();
-                    break;
-                case CGrammarLexer.MOD_ASSIGN:
-                    aOperatorNode =
-                        new ExpressionAssignmentModulo();
-                    break;
-                case CGrammarLexer.LEFT_ASSIGN:
-                    aOperatorNode =
-                        new Expression_AssignmentLeft();
-                    break;
-                case CGrammarLexer.RIGHT_ASSIGN:
-                    aOperatorNode =
-                        new Expression_AssignmentRight();
-                    break;
-                case CGrammarLexer.OR_ASSIGN:
-                    aOperatorNode =
-                        new Expression_AssignmentOr();
-                    break;
-                case CGrammarLexer.AND_ASSIGN:
-                    aOperatorNode =
-                        new Expression_AssignmentAnd();
-                    break;
-                case CGrammarLexer.XOR_ASSIGN:
-                    aOperatorNode =
-                        new Expression_AssignmentXor();
-                    break;
-                default:
-                    throw new NotImplementedException("Unhandled unary operator type");
-
-            }
-            // 3. Add FunctionDefinitionAST node to parent
-            parent.AddChild(aOperatorNode, parent.GetContextForChild(context)); // assuming context
-
-            m_contexts.Push(aOperatorNode);
-            base.VisitAssignment_expression_Assignment(context);
-            m_contexts.Pop();
-
-            return 0;
-        }
+        
 
         public override int VisitExpression_statement(CGrammarParser.Expression_statementContext context) {
             ASTComposite parent = m_contexts.Peek();
