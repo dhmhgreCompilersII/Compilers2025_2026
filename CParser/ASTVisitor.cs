@@ -294,27 +294,30 @@ namespace CParser {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentXor(Expression_AssignmentAnd node, INFO info) {
+        public virtual Result VisitExpressionAssignmentXor(Expression_AssignmentXor node, INFO info) {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentOr(Expression_AssignmentAnd node, INFO info) {
+        public virtual Result VisitExpressionAssignmentOr(Expression_AssignmentOr node, INFO info) {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentDiv(ExpressionAssignmentDivision node, INFO info) {
+        public virtual Result VisitExpressionAssignmentDivision(ExpressionAssignmentDivision node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitExpressionAssignmentMultiplication(ExpressionAssignmentMultiplication node, INFO info) {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentMod(ExpressionAssignmentModulo node, INFO info) {
+        public virtual Result VisitExpressionAssignmentModulo(ExpressionAssignmentModulo node, INFO info) {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentAdd(ExpressionAssignmentAddition node, INFO info) {
+        public virtual Result VisitExpressionAssignmentAddition(ExpressionAssignmentAddition node, INFO info) {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitExpressionAssignmentSub(ExpressionAssignmentSubtraction node, INFO info) {
+        public virtual Result VisitExpressionAssignmentSubtraction(ExpressionAssignmentSubtraction node, INFO info) {
             return VisitChildren(node, info);
         }
 
@@ -334,7 +337,8 @@ namespace CParser {
             return VisitChildren(node, info);
         }
 
-
-
+        public virtual Result VisitExpressionCast(Expression_Cast node, INFO info) {
+            return VisitChildren(node, info);
+        }
     }
 }

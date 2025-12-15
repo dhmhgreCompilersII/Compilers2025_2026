@@ -845,37 +845,10 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionCast(this, info);
         }
     }
-
     
-
-    public class ExpressionDivision : CExpression {
-        public ExpressionDivision() : base(2,
-            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_DIVISION,
-            "ExpressionDivision") {
-
-        }
-
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ExpressionModulus : CExpression {
-        public ExpressionModulus() : base(2,
-            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MODULO,
-            "ExpressionModulo") {
-
-        }
-
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
-        }
-    }
 
     public class Expression_AssignmentLeft : CExpression {
         public Expression_AssignmentLeft() : base(2,
@@ -883,8 +856,9 @@ namespace CParser {
             "ExpressionAssignmentLeft") {
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result,
+            INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentLeft(this, info);
         }
     }
 
@@ -895,7 +869,7 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentRight(this, info);
         }
     }
 
@@ -905,10 +879,9 @@ namespace CParser {
             "ExpressionAssignmentAND") {
 
         }
-
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentAnd(this, info);
         }
     }
 
@@ -919,7 +892,7 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentXor(this, info);
         }
     }
 
@@ -929,21 +902,20 @@ namespace CParser {
             "ExpressionAssignmentOR") {
         }
 
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentOr(this, info);
         }
     }
 
     public class ExpressionAssignmentMultiplication : CExpression {
         public ExpressionAssignmentMultiplication() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_MULTIPLICATION,
-            "ExpressionAssignmentDiv") {
-
+            "ExpressionAssignmentMultiplication") {
         }
-
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentMultiplication(this, info);
         }
     }
 
@@ -952,13 +924,11 @@ namespace CParser {
         public ExpressionAssignmentDivision() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_DIVISION,
             "ExpressionAssignmentDivision") {
-
         }
-
-
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, 
+            INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentDivision(this, info);
         }
     }
 
@@ -966,12 +936,10 @@ namespace CParser {
         public ExpressionAssignmentModulo() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_MODULO,
             "ExpressionAssignmentModulo") {
-
         }
-
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentModulo(this, info);
         }
     }
 
@@ -979,12 +947,11 @@ namespace CParser {
         public ExpressionAssignmentAddition() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_ADDITION,
             "ExpressionAssignmentAddition") {
-
         }
 
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, 
+            INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentAddition(this, info);
         }
     }
 
@@ -992,12 +959,11 @@ namespace CParser {
         public ExpressionAssignmentSubtraction() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_SUBTRACTION,
             "ExpressionAssignmentSubtraction") {
-
         }
-
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+        
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
+            INFO info = default(INFO)) {
+            return visitor.VisitExpressionAssignmentSubtraction(this, info);
         }
     }
 
