@@ -167,7 +167,8 @@ namespace CParser {
             // 2. Visit Declarations
             ASTGenerationBuildParameters parentContextParameters;
             if (context.type_specifier() != null && context.type_specifier().Length != 0) {
-                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION) {
+                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION ||
+                    parent.MType == (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION) {
                     parentContextParameters = new ASTGenerationBuildParameters() {
                         Parent = m_contexts.Peek().Parent,
                         Context = DeclarationAST.TYPE_SPECIFIER
@@ -177,7 +178,8 @@ namespace CParser {
             }
 
             if (context.type_qualifier() != null && context.type_qualifier().Length != 0) {
-                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION) {
+                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION ||
+                    parent.MType == (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION) {
                     parentContextParameters = new ASTGenerationBuildParameters() {
                         Parent = m_contexts.Peek().Parent,
                         Context = DeclarationAST.TYPE_QUALIFIER
@@ -187,7 +189,8 @@ namespace CParser {
             }
 
             if (context.storage_class_specifier() != null && context.storage_class_specifier().Length != 0) {
-                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION) {
+                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION ||
+                    parent.MType == (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION) {
                     parentContextParameters = new ASTGenerationBuildParameters() {
                         Parent = m_contexts.Peek().Parent,
                         Context = DeclarationAST.STORAGE_SPECIFIER
@@ -198,7 +201,7 @@ namespace CParser {
 
 
             return 0;
-            
+
         }
 
 
@@ -214,7 +217,7 @@ namespace CParser {
 
             ASTGenerationBuildParameters p = new ASTGenerationBuildParameters() {
                 Parent = pardecl,
-                Context = ParameterDeclarationAST.DECLARATION_SPECIFIERS
+                Context = null
             };
             VisitChildInContext(context.declaration_specifiers(), p);
 
@@ -300,7 +303,7 @@ namespace CParser {
 
 
         public override int VisitTerminal(ITerminalNode node) {
-            ASTGenerationBuildParameters currentContext = m_contexts.Peek(); 
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
             ASTComposite parent = currentContext.Parent;
             switch (node.Symbol.Type) {
                 case CGrammarParser.IDENTIFIER:
@@ -316,6 +319,11 @@ namespace CParser {
                 case CGrammarParser.INT:
                     IntegerTypeAST intNode = new IntegerTypeAST(node.GetText());
                     parent.AddChild(intNode, currentContext.Context); // assuming context INT for simplicity
+
+                    break;
+                case CGrammarParser.CHAR:
+                    CharTypeAST charNode = new CharTypeAST(node.GetText());
+                    parent.AddChild(charNode, currentContext.Context); // assuming context INT for simplicity
 
                     break;
                 /*case CGrammarParser.CONSTANT: {

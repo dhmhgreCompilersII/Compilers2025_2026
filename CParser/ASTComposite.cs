@@ -245,9 +245,9 @@ namespace CParser {
     }
 
     public class ParameterDeclarationAST : ASTComposite {
-        public const int DECLARATION_SPECIFIERS = 0, DECLARATOR = 1;
+        public const int TYPE_SPECIFIER = 0, DECLARATOR = 1, TYPE_QUALIFIER = 2, STORAGE_SPECIFIER = 3;
         public ParameterDeclarationAST() :
-            base(2, (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION, "ParameterDeclaration") {
+            base(4, (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION, "ParameterDeclaration") {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitParameterDeclaration(this, info);

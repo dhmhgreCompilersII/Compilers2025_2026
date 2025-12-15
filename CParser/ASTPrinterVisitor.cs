@@ -67,7 +67,9 @@ namespace CParser {
         public override int VisitParameterDeclaration(ParameterDeclarationAST node, ASTComposite parent) {
             // 1.Create context clusters
             CreateContext(node, ParameterDeclarationAST.DECLARATOR, "Declarators");
-            CreateContext(node, ParameterDeclarationAST.DECLARATION_SPECIFIERS, "Type Specifier");
+            CreateContext(node, ParameterDeclarationAST.TYPE_SPECIFIER, "Type Specifier");
+            CreateContext(node, ParameterDeclarationAST.TYPE_QUALIFIER, "Type Qualifier");
+            CreateContext(node, ParameterDeclarationAST.STORAGE_SPECIFIER, "Storage Specifier");
 
             // . Print graphviz edge from parent to this node
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
