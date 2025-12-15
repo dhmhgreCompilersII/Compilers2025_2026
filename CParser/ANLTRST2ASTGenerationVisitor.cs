@@ -469,6 +469,35 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitAdditive_expression_Subtraction(CGrammarParser.Additive_expression_SubtractionContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create Addition node
+            Expression_Subtraction subtraction = new Expression_Subtraction();
+
+            // 3. Add Addition node to parent
+            parent.AddChild(subtraction, currentContext.Context);
+
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = subtraction,
+                Context = Expression_Subtraction.LEFT
+            };
+            VisitChildInContext(context.additive_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = subtraction,
+                Context = Expression_Subtraction.RIGHT
+            };
+            VisitChildInContext(context.multiplicative_expression(), paramContext);
+
+
+            return 0;
+        }
+
         /*
         public override int VisitFunctionWithNOArguments(CGrammarParser.FunctionWithNOArgumentsContext context) {
 
