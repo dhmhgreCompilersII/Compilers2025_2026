@@ -503,33 +503,6 @@ namespace CParser {
             ASTComposite parent = currentContext.Parent;
 
             // 2. Create Addition node
-            Expression_Multiplication multiplications = new Expression_Multiplication();
-
-            // 3. Add Addition node to parent
-            parent.AddChild(multiplications, currentContext.Context);
-
-            // 4. Visit left and right expressions
-            ASTGenerationBuildParameters paramContext;
-            paramContext = new ASTGenerationBuildParameters() {
-                Parent = multiplications,
-                Context = Expression_Multiplication.LEFT
-            };
-            VisitChildInContext(context.multiplicative_expression(), paramContext);
-
-            paramContext = new ASTGenerationBuildParameters() {
-                Parent = multiplications,
-                Context = Expression_Multiplication.RIGHT
-            };
-            VisitChildInContext(context.cast_expression(), paramContext);
-            return 0;
-        }
-
-        public override int VisitMultiplicative_expression_Multiplication(CGrammarParser.Multiplicative_expression_MultiplicationContext context) {
-            // 1. Get current parent node
-            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
-            ASTComposite parent = currentContext.Parent;
-
-            // 2. Create Addition node
             Expression_Division division = new Expression_Division();
 
             // 3. Add Addition node to parent
@@ -546,6 +519,33 @@ namespace CParser {
             paramContext = new ASTGenerationBuildParameters() {
                 Parent = division,
                 Context = Expression_Division.RIGHT
+            };
+            VisitChildInContext(context.cast_expression(), paramContext);
+            return 0;
+        }
+
+        public override int VisitMultiplicative_expression_Multiplication(CGrammarParser.Multiplicative_expression_MultiplicationContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create Addition node
+            Expression_Multiplication multiplications = new Expression_Multiplication();
+
+            // 3. Add Addition node to parent
+            parent.AddChild(multiplications, currentContext.Context);
+
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = multiplications,
+                Context = Expression_Multiplication.LEFT
+            };
+            VisitChildInContext(context.multiplicative_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = multiplications,
+                Context = Expression_Multiplication.RIGHT
             };
             VisitChildInContext(context.cast_expression(), paramContext);
             return 0;
