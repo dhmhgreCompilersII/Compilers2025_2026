@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Antlr4.Runtime;
+using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 
 namespace CParser {
@@ -576,6 +577,99 @@ namespace CParser {
             VisitChildInContext(context.cast_expression(), paramContext);
             return 0;
         }
+        public override int VisitShift_expression_LeftShift(CGrammarParser.Shift_expression_LeftShiftContext context)
+        {
+
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+            // 2. Create LeftShift node
+            ExpressionShiftLeft leftShift = new ExpressionShiftLeft();
+            // 3. Add LeftShift node to parent
+            parent.AddChild(leftShift, currentContext.Context);
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = leftShift,
+                Context = ExpressionShiftLeft.LEFT
+            };
+            VisitChildInContext(context.shift_expression(), paramContext);
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = leftShift,
+                Context = ExpressionShiftLeft.RIGHT
+            };
+            VisitChildInContext(context.additive_expression(), paramContext);
+
+            return 0;
+
+        }
+
+        public override int VisitShift_expression_RightShift(CGrammarParser.Shift_expression_RightShiftContext context)
+        {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+            // 2. Create RightShift node
+            ExpressionShiftRight rightShift = new ExpressionShiftRight();
+            // 3. Add RightShift node to parent
+            parent.AddChild(rightShift, currentContext.Context);
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = rightShift,
+                Context = ExpressionShiftRight.LEFT
+            };
+            VisitChildInContext(context.shift_expression(), paramContext);
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = rightShift,
+                Context = ExpressionShiftRight.RIGHT
+            };
+            VisitChildInContext(context.additive_expression(), paramContext);
+            return 0;
+        }
+
+        public override int VisitUnary_expression_Increment(CGrammarParser.Unary_expression_IncrementContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create FunctionDefinitionAST node
+            UnaryExpressionIncrement unaryIncrement = new UnaryExpressionIncrement();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(unaryIncrement, currentContext.Context); // assuming context
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = unaryIncrement,
+                Context = UnaryExpressionIncrement.OPERAND
+            };
+            VisitChildInContext(context.unary_expression(), paramContext);
+            return 0;
+        }
+
+        public override int VisitUnary_expression_Decrement(CGrammarParser.Unary_expression_DecrementContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create FunctionDefinitionAST node
+            UnaryExpressionDecrement unaryDecrement = new UnaryExpressionDecrement();
+
+            // 3. Add FunctionDefinitionAST node to parent
+            parent.AddChild(unaryDecrement, currentContext.Context); // assuming context
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = unaryDecrement,
+                Context = UnaryExpressionDecrement.OPERAND
+            };
+            VisitChildInContext(context.unary_expression(), paramContext);
+            return 0;
+        }
+
 
         /*
         public override int VisitFunctionWithNOArguments(CGrammarParser.FunctionWithNOArgumentsContext context) {

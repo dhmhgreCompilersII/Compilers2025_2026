@@ -502,6 +502,7 @@ namespace CParser {
     }
 
     public class UnaryExpressionIncrement : CExpression {
+        public const int OPERAND = 0;
         public UnaryExpressionIncrement() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_INCREMENT, "UnaryExpressionIncrement") {
 
         }
@@ -512,6 +513,7 @@ namespace CParser {
     }
 
     public class UnaryExpressionDecrement : CExpression {
+        public const int OPERAND = 0;
         public UnaryExpressionDecrement() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_DECREMENT, "UnaryExpressionDecrement") {
         }
 
@@ -626,6 +628,7 @@ namespace CParser {
     }
 
     public class ExpressionShiftLeft : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionShiftLeft() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTL,
             "ExpressionLeftShift") {
@@ -638,6 +641,7 @@ namespace CParser {
     }
 
     public class ExpressionShiftRight : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionShiftRight() : base(2, 
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTR, 
             "ExpressionRightShift") {

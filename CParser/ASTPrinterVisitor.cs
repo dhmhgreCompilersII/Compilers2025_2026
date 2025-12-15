@@ -170,6 +170,43 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitShiftExpression_Left(ExpressionShiftLeft node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, ExpressionShiftLeft.LEFT, "LEFT");
+            CreateContext(node, ExpressionShiftLeft.RIGHT, "RIGHT");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+
+        }
+
+        public override int VisitShiftExpression_Right(ExpressionShiftRight node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, ExpressionShiftRight.LEFT, "LEFT");
+            CreateContext(node, ExpressionShiftRight.RIGHT, "RIGHT");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitUnaryExpressionIncrement(UnaryExpressionIncrement node, ASTComposite info) {
+            // 1.Create context clusters
+            CreateContext(node, UnaryExpressionIncrement.OPERAND, "Increment");
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+
+        }
+
+        public override int VisitUnaryExpressionDecrement(UnaryExpressionDecrement node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, UnaryExpressionDecrement.OPERAND, "Decrement");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+
+        }
+
 
         public override int VisitCompoundStatement(CompoundStatement node, ASTComposite parent) {
 

@@ -4,5 +4,6 @@ int main(int argc, char **argv) {
 	b=a-2*1-b;
 	
 	
+	++a;
 }
 	
