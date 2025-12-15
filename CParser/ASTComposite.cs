@@ -114,10 +114,10 @@ namespace CParser {
             EXPRESSION_RELATIONAL_SHIFTL, EXPRESSION_RELATIONAL_SHIFTR,
             EXPRESSION_RELATIONAL_LESS,
             EXPRESSION_RELATIONAL_GREATER, EXPRESSION_RELATIONAL_LESS_OR_EQUAL,
-            EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, EXPRESSION_LOGICAL_AND_INCLUSIVE_OR,
-            EXPRESSION_LOGICAL_AND, EXPRESSION_LOGICAL_OR_INCLUSIVE_OR,
-            EXPRESSION_LOGICAL_OR, CONDITIONAL_EXPRESSION_OR,
-            CONDITIONAL_EXPRESSION, ASSIGNMENT_EXPRESSION_CONDITIONAL,
+            EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, 
+            EXPRESSION_LOGICAL_AND, 
+            EXPRESSION_LOGICAL_OR, 
+            CONDITIONAL_EXPRESSION, 
             ASSIGNMENT_EXPRESSION,
 
             CHAR_TYPE,
@@ -689,16 +689,7 @@ namespace CParser {
         }
     }
 
-    public class ExpressionLogicalAndInclusiveOr : CExpression {
-        public ExpressionLogicalAndInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND_INCLUSIVE_OR, "ExpressionLogicalAndInclusiveOr") {
-        }
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
-            INFO info = default(INFO)) {
-            throw new NotImplementedException();
-        }
-    }
-
+    
     public class ExpressionLogicalAnd : CExpression {
         public ExpressionLogicalAnd() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND, "ExpressionLogicalAnd") {
         }
@@ -708,17 +699,7 @@ namespace CParser {
             throw new NotImplementedException();
         }
     }
-
-    public class ExpressionLogicalOrInclusiveOr : CExpression {
-        public ExpressionLogicalOrInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR_INCLUSIVE_OR, "ExpressionLogicalOrInclusiveOr") {
-        }
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
-            INFO info = default(INFO)) {
-            throw new NotImplementedException();
-        }
-    }
-
+    
     public class ExpressionLogicalOr : CExpression {
         public ExpressionLogicalOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR, "ExpressionLogicalOr") {
         }
@@ -728,17 +709,7 @@ namespace CParser {
             throw new NotImplementedException();
         }
     }
-
-    public class ConditionalExpressionOr : CExpression {
-        public ConditionalExpressionOr() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION_OR, "ConditionalExpressionOr") {
-        }
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
-            INFO info = default(INFO)) {
-            throw new NotImplementedException();
-        }
-    }
-
+    
     public class ConditionalExpression : CExpression {
         public ConditionalExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression") {
         }
@@ -749,19 +720,7 @@ namespace CParser {
             throw new NotImplementedException();
         }
     }
-
-    public class AssignmentExpressionConditional : CExpression {
-        public AssignmentExpressionConditional() : base(2,
-            (uint)TranslationUnitAST.NodeTypes.ASSIGNMENT_EXPRESSION_CONDITIONAL, "assignment_expression_conditional") {
-
-        }
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
-        }
-    }
-
-
+    
     public class IDENTIFIER : ASTLeaf {
         public IDENTIFIER(string lexeme) :
             base(lexeme, (uint)TranslationUnitAST.NodeTypes.IDENTIFIER, lexeme) {
