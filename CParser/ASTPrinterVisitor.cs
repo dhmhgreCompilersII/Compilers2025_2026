@@ -80,8 +80,9 @@ namespace CParser {
 
             // 1.Create context clusters
             CreateContext(node, DeclarationAST.DECLARATORS, "Declarators");
-            CreateContext(node, DeclarationAST.DECLARATION_TYPE, "Type Specifier");
-            CreateContext(node, DeclarationAST.DECLARATION_STORAGE_CLASS, "Storage Class Specifier");
+            CreateContext(node, DeclarationAST.TYPE_SPECIFIER, "Type Specifier");
+            CreateContext(node, DeclarationAST.TYPE_QUALIFIER, "Type Qualifier");
+            CreateContext(node, DeclarationAST.STORAGE_SPECIFIER, "Storage Specifier");
 
             // . Print graphviz edge from parent to this node
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");

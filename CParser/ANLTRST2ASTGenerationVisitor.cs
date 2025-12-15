@@ -158,6 +158,49 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitDeclaration_specifiers(CGrammarParser.Declaration_specifiersContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+
+            // 2. Visit Declarations
+            ASTGenerationBuildParameters parentContextParameters;
+            if (context.type_specifier() != null && context.type_specifier().Length != 0) {
+                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION) {
+                    parentContextParameters = new ASTGenerationBuildParameters() {
+                        Parent = m_contexts.Peek().Parent,
+                        Context = DeclarationAST.TYPE_SPECIFIER
+                    };
+                    VisitChildrenInContext(context.type_specifier(), parentContextParameters);
+                }
+            }
+
+            if (context.type_qualifier() != null && context.type_qualifier().Length != 0) {
+                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION) {
+                    parentContextParameters = new ASTGenerationBuildParameters() {
+                        Parent = m_contexts.Peek().Parent,
+                        Context = DeclarationAST.TYPE_QUALIFIER
+                    };
+                    VisitChildrenInContext(context.type_qualifier(), parentContextParameters);
+                }
+            }
+
+            if (context.storage_class_specifier() != null && context.storage_class_specifier().Length != 0) {
+                if (parent.MType == (uint)TranslationUnitAST.NodeTypes.DECLARATION) {
+                    parentContextParameters = new ASTGenerationBuildParameters() {
+                        Parent = m_contexts.Peek().Parent,
+                        Context = DeclarationAST.STORAGE_SPECIFIER
+                    };
+                    VisitChildrenInContext(context.storage_class_specifier(), parentContextParameters);
+                }
+            }
+
+
+            return 0;
+            
+        }
+
 
         public override int VisitParameter_declaration(CGrammarParser.Parameter_declarationContext context) {
 

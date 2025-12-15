@@ -67,19 +67,6 @@ namespace CParser {
             }
             m_children[(uint)context].Add(child);
         }
-
-        public virtual uint GetContextForChild(IParseTree child) {
-            return child switch {
-                ParserRuleContext prc => GetContextForParserRuleContextChild(prc),
-                ITerminalNode ttn => GetContextForTerminalNodeChild(ttn),
-                _ => throw new NotImplementedException("GetContextForChild not implemented for this child type")
-            };
-        }
-
-        protected abstract uint GetContextForParserRuleContextChild(ParserRuleContext parentContext);
-        protected abstract uint GetContextForTerminalNodeChild(ITerminalNode ttn);
-
-
     }
 
     public abstract class ASTLeaf : ASTElement {
@@ -155,23 +142,6 @@ namespace CParser {
             base(2, (uint)TranslationUnitAST.NodeTypes.TRANSLATION_UNIT, "TranslationUnitAST") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_declaration:
-                    return DECLARATIONS;
-                case CGrammarParser.RULE_function_definition:
-                    return FUNCTION_DEFINITION;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-            }
-        }
-
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new ArgumentOutOfRangeException("child", "Terminal nodes are not expected as direct children of TranslationUnitAST");
-        }
-
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitTranslationUnit(this, info);
         }
@@ -179,10 +149,9 @@ namespace CParser {
     }
 
     public class DeclarationAST : ASTComposite {
-        public const int DECLARATION_STORAGE_CLASS = 0,
-            DECLARATION_TYPE = 1, DECLARATORS = 2;
+        public const int TYPE_SPECIFIER = 0, DECLARATORS = 1, TYPE_QUALIFIER=2, STORAGE_SPECIFIER=3;
 
-        public enum TYPE {
+        public enum TYPE_SPECIFIER_ENUM {
             VOID,
             CHAR,
             SHORT,
@@ -197,67 +166,41 @@ namespace CParser {
             ENUM
         }
 
-        public enum STORAGE_CLASS {
+        public enum STORAGE_CLASS_ENUM {
             STATIC,
             EXTERN,
             AUTO,
             REGISTER
         }
 
-        public enum TYPE_QUALIFIER {
+        public enum TYPE_QUALIFIER_ENUM {
             CONST,
             RESTRICT,
             VOLATILE,
             ATOMIC
         }
 
-        private TYPE m_type;
-        private STORAGE_CLASS m_class;
-        private TYPE_QUALIFIER m_qualifier;
+        private TYPE_SPECIFIER_ENUM m_type;
+        private STORAGE_CLASS_ENUM m_class;
+        private TYPE_QUALIFIER_ENUM m_qualifier;
 
-        public TYPE MType1 {
+        public TYPE_SPECIFIER_ENUM MType1 {
             get => m_type;
             internal set => m_type = value;
         }
 
-        public STORAGE_CLASS MClass {
+        public STORAGE_CLASS_ENUM MClass {
             get => m_class;
             internal set => m_class = value;
         }
 
-        public TYPE_QUALIFIER MQualifier {
+        public TYPE_QUALIFIER_ENUM MQualifier {
             get => m_qualifier;
             internal set => m_qualifier = value;
         }
 
         public DeclarationAST() :
-            base(3, (uint)TranslationUnitAST.NodeTypes.DECLARATION, "DeclarationAST") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_type_specifier:
-                    return DECLARATION_TYPE;
-                case CGrammarParser.RULE_pointer:
-                case CGrammarParser.RULE_direct_declarator:
-                    return DECLARATORS;
-                case CGrammarParser.RULE_storage_class_specifier:
-                    return DECLARATION_STORAGE_CLASS;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.IDENTIFIER:
-                    return DECLARATORS;
-                case CGrammarLexer.INT:
-                    return DECLARATION_TYPE;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
-            }
+            base(4, (uint)TranslationUnitAST.NodeTypes.DECLARATION, "DeclarationAST") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
@@ -296,26 +239,6 @@ namespace CParser {
         public PointerTypeAST() :
             base(1, (uint)TranslationUnitAST.NodeTypes.POINTER_TYPE, "PointerTypeAST") {
         }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_pointer:
-                case CGrammarParser.RULE_direct_declarator:
-                    return POINTER_TARGET;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.IDENTIFIER:
-                    return POINTER_TARGET;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
-            }
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitPointerType(this, info);
         }
@@ -326,30 +249,6 @@ namespace CParser {
         public ParameterDeclarationAST() :
             base(2, (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION, "ParameterDeclaration") {
         }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_pointer:
-                case CGrammarParser.RULE_direct_declarator:
-                    return DECLARATOR;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.INT:
-                case CGrammarLexer.CHAR:
-                    return DECLARATION_SPECIFIERS;
-                case CGrammarLexer.IDENTIFIER:
-                    return DECLARATOR;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
-
-            }
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitParameterDeclaration(this, info);
         }
@@ -363,26 +262,7 @@ namespace CParser {
             base(3, (uint)TranslationUnitAST.NodeTypes.FUNCTION_TYPE, "FunctionTypeAST") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_pointer:
-                    return FUNCTION_TYPE;
-                case CGrammarParser.RULE_parameter_declaration:
-                    return FUNCTION_PARAMETERS;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.IDENTIFIER:
-                    return FUNCTION_NAME;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
-            }
-        }
-
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             return visitor.VisitFunctionType(this, info);
@@ -395,31 +275,6 @@ namespace CParser {
             DECLARATOR = 1, PARAMETER_DECLARATIONS = 2, FUNCTION_BODY = 3;
         public FunctionDefinitionAST() :
             base(4, (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION, "FunctionDefinitionAST") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_pointer:
-                case CGrammarParser.RULE_direct_declarator:
-                    return DECLARATOR;
-                case CGrammarParser.RULE_parameter_declaration:
-                    return PARAMETER_DECLARATIONS;
-                case CGrammarParser.RULE_compound_statement:
-                    return FUNCTION_BODY;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.IDENTIFIER:
-                    return DECLARATOR;
-                case CGrammarLexer.INT:
-                    return DECLARATION_SPECIFIERS;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
-            }
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -451,37 +306,13 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionIdentifier(this, info);
         }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new InvalidOperationException($"{MName} does not have non-leaf children");
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            if (ttn.Symbol.Type == CGrammarParser.IDENTIFIER) {
-                return IDENTIFIER;
-            } else {
-                throw new ArgumentOutOfRangeException("child", "Unknown child terminal type");
-            }
-        }
+        
     }
 
     public class Expression_Number : CExpression {
         public const int NUMBER = 0;
         public Expression_Number(uint numcontexts, uint type, string name) :
             base(1, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_NUMBER, name) {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.INT:
-                    return NUMBER;
-                default:
-                    throw new NotImplementedException();
-            }
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
@@ -495,12 +326,7 @@ namespace CParser {
         public Expression_StringLiteral() : base(1,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_STRINGLITERAL, "StringLiteral") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new Exception("Expression Indentifier does not have non-leaf children");
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            return STRING;
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionStringLiteral(this, info);
         }
@@ -511,27 +337,6 @@ namespace CParser {
 
         public Expression_Assignment() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT, "Expression_Assignment") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_additive_expression:
-                    return RIGHT;
-                default:
-                    throw new NotImplementedException();
-
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.IDENTIFIER:
-                    return LEFT;
-                case CGrammarLexer.CONSTANT:
-                    return RIGHT;
-                default:
-                    throw new NotImplementedException();
-            }
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -546,19 +351,6 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ADDITION, "Expression_Addition") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            switch (ttn.Symbol.Type) {
-                case CGrammarLexer.IDENTIFIER:
-                    return LEFT;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionAddition(this, info);
         }
@@ -571,14 +363,6 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MULTIPLICATION, "Expression_Multiplication") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionMultiplication(this, info);
         }
@@ -589,14 +373,6 @@ namespace CParser {
 
         public Expression_Division() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_DIVISION, "Expression_Division") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
@@ -612,14 +388,6 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MODULO, "Expression_Modulo") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionModulo(this, info);
         }
@@ -630,14 +398,6 @@ namespace CParser {
 
         public Expression_Subtraction() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_SUBTRACTION, "Expression_Subtraction") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -652,14 +412,6 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_EQUALITY_EQUAL, "Expression_Equality_Equal") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionEqualityEqual(this, info);
         }
@@ -670,14 +422,6 @@ namespace CParser {
 
         public Expression_EqualityNotEqual() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_EQUALITY_NOTEQUAL, "Expression_Equality_NotEqual") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -691,15 +435,6 @@ namespace CParser {
         public Expression_BitwiseAND() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_BITWISE_AND, "Expression_Bitwise_AND") {
         }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             return visitor.VisitExpressionBitwiseAND(this, info);
@@ -713,14 +448,6 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_BITWISE_OR, "Expression_Bitwise_OR") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionBitwiseOR(this, info);
         }
@@ -732,14 +459,6 @@ namespace CParser {
 
         public Expression_BitwiseXOR() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_BITWISE_XOR, "Expression_Bitwise_XOR") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -763,22 +482,6 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.COMPOUNDSTATEMENT, "CompoundStatement") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext parentContext) {
-            switch (parentContext.RuleIndex) {
-                case CGrammarParser.RULE_compound_statement:
-                case CGrammarParser.RULE_expression_statement:
-                    return STATEMENTS;
-                case CGrammarParser.RULE_declaration:
-                    return DECLARATIONS;
-                default:
-                    throw new ArgumentOutOfRangeException("child", "Unknown child rule index");
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new ArgumentOutOfRangeException("child", "CompoundStatement child cannot be terminal");
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitCompoundStatement(this, info);
         }
@@ -788,14 +491,6 @@ namespace CParser {
         public const int EXPRESSION = 0;
         public ExpressionStatement() : base(1,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_STATEMENT, "ExpressionStatement") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            return EXPRESSION;
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            return EXPRESSION;
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, 
@@ -809,14 +504,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -825,12 +512,7 @@ namespace CParser {
     public class UnaryExpressionDecrement : CExpression {
         public UnaryExpressionDecrement() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_DECREMENT, "UnaryExpressionDecrement") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+       
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -843,12 +525,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_AMBERSAND,
                 "UnaryExpressionUnaryOperatorAmbersand") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -861,12 +538,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_ASTERISK,
                 "UnaryExpressionUnaryOperatorAsterisk") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -879,12 +551,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_PLUS,
                 "UnaryExpressionUnaryOperatorPLUS") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -899,12 +566,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_HYPHEN,
                 "UnaryExpressionUnaryOperatorMinus") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -919,12 +581,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_TILDE,
                 "UnaryExpressionUnaryOperatorTilde") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -939,12 +596,7 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_NOT,
                 "UnaryExpressionUnaryOperatorNOT") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -954,12 +606,7 @@ namespace CParser {
     public class UnaryExpressionSizeOfExpression : CExpression {
         public UnaryExpressionSizeOfExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF, "UnaryExpressionSizeOf") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -969,12 +616,7 @@ namespace CParser {
     public class UnaryExpressionSizeOfTypeName : CExpression {
         public UnaryExpressionSizeOfTypeName() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF_TYPE, "UnaryExpressionSizeOfType") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -984,12 +626,7 @@ namespace CParser {
     public class ExpressionRelationalShift : CExpression {
         public ExpressionRelationalShift() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFT, "ExpressionRelationalShift") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+       
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -999,12 +636,7 @@ namespace CParser {
     public class ExpressionRelationalLess : CExpression {
         public ExpressionRelationalLess() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS, "ExpressionRelationalLess") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1014,12 +646,7 @@ namespace CParser {
     public class ExpressionRelationalGreater : CExpression {
         public ExpressionRelationalGreater() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER, "ExpressionRelationalGreater") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1029,12 +656,7 @@ namespace CParser {
     public class ExpressionRelationalLessOrEqual : CExpression {
         public ExpressionRelationalLessOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS_OR_EQUAL, "ExpressionRelationalLessOrEqual") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1044,12 +666,7 @@ namespace CParser {
     public class ExpressionRelationalGreaterOrEqual : CExpression {
         public ExpressionRelationalGreaterOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, "ExpressionRelationalGreaterOrEqual") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1059,12 +676,7 @@ namespace CParser {
     public class ExpressionLogicalAndInclusiveOr : CExpression {
         public ExpressionLogicalAndInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND_INCLUSIVE_OR, "ExpressionLogicalAndInclusiveOr") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1074,12 +686,7 @@ namespace CParser {
     public class ExpressionLogicalAnd : CExpression {
         public ExpressionLogicalAnd() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND, "ExpressionLogicalAnd") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1089,12 +696,7 @@ namespace CParser {
     public class ExpressionLogicalOrInclusiveOr : CExpression {
         public ExpressionLogicalOrInclusiveOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR_INCLUSIVE_OR, "ExpressionLogicalOrInclusiveOr") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1104,12 +706,7 @@ namespace CParser {
     public class ExpressionLogicalOr : CExpression {
         public ExpressionLogicalOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR, "ExpressionLogicalOr") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1119,12 +716,7 @@ namespace CParser {
     public class ConditionalExpressionOr : CExpression {
         public ConditionalExpressionOr() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION_OR, "ConditionalExpressionOr") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1135,14 +727,7 @@ namespace CParser {
         public ConditionalExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1153,14 +738,6 @@ namespace CParser {
         public AssignmentExpressionConditional() : base(2,
             (uint)TranslationUnitAST.NodeTypes.ASSIGNMENT_EXPRESSION_CONDITIONAL, "assignment_expression_conditional") {
 
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -1195,12 +772,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitPostfixExpression_ArraySubscript(this, info);
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
     }
 
     public class Postfixexpression_FunctionCallNoArgs : CExpression {
@@ -1211,12 +783,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_FunctionCallNoArgs(this, info);
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            return FUNCTION;
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
     }
 
     public class Postfixexpression_FunctionCallWithArgs : CExpression {
@@ -1231,13 +798,6 @@ namespace CParser {
             return visitor.Visitpostfix_expression_FunctionCallWithArgs(this, info);
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            return FUNCTION;
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
     }
 
     public class Postfixexpression_MemberAccess : CExpression {
@@ -1252,13 +812,6 @@ namespace CParser {
             return visitor.Visitpostfix_expression_MemberAccess(this, info);
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            return ACCESS;
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
     }
 
@@ -1270,12 +823,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_PointerMemberAccess(this, info);
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            return ACCESS;
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+       
     }
 
     public class Postfixexpression_Increment : CExpression {
@@ -1288,12 +836,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_Increment(this, info);
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            return ACCESS;
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
     }
 
     public class Postfixexpression_Decrement : CExpression {
@@ -1306,12 +849,7 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.Visitpostfix_expression_Decrement(this, info);
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            return ACCESS;
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
     }
 
     public class Expression_CommaExpression : CExpression {
@@ -1319,12 +857,7 @@ namespace CParser {
         public Expression_CommaExpression() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_COMMAEXPRESSION, "Expression_CommaExpression") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitExpressionCommaExpression(this, info);
         }
@@ -1334,14 +867,6 @@ namespace CParser {
         public Expression_Cast() : base(2,
             (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_CAST,
             "ExpressionCast") {
-        }
-
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -1356,14 +881,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -1376,13 +893,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1396,13 +906,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1414,12 +917,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_LEFT,
             "ExpressionAssignmentLeft") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -1430,12 +928,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_RIGHT,
             "ExpressionAssignmentRight") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -1448,13 +941,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1466,12 +952,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_XOR,
             "ExpressionAssignmentXOR") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -1482,12 +963,7 @@ namespace CParser {
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_OR,
             "ExpressionAssignmentOR") {
         }
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -1500,14 +976,7 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
-
+       
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
         }
@@ -1521,13 +990,7 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
+       
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1541,13 +1004,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1561,13 +1017,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1581,13 +1030,6 @@ namespace CParser {
 
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            throw new NotImplementedException();
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             throw new NotImplementedException();
@@ -1602,18 +1044,6 @@ namespace CParser {
                 (uint)TranslationUnitAST.NodeTypes.STATEMENT_EXPRESSION, "Statement_Expression") {
         }
 
-        protected override uint GetContextForParserRuleContextChild(ParserRuleContext prc) {
-            switch (prc.RuleIndex) {
-                case CGrammarParser.RULE_assignment_expression:
-                    return EXPRESSION;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        protected override uint GetContextForTerminalNodeChild(ITerminalNode ttn) {
-            throw new NotImplementedException();
-        }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitStatementExpression(this, info);
