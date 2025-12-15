@@ -1,8 +1,6 @@
 int main(int argc, char **argv) {
 	int a;	
 	a=1;
-	b=a-2+1-b;
-	
-	
+	++a;
 }
 	
