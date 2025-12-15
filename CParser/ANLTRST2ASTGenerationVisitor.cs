@@ -493,8 +493,87 @@ namespace CParser {
                 Context = Expression_Subtraction.RIGHT
             };
             VisitChildInContext(context.multiplicative_expression(), paramContext);
+            return 0;
+        }
 
+        public override int VisitMultiplicative_expression_Division(CGrammarParser.Multiplicative_expression_DivisionContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
 
+            // 2. Create Addition node
+            Expression_Multiplication multiplications = new Expression_Multiplication();
+
+            // 3. Add Addition node to parent
+            parent.AddChild(multiplications, currentContext.Context);
+
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = multiplications,
+                Context = Expression_Multiplication.LEFT
+            };
+            VisitChildInContext(context.multiplicative_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = multiplications,
+                Context = Expression_Multiplication.RIGHT
+            };
+            VisitChildInContext(context.cast_expression(), paramContext);
+            return 0;
+        }
+
+        public override int VisitMultiplicative_expression_Multiplication(CGrammarParser.Multiplicative_expression_MultiplicationContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create Addition node
+            Expression_Division division = new Expression_Division();
+
+            // 3. Add Addition node to parent
+            parent.AddChild(division, currentContext.Context);
+
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = division,
+                Context = Expression_Division.LEFT
+            };
+            VisitChildInContext(context.multiplicative_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = division,
+                Context = Expression_Division.RIGHT
+            };
+            VisitChildInContext(context.cast_expression(), paramContext);
+            return 0;
+        }
+
+        public override int VisitMultiplicative_expression_Modulus(CGrammarParser.Multiplicative_expression_ModulusContext context) {
+            // 1. Get current parent node
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            // 2. Create Addition node
+            Expression_Modulo modulo = new Expression_Modulo();
+
+            // 3. Add Addition node to parent
+            parent.AddChild(modulo, currentContext.Context);
+
+            // 4. Visit left and right expressions
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = modulo,
+                Context = Expression_Modulo.LEFT
+            };
+            VisitChildInContext(context.multiplicative_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters() {
+                Parent = modulo,
+                Context = Expression_Modulo.RIGHT
+            };
+            VisitChildInContext(context.cast_expression(), paramContext);
             return 0;
         }
 

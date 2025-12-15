@@ -91,8 +91,6 @@ namespace CParser {
 
             // 3. Visit children and print AST nodes and edges
             VisitChildren(node, node);
-
-
             return 0;
         }
 
@@ -140,6 +138,33 @@ namespace CParser {
             // 1.Create context clusters
             CreateContext(node, Expression_Subtraction.LEFT, "LEFT");
             CreateContext(node, Expression_Subtraction.RIGHT, "RIGHT");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitExpressionMultiplication(Expression_Multiplication node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, Expression_Multiplication.LEFT, "LEFT");
+            CreateContext(node, Expression_Multiplication.RIGHT, "RIGHT");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitExpressionDivision(Expression_Division node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, Expression_Division.LEFT, "LEFT");
+            CreateContext(node, Expression_Division.RIGHT, "RIGHT");
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitExpressionModulo(Expression_Modulo node, ASTComposite parent) {
+            // 1.Create context clusters
+            CreateContext(node, Expression_Modulo.LEFT, "LEFT");
+            CreateContext(node, Expression_Modulo.RIGHT, "RIGHT");
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             VisitChildren(node, node);
             return 0;

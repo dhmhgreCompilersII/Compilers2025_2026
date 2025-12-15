@@ -696,17 +696,17 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionLogicalAND(this, info);
         }
     }
     
     public class ExpressionLogicalOr : CExpression {
         public ExpressionLogicalOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR, "ExpressionLogicalOr") {
         }
-
+        
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionLogicalOR(this, info);
         }
     }
     
@@ -717,7 +717,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitConditionalExpression(this, info);
         }
     }
     
@@ -849,17 +849,7 @@ namespace CParser {
         }
     }
 
-    public class ExpressionMultiplication : CExpression {
-        public ExpressionMultiplication() : base(2,
-            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MULTIPLICATION,
-            "ExpressionMultiplication") {
-
-        }
-
-        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
-        }
-    }
+    
 
     public class ExpressionDivision : CExpression {
         public ExpressionDivision() : base(2,
