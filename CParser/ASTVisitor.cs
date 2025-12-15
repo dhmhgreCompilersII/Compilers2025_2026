@@ -177,14 +177,60 @@ namespace CParser {
             return default(Result);
         }
 
-        public virtual Result VisitShiftExpression_Left(ExpressionRelationalShiftLeft node, INFO info) {
+        public virtual Result VisitShiftExpression_Left(ExpressionShiftLeft node, INFO info) {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitShiftExpression_Right(ExpressionRelationalShiftRight node, INFO info) {
+        public virtual Result VisitShiftExpression_Right(ExpressionShiftRight node, INFO info) {
             return VisitChildren(node, info);
         }
 
+        public virtual Result VisitRelationalLess(ExpressionRelationalLess node,INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitRelationalGreater(ExpressionRelationalGreater node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitRelationalLessEqual(ExpressionRelationalLessOrEqual node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitRelationalGreaterEqual(ExpressionRelationalGreaterOrEqual node, INFO info) {
+            return VisitChildren(node, info);
+        }
+      
+        public virtual Result VisitUnaryIncreament(UnaryExpressionIncrement node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitUnaryDecreament(UnaryExpressionDecrement node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitUnarySIZEOFExpression(UnaryExpressionSizeOfExpression node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitUnarySIZEOFTypeName(UnaryExpressionSizeOfTypeName node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitUnaryCastExpression(UnaryExpressionUnaryOperatorAmbersand node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitUnaryCastExpression(UnaryExpressionUnaryOperatorAsterisk node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitUnaryCastExpression(UnaryExpressionUnaryOperatorPLUS node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitUnaryCastExpression(UnaryExpressionUnaryOperatorMINUS node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitUnaryCastExpression(UnaryExpressionUnaryOperatorTilde node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitUnaryCastExpression(UnaryExpressionUnaryOperatorNOT node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        
         public virtual Result VisitPostfixExpression_ArraySubscript(Postfixexpression_ArraySubscript node, INFO info) {
             return VisitChildren(node, info);
         }

@@ -3,6 +3,7 @@ using Antlr4.Runtime.Tree;
 using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
@@ -506,7 +507,7 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionIncrement(this, info);
         }
     }
 
@@ -515,7 +516,7 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionDecrement(this, info);
         }
     }
 
@@ -528,7 +529,7 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionOperatorAmbersand(this, info);
         }
     }
 
@@ -541,7 +542,7 @@ namespace CParser {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionOperatorAsterisk(this, info);
         }
     }
 
@@ -555,7 +556,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionOperatorPLUS(this, info);
         }
     }
 
@@ -570,7 +571,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionOperatorMINUS(this, info);
         }
     }
 
@@ -585,7 +586,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionOperatorTilde(this, info);
         }
     }
 
@@ -600,7 +601,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionOperatorNOT(this, info);
         }
     }
 
@@ -610,7 +611,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionSizeOfExpression(this, info);
         }
     }
 
@@ -620,12 +621,14 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitUnaryExpressionSizeOfTypename(this, info);
         }
     }
 
-    public class ExpressionRelationalShiftLeft : CExpression {
-        public ExpressionRelationalShiftLeft() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTL, "ExpressionRelationalShift") {
+    public class ExpressionShiftLeft : CExpression {
+        public ExpressionShiftLeft() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTL,
+            "ExpressionLeftShift") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
@@ -634,8 +637,10 @@ namespace CParser {
         }
     }
 
-    public class ExpressionRelationalShiftRight : CExpression {
-        public ExpressionRelationalShiftRight() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTR, "ExpressionRelationalShift") {
+    public class ExpressionShiftRight : CExpression {
+        public ExpressionShiftRight() : base(2, 
+            (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_SHIFTR, 
+            "ExpressionRightShift") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
@@ -650,7 +655,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitRelationalLess(this, info);
         }
     }
 
@@ -660,7 +665,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitRelationalGreater(this, info);
         }
     }
 
@@ -670,7 +675,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitRelationalLessEqual(this, info);
         }
     }
 
@@ -680,7 +685,7 @@ namespace CParser {
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitRelationalGreaterEqual(this, info);
         }
     }
 
