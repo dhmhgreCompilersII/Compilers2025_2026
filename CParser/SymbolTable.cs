@@ -12,94 +12,38 @@ namespace CParser {
 
 
     public class Symbol {
-        public enum SymbolType
-        {
+        public enum SymbolType {
             Variable,
             Function,
             Type
-        }
+        };
         public string m_name;
         private ASTElement m_node;
         public SymbolType m_type;
-
         public Symbol(){}
-
-        public Symbol(String name, SymbolType symbol, ASTElement node)
-        {
-            m_name = name;
-            m_node = node;
-            m_type = symbol;
-        }
-    }
-
-    public class CScope
-    {
-        public enum Namespace{
-            Labels,
-            Tags,
-            Members,
-            Ordinary
-        }
-
-        private CScope m_parent;
-
-        private Dictionary<Namespace, SymbolTable> m_namespaces = new Dictionary<Namespace, SymbolTable>();
-
-        public CScope(CScope? parent)
-        {
-            m_parent = parent;
-        }
-
-        public void AddSymbol(Namespace nspace, string key, Symbol symbol)
-        {
-
-        }
-
-        public Symbol LookUpSymbol(string key)
-        {
-            return null;
-        }
-
-        protected void InitializeNamespace(Namespace n_space)
-        {
-            if (!m_namespaces.ContainsKey(n_space))
-            {
-
-            }
-        }
         
-    }
-
-    public class CScopeSystem{
-
-        public void EnterScope(CScope.Namespace nspace, string name) {
-
+        public Symbol(string name, SymbolType type, ASTElement node) {
+            m_name = name;
+            m_type = type;
+            m_node = node;
         }
 
-        public void ExitScope() {
-
+        public string MName {
+            get => m_name;
+            set => m_name = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private CScopeSystem(){}
-
-        private CScope m_currentScope;
-        private CScope m_globalScope;
-        private CScopeSystem? m_instance = null;
-
-        public CScope MCurrentScope => m_currentScope;
-
-        public CScope MGlobalScope=>m_globalScope;
-
-        public void AddSymbol(Namespace nspace, string key, Symbol symbol)
-        {
-
+        public ASTElement MNode {
+            get => m_node;
+            set => m_node = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public static CScopeSystem GetInstance()
-        {
-
+        public SymbolType MType {
+            get => m_type;
+            set => m_type = value;
         }
     }
+    
 
     public class SymbolTable{
         private SymbolTable m_parent;
@@ -130,38 +74,6 @@ namespace CParser {
             }
             symbols.Add(key, symbol);
         }
-
-    }
-}
-
-public class CFunctionScope : CScope
-{
-    public CFunctionScope() : base(){
-
-    }
-}
-
-public class CBlockScope : CScope
-{
-    public CBlockScope() : base()
-    {
-
-    }
-}
-
-public class CFunctionPrototypeScope : CScope
-{
-    public CFunctionPrototypeScope() : base()
-    {
-
-    }
-}
-
-public class CFileScope : CScope
-{
-    public CFileScope() : base(null)
-    {
-
     }
 }
     
