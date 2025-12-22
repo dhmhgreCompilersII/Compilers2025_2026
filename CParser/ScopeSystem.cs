@@ -9,58 +9,58 @@ using System.Threading.Tasks;
 using static CParser.CScope;
 
 namespace CParser {
-    public class CScopeSystem
-    {
+    public class CScopeSystem {
 
-        public enum ScopeType
-        {
-            File,
-            Function,
-            Block,
-            Function_Prorotype,
-            StructUnionEnum
-        };
+        public void EnterScope(ScopeType stype, string name) {
 
-        public void EnterScope(ScopeType stype, string name)
-        {
-            CScope newScope = stype switch
-            {
+            CScope newScope = stype switch {
                 ScopeType.File => new CFileScope(),
+                ScopeType.Function => new CFunctionScope(m_currentScope, name),
                 ScopeType.Block => new CBlockScope(m_currentScope),
-                ScopeType.Function => new CFunctionScope(m_currentScope),
-                ScopeType.Function_Prorotype => new CFunctionScope(m_currentScope),
-                ScopeType.StructUnionEnum => new CStructUnionScope(m_currentScope),
-                _ => throw new NotImplementedException()
+                ScopeType.FunctionPrototype => new CFunctionPrototypeScope(m_currentScope,name),
+                ScopeType.StructUnionEnum => new CStructUnionEnumScope(m_currentScope,name),
+                _ => throw new NotImplementedException($"Scope type {stype} not implemented."),
             };
+            m_currentScope.AddChildScope(newScope);
             m_Scopes.Push(newScope);
-
-            if (stype == ScopeType.File)
-            {
+            if (stype == ScopeType.File) {
                 m_globalScope = newScope;
             }
-
             m_currentScope = newScope;
         }
 
         public void ExitScope() {
-
+            if (m_Scopes.Count > 1) {
+                m_Scopes.Pop();
+                m_currentScope = m_Scopes.Peek();
+            } else {
+                throw new Exception("Cannot exit global scope.");
+            }
         }
 
         public void AddSymbol(Namespace nspace, string key, Symbol symbol) {
+            m_currentScope.AddSymbol(nspace, key, symbol);
+        }
 
+        public Symbol LookUpSymbol(Namespace nspace, string key) {
+            return m_currentScope.LookupSymbol(nspace, key);
         }
 
         private CScopeSystem() {
+            m_Scopes = new Stack<CScope>();
+            m_globalScope = null;
+            m_currentScope = null;
         }
 
+        // It is during syntax analysis to trace the current scope
         private Stack<CScope> m_Scopes;
         private CScope m_currentScope;
         private CScope m_globalScope;
         private static CScopeSystem? m_instance = null;
 
         public CScope MCurrentScope => m_currentScope;
-        public CScope MGlobalScope  => m_globalScope;
-           
+        public CScope MGlobalScope => m_globalScope;
+
 
         public static CScopeSystem GetInstance() {
             if (m_instance == null) {
