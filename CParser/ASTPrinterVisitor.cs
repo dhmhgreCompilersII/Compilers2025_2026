@@ -246,6 +246,73 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitPostfixExpression_ArraySubscript(Postfixexpression_ArraySubscript node, ASTComposite info)
+        {
+            CreateContext(node, Postfixexpression_ArraySubscript.ARRAY, "Array Name");
+            CreateContext(node, Postfixexpression_ArraySubscript.INDEX, "Index");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int Visitpostfix_expression_FunctionCallNoArgs(Postfixexpression_FunctionCallNoArgs node, ASTComposite info)
+        {
+            CreateContext(node, Postfixexpression_FunctionCallNoArgs.FUNCTION, "Function Call with no arguments");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int Visitpostfix_expression_FunctionCallWithArgs(Postfixexpression_FunctionCallWithArgs node, ASTComposite info)
+        {
+            CreateContext(node, Postfixexpression_FunctionCallNoArgs.FUNCTION, "Function Call");
+            CreateContext(node, Postfixexpression_FunctionCallWithArgs.ARGUMENTS, "Arguments");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int Visitpostfix_expression_MemberAccess(Postfixexpression_MemberAccess node, ASTComposite info)
+        {
+            CreateContext(node, Postfixexpression_MemberAccess.ACCESS, "Member Access");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int Visitpostfix_expression_PointerMemberAccess(Postfixexpression_PointerMemberAccess node, ASTComposite info)
+        {
+            CreateContext(node, Postfixexpression_PointerMemberAccess.ACCESS, "Pointer member Access");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int Visitpostfix_expression_Increment(Postfixexpression_Increment node, ASTComposite info)
+        {
+            CreateContext(node, Postfixexpression_Increment.ACCESS, "Increment");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int Visitpostfix_expression_Decrement(Postfixexpression_Decrement node, ASTComposite info)
+        {
+            CreateContext(node, Postfixexpression_Decrement.ACCESS, "Decrement");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
         public override int VisitIdentifier(IDENTIFIER node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIdentifier(node, parent);

@@ -767,9 +767,9 @@ namespace CParser {
 
     public class Postfixexpression_FunctionCallWithArgs : CExpression {
 
-        public const int FUNCTION = 0;
+        public const int FUNCTION = 0, ARGUMENTS = 1;
 
-        public Postfixexpression_FunctionCallWithArgs() : base(1,
+        public Postfixexpression_FunctionCallWithArgs() : base(2,
             (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_FUNCTIONCALLWITHARGS, "postfix_expression_FunctionCallWithArgs") {
         }
 
@@ -822,7 +822,7 @@ namespace CParser {
 
         public const int ACCESS = 0;
         public Postfixexpression_Decrement() : base(1,
-            (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_DECREMENT, "postfix_expression_Increment") {
+            (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_DECREMENT, "postfix_expression_Decrement") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {

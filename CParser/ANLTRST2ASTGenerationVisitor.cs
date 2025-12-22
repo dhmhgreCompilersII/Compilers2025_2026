@@ -297,8 +297,6 @@ namespace CParser {
 
             }
 
-
-
             return 0;
         }
 
@@ -369,6 +367,7 @@ namespace CParser {
 
             return 0;
         }
+
         public override int VisitAssignment_expression_Assignment(
             CGrammarParser.Assignment_expression_AssignmentContext context) {
             // 1. Get current parent node
@@ -670,6 +669,147 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitPostfix_expression_ArraySubscript(CGrammarParser.Postfix_expression_ArraySubscriptContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Postfixexpression_ArraySubscript arraySubscript = new Postfixexpression_ArraySubscript();
+
+            parent.AddChild(arraySubscript, currentContext.Context);
+            ASTGenerationBuildParameters paramContext;
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = arraySubscript,
+                Context = Postfixexpression_ArraySubscript.ARRAY
+            };
+            VisitChildInContext(context.postfix_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = arraySubscript,
+                Context = Postfixexpression_ArraySubscript.INDEX
+            };
+            VisitChildInContext(context.expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitPostfix_expression_FunctionCallNoArgs(CGrammarParser.Postfix_expression_FunctionCallNoArgsContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Postfixexpression_FunctionCallNoArgs noArgsCall = new Postfixexpression_FunctionCallNoArgs();
+
+            parent.AddChild(noArgsCall, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = noArgsCall,
+                Context = Postfixexpression_FunctionCallNoArgs.FUNCTION
+            };
+            VisitChildInContext(context.postfix_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitPostfix_expression_FunctionCallWithArgs(CGrammarParser.Postfix_expression_FunctionCallWithArgsContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Postfixexpression_FunctionCallWithArgs WithArgsCall = new Postfixexpression_FunctionCallWithArgs();
+
+            parent.AddChild(WithArgsCall, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = WithArgsCall,
+                Context = Postfixexpression_FunctionCallWithArgs.FUNCTION
+            };
+            VisitChildInContext(context.postfix_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = WithArgsCall,
+                Context = Postfixexpression_FunctionCallWithArgs.ARGUMENTS
+            };
+            VisitChildInContext(context.argument_expression_list(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitPostfix_expression_PointerMemberAccess(CGrammarParser.Postfix_expression_PointerMemberAccessContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Postfixexpression_PointerMemberAccess pointerMemberAccess = new Postfixexpression_PointerMemberAccess();
+
+            parent.AddChild(pointerMemberAccess, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = pointerMemberAccess,
+                Context = Postfixexpression_PointerMemberAccess.ACCESS
+            };
+            VisitChildInContext(context.postfix_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitPostfix_expression_MemberAccess(CGrammarParser.Postfix_expression_MemberAccessContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Postfixexpression_MemberAccess memberAccess = new Postfixexpression_MemberAccess();
+
+            parent.AddChild(memberAccess, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = memberAccess,
+                Context = Postfixexpression_MemberAccess.ACCESS
+            };
+            VisitChildInContext(context.postfix_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitPostfix_expression_Decrement(CGrammarParser.Postfix_expression_DecrementContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Postfixexpression_Decrement dec = new Postfixexpression_Decrement();
+
+            parent.AddChild(dec, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = dec,
+                Context = Postfixexpression_Decrement.ACCESS
+            };
+            VisitChildInContext(context.postfix_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitPostfix_expression_Increment(CGrammarParser.Postfix_expression_IncrementContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Postfixexpression_Increment inc = new Postfixexpression_Increment();
+
+            parent.AddChild(inc, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = inc,
+                Context = Postfixexpression_Increment.ACCESS
+            };
+            VisitChildInContext(context.postfix_expression(), paramContext);
+
+
+            return 0;
+        }
 
         /*
         public override int VisitFunctionWithNOArguments(CGrammarParser.FunctionWithNOArgumentsContext context) {

@@ -3,7 +3,13 @@ int main(int argc, char **argv) {
 	a=1;
 	b=a-2*1-b;
 	
-	
 	++a;
+	a[7];
+	call();
+	add(5,2);
+	a.var = 1;
+	a->point = a;
+	b++;
+	b--;
 }
 	
