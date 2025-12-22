@@ -38,6 +38,10 @@ namespace CParser {
             get => m_type;
             set => m_type = value;
         }
+
+        public override string ToString() {
+            return $"Symbol(Name: {m_name}, Type: {m_type}, Node: {m_node})";
+        }
     }
     
 

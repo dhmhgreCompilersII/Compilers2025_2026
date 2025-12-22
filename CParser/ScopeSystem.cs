@@ -43,6 +43,10 @@ namespace CParser {
             return m_currentScope.LookupSymbol(nspace, key);
         }
 
+        public override string ToString() {
+            return m_globalScope.ToString();
+        }
+
         private CScopeSystem() {
             m_Scopes = new Stack<CScope>();
             m_globalScope = null;
