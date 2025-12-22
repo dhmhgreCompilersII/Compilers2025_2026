@@ -8,7 +8,7 @@ using static CParser.CScope;
 namespace CParser {
     public class CScopeSystem {
 
-        public void EnterScope(ScopeType stype, string name) {
+        public void EnterScope(ScopeType stype, string name=null) {
 
             CScope newScope = stype switch {
                 ScopeType.File => new CFileScope(),
@@ -18,7 +18,10 @@ namespace CParser {
                 ScopeType.StructUnionEnum => new CStructUnionEnumScope(m_currentScope,name),
                 _ => throw new NotImplementedException($"Scope type {stype} not implemented."),
             };
-            m_currentScope.AddChildScope(newScope);
+            if (m_currentScope != null) {
+                m_currentScope.AddChildScope(newScope);
+            }
+
             m_Scopes.Push(newScope);
             if (stype == ScopeType.File) {
                 m_globalScope = newScope;
@@ -27,8 +30,12 @@ namespace CParser {
         }
 
         public void ExitScope() {
-            if (m_Scopes.Count > 1) {
+            if (m_Scopes.Count > 0) {
                 m_Scopes.Pop();
+                if ( m_Scopes.Count == 0) {
+                    m_currentScope = null;
+                    return;
+                }
                 m_currentScope = m_Scopes.Peek();
             } else {
                 throw new Exception("Cannot exit global scope.");
