@@ -8,27 +8,38 @@ namespace CParser {
 
 
     public class Symbol {
-        public string Name;
-        private ASTElement node;
-    }
-
-    public class CScopeSystem{
-
-        public enum CNamespaces{
-            Tags,
-            Labels,
-            Members,
-            Ordinary
+        public enum SymbolType {
+            Variable,
+            Function,
+            Type
         };
+        public string m_name;
+        private ASTElement m_node;
+        public SymbolType m_type;
+        public Symbol(){}
         
-
-        public void EnterScope(string name) {
+        public Symbol(string name, SymbolType type, ASTElement node) {
+            m_name = name;
+            m_type = type;
+            m_node = node;
         }
-        public void ExitScope() {
+
+        public string MName {
+            get => m_name;
+            set => m_name = value ?? throw new ArgumentNullException(nameof(value));
         }
 
+        public ASTElement MNode {
+            get => m_node;
+            set => m_node = value ?? throw new ArgumentNullException(nameof(value));
+        }
 
+        public SymbolType MType {
+            get => m_type;
+            set => m_type = value;
+        }
     }
+    
 
     public class SymbolTable{
         private SymbolTable m_parent;
@@ -54,11 +65,10 @@ namespace CParser {
                 throw new ArgumentNullException(nameof(symbol), "Cannot add null symbol to symbol table.");
             }
             
-            if (string.IsNullOrEmpty(symbol.Name)) {
+            if (string.IsNullOrEmpty(symbol.m_name)) {
                 throw new ArgumentException("Symbol must have a valid name.", nameof(symbol));
             }
             symbols.Add(key, symbol);
         }
-
     }
 }
