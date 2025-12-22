@@ -32,8 +32,9 @@ namespace CParser{
         public CScope? MParent => m_parent;
         public ScopeType MScopeType => m_scopeType;
 
-        public CScope(CScope? parent) {
+        public CScope(CScope? parent,ScopeType stype) {
             m_parent = parent;
+            m_scopeType = stype;
             m_childScopes = new List<CScope>();
         }
 
@@ -41,6 +42,9 @@ namespace CParser{
             StringBuilder report= new StringBuilder();
             report.Append($"CScope(Type: {m_scopeType}, Parent: {(m_parent != null ? "Yes" : "No")}, ChildCount: {m_childScopes.Count})");
             report.AppendLine();
+            foreach (KeyValuePair<Namespace, SymbolTable> pair in m_namespaces) {
+                report.Append($" Namespace: {pair.Key} , {pair.Value.ToString()}");
+            }
             foreach (CScope mChildScope in m_childScopes) {
                 report.Append(mChildScope.ToString());
             }
@@ -88,7 +92,7 @@ namespace CParser{
     public class CFunctionScope : CScope{
         private string m_name;
         public string MName => m_name;
-        public CFunctionScope(CScope parent, string name) : base(parent) {
+        public CFunctionScope(CScope parent, string name) : base(parent,ScopeType.Function) {
             InitializeNamespace(Namespace.Ordinary);
             InitializeNamespace(Namespace.Labels);
             InitializeNamespace(Namespace.Tags);
@@ -97,14 +101,14 @@ namespace CParser{
     }
 
     public class CFileScope : CScope{
-        public CFileScope() : base(null) {
+        public CFileScope() : base(null,ScopeType.File) {
             InitializeNamespace(Namespace.Ordinary);
             InitializeNamespace(Namespace.Tags);
         }
     }
 
     public class CBlockScope : CScope{
-        public CBlockScope(CScope parent) : base(parent) {
+        public CBlockScope(CScope parent) : base(parent,ScopeType.Block) {
             InitializeNamespace(Namespace.Ordinary);
             InitializeNamespace(Namespace.Tags);
         }
@@ -114,7 +118,8 @@ namespace CParser{
         private string m_name;
         public string MName => m_name;
 
-        public CFunctionPrototypeScope(CScope parent,string name) : base(parent) {
+        public CFunctionPrototypeScope(CScope parent,string name) : 
+            base(parent,ScopeType.FunctionPrototype) {
             InitializeNamespace(Namespace.Ordinary);
             InitializeNamespace(Namespace.Tags);
             m_name = name;
@@ -123,7 +128,8 @@ namespace CParser{
     }
     public class CStructUnionEnumScope : CScope{
         private string m_name;
-        public CStructUnionEnumScope(CScope parent,string name) : base(parent) {
+        public CStructUnionEnumScope(CScope parent,string name) : 
+            base(parent,ScopeType.StructUnionEnum) {
             InitializeNamespace(Namespace.Members);
             InitializeNamespace(Namespace.Tags);
             m_name = name;

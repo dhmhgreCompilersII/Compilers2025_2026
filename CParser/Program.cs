@@ -33,7 +33,10 @@ namespace CParser {
 
             // Ask the parser to start parsing at rule 'compilationUnit'
             parser.Profile = true;
+            CScopeSystem.GetInstance().EnterScope(ScopeType.File);
             IParseTree syntaxTree = parser.translation_unit();
+            CScopeSystem.GetInstance().ExitScope();
+            Console.WriteLine($"{CScopeSystem.GetInstance().ToString()}");
             // Print the tree in LISP format
             //Console.WriteLine(syntaxTree.ToStringTree());
 
