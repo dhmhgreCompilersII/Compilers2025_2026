@@ -74,5 +74,15 @@ namespace CParser {
             }
             symbols.Add(key, symbol);
         }
+
+        public override string ToString() {
+            StringBuilder report= new StringBuilder();
+            report.AppendLine("SymbolTable:");
+            foreach (KeyValuePair<string, Symbol> pair in symbols) {
+                report.AppendLine($" Key: {pair.Key} , Value: {pair.Value.ToString()}");
+            }
+            return report.ToString();
+
+        }
     }
 }
