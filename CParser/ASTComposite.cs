@@ -37,6 +37,10 @@ namespace CParser {
             m_name = name + $"_{m_serialNumberCounter}";
         }
 
+        public override string ToString() {
+            return $"ASTElement(Name: {m_name})";
+        }
+
         public abstract Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO));
 
     }

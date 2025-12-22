@@ -37,6 +37,16 @@ namespace CParser{
             m_childScopes = new List<CScope>();
         }
 
+        public override string ToString() {
+            StringBuilder report= new StringBuilder();
+            report.Append($"CScope(Type: {m_scopeType}, Parent: {(m_parent != null ? "Yes" : "No")}, ChildCount: {m_childScopes.Count})");
+            report.AppendLine();
+            foreach (CScope mChildScope in m_childScopes) {
+                report.Append(mChildScope.ToString());
+            }
+            return report.ToString();
+        }
+
         public void AddChildScope(CScope child) {
             m_childScopes.Add(child);
         }
