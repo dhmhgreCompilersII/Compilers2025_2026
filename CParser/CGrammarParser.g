@@ -183,8 +183,6 @@ direct_declarator
 		}
 	}
 	
-	
-	
 	#IDENTIFIER
 	| LPAREN declarator RPAREN									#Parenthesis
 	| direct_declarator LBRACKET constant_expression RBRACKET	#ArrayDimensionWithSIZE

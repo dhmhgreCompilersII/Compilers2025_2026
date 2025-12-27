@@ -137,10 +137,7 @@ namespace CParser {
 
             STATEMENT_EXPRESSION,
             INTEGER
-
-
         }
-
 
         public const uint FUNCTION_DEFINITION = 0, DECLARATIONS = 1;
 
@@ -459,7 +456,6 @@ namespace CParser {
         }
     }
 
-
     public class Expression_BitwiseXOR : CExpression {
         public const int LEFT = 0, RIGHT = 1;
 
@@ -471,10 +467,6 @@ namespace CParser {
             return visitor.VisitExpressionBitwiseXOR(this, info);
         }
     }
-
-
-
-
 
     public abstract class Statement : ASTComposite {
         public Statement(uint numcontexts, uint type, string name) :
@@ -526,10 +518,12 @@ namespace CParser {
         }
     }
 
-    public class UnaryExpressionUnaryOperatorAmbersand : CExpression {
+    public class UnaryExpressionUnaryOperatorAmbersand : CExpression
+    {
+        public const int EXPRESSION = 0;
 
         public UnaryExpressionUnaryOperatorAmbersand() :
-            base(2,
+            base(1,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_AMBERSAND,
                 "UnaryExpressionUnaryOperatorAmbersand") {
         }
@@ -539,10 +533,12 @@ namespace CParser {
         }
     }
 
-    public class UnaryExpressionUnaryOperatorAsterisk : CExpression {
+    public class UnaryExpressionUnaryOperatorAsterisk : CExpression
+    {
+        public const int EXPRESSION = 0;
 
         public UnaryExpressionUnaryOperatorAsterisk() :
-            base(2,
+            base(1,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_ASTERISK,
                 "UnaryExpressionUnaryOperatorAsterisk") {
         }
@@ -552,10 +548,12 @@ namespace CParser {
         }
     }
 
-    public class UnaryExpressionUnaryOperatorPLUS : CExpression {
+    public class UnaryExpressionUnaryOperatorPLUS : CExpression
+    {
+        public const int EXPRESSION = 0;
 
         public UnaryExpressionUnaryOperatorPLUS() :
-            base(2,
+            base(1,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_PLUS,
                 "UnaryExpressionUnaryOperatorPLUS") {
         }
@@ -567,10 +565,13 @@ namespace CParser {
     }
 
 
-    public class UnaryExpressionUnaryOperatorMINUS : CExpression {
+    public class UnaryExpressionUnaryOperatorMINUS : CExpression
+    {
+
+        public const int EXPRESSION = 0;
 
         public UnaryExpressionUnaryOperatorMINUS() :
-            base(2,
+            base(1,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_HYPHEN,
                 "UnaryExpressionUnaryOperatorMinus") {
         }
@@ -582,10 +583,12 @@ namespace CParser {
     }
 
 
-    public class UnaryExpressionUnaryOperatorTilde : CExpression {
+    public class UnaryExpressionUnaryOperatorTilde : CExpression
+    {
+        public const int EXPRESSION = 0;
 
         public UnaryExpressionUnaryOperatorTilde() :
-            base(2,
+            base(1,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_TILDE,
                 "UnaryExpressionUnaryOperatorTilde") {
         }
@@ -597,10 +600,12 @@ namespace CParser {
     }
 
 
-    public class UnaryExpressionUnaryOperatorNOT : CExpression {
+    public class UnaryExpressionUnaryOperatorNOT : CExpression
+    {
+        public const int EXPRESSION = 0;
 
         public UnaryExpressionUnaryOperatorNOT() :
-            base(2,
+            base(1,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_NOT,
                 "UnaryExpressionUnaryOperatorNOT") {
         }
@@ -657,7 +662,10 @@ namespace CParser {
         }
     }
 
-    public class ExpressionRelationalLess : CExpression {
+    public class ExpressionRelationalLess : CExpression
+    {
+        public const int LEFT = 0, RIGHT = 1;
+
         public ExpressionRelationalLess() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS, "ExpressionRelationalLess") {
         }
 
@@ -667,7 +675,10 @@ namespace CParser {
         }
     }
 
-    public class ExpressionRelationalGreater : CExpression {
+    public class ExpressionRelationalGreater : CExpression
+    {
+        public const int LEFT = 0, RIGHT = 1;
+
         public ExpressionRelationalGreater() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER, "ExpressionRelationalGreater") {
         }
 
@@ -677,7 +688,10 @@ namespace CParser {
         }
     }
 
-    public class ExpressionRelationalLessOrEqual : CExpression {
+    public class ExpressionRelationalLessOrEqual : CExpression
+    {
+        public const int LEFT = 0, RIGHT = 1;
+
         public ExpressionRelationalLessOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS_OR_EQUAL, "ExpressionRelationalLessOrEqual") {
         }
 
@@ -687,7 +701,10 @@ namespace CParser {
         }
     }
 
-    public class ExpressionRelationalGreaterOrEqual : CExpression {
+    public class ExpressionRelationalGreaterOrEqual : CExpression
+    {
+        public const int LEFT = 0, RIGHT = 1;
+
         public ExpressionRelationalGreaterOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, "ExpressionRelationalGreaterOrEqual") {
         }
 
@@ -697,8 +714,10 @@ namespace CParser {
         }
     }
 
-    
-    public class ExpressionLogicalAnd : CExpression {
+    public class ExpressionLogicalAnd : CExpression
+    {
+        public const int LEFT = 0, RIGHT = 1;
+
         public ExpressionLogicalAnd() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND, "ExpressionLogicalAnd") {
         }
 
@@ -708,7 +727,10 @@ namespace CParser {
         }
     }
     
-    public class ExpressionLogicalOr : CExpression {
+    public class ExpressionLogicalOr : CExpression
+    {
+        public const int LEFT = 0, RIGHT = 1;
+
         public ExpressionLogicalOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR, "ExpressionLogicalOr") {
         }
         
@@ -718,8 +740,11 @@ namespace CParser {
         }
     }
     
-    public class ConditionalExpression : CExpression {
-        public ConditionalExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression") {
+    public class ConditionalExpression : CExpression
+    {
+        public const int CONDITION = 0, TRUE_EXPRESSION = 1, FALSE_EXPRESSION = 2;
+
+        public ConditionalExpression() : base(3, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression") {
         }
 
 
@@ -785,9 +810,9 @@ namespace CParser {
 
     public class Postfixexpression_MemberAccess : CExpression {
 
-        public const int ACCESS = 0;
+        public const int ACCESS = 0, MEMBER = 1;
 
-        public Postfixexpression_MemberAccess() : base(1,
+        public Postfixexpression_MemberAccess() : base(2,
             (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_MEMBERACCESS, "postfix_expression_MemberAccess") {
         }
 
@@ -798,9 +823,10 @@ namespace CParser {
 
     }
 
-    public class Postfixexpression_PointerMemberAccess : CExpression {
-        public const int ACCESS = 0;
-        public Postfixexpression_PointerMemberAccess() : base(1,
+    public class Postfixexpression_PointerMemberAccess : CExpression
+    {
+        public const int ACCESS = 0, MEMBER = 1;
+        public Postfixexpression_PointerMemberAccess() : base(2,
             (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_POINTERMEMBERACCESS, "postfix_expression_PointerMemberAccess") {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -846,7 +872,10 @@ namespace CParser {
         }
     }
 
-    public class Expression_Cast : CExpression {
+    public class Expression_Cast : CExpression
+    {
+        public const int TYPE = 0, EXPRESSION = 1;
+
         public Expression_Cast() : base(2,
             (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_CAST,
             "ExpressionCast") {
@@ -926,7 +955,6 @@ namespace CParser {
             return visitor.VisitExpressionAssignmentMultiplication(this, info);
         }
     }
-
 
     public class ExpressionAssignmentDivision : CExpression {
         public ExpressionAssignmentDivision() : base(2,

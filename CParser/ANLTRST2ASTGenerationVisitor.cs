@@ -25,7 +25,6 @@ namespace CParser {
         }
     }
 
-
     public class ANLTRST2ASTGenerationVisitor : CGrammarParserBaseVisitor<int> {
 
         ASTComposite m_root;
@@ -41,7 +40,7 @@ namespace CParser {
             m_root = null;
         }
 
-        public void VisitChildInContext(ParserRuleContext child, ASTGenerationBuildParameters p) {
+        public void VisitChildInContext(IParseTree child, ASTGenerationBuildParameters p) {
             if (child != null) {
                 m_contexts.Push(p);
                 Visit(child);
@@ -49,7 +48,7 @@ namespace CParser {
             }
         }
 
-        public void VisitChildrenInContext(ParserRuleContext[] children,
+        public void VisitChildrenInContext(IParseTree[] children,
             ASTGenerationBuildParameters p) {
             if (children != null) {
                 m_contexts.Push(p);
@@ -377,6 +376,9 @@ namespace CParser {
             // 2. Create FunctionDefinitionAST node
             var aoperator = context.assignment_operator();
             ASTComposite aOperatorNode = null;
+
+            var text = aoperator.op.Text;
+
             switch (aoperator.op.Type) {
                 case CGrammarLexer.ASSIGN:
                     aOperatorNode =
@@ -390,9 +392,9 @@ namespace CParser {
                     aOperatorNode =
                         new ExpressionAssignmentDivision();
                     break;
-                case CGrammarLexer.PLUS:
+                case CGrammarLexer.ADD_ASSIGN:
                     aOperatorNode =
-                        new UnaryExpressionUnaryOperatorPLUS();
+                        new ExpressionAssignmentAddition();
                     break;
                 case CGrammarLexer.MOD_ASSIGN:
                     aOperatorNode =
@@ -417,6 +419,10 @@ namespace CParser {
                 case CGrammarLexer.XOR_ASSIGN:
                     aOperatorNode =
                         new Expression_AssignmentXor();
+                    break;
+                case CGrammarLexer.SUB_ASSIGN:
+                    aOperatorNode = 
+                        new ExpressionAssignmentSubtraction();
                     break;
                 default:
                     throw new NotImplementedException("Unhandled unary operator type");
@@ -752,6 +758,13 @@ namespace CParser {
                 Context = Postfixexpression_PointerMemberAccess.ACCESS
             };
             VisitChildInContext(context.postfix_expression(), paramContext);
+            
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = pointerMemberAccess,
+                Context = Postfixexpression_PointerMemberAccess.MEMBER
+            };
+            VisitChildInContext(context.IDENTIFIER(), paramContext);
 
             return 0;
         }
@@ -770,6 +783,13 @@ namespace CParser {
                 Context = Postfixexpression_MemberAccess.ACCESS
             };
             VisitChildInContext(context.postfix_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = memberAccess,
+                Context = Postfixexpression_MemberAccess.MEMBER
+            };
+            VisitChildInContext(context.IDENTIFIER(), paramContext);
 
             return 0;
         }
@@ -807,6 +827,389 @@ namespace CParser {
             };
             VisitChildInContext(context.postfix_expression(), paramContext);
 
+
+            return 0;
+        }
+
+        public override int VisitLogical_and_expression_LogicalAND(CGrammarParser.Logical_and_expression_LogicalANDContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            ExpressionLogicalAnd andExpr = new ExpressionLogicalAnd();
+
+            parent.AddChild(andExpr, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = andExpr,
+                Context = ExpressionLogicalAnd.LEFT
+            };
+            VisitChildInContext(context.logical_and_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = andExpr,
+                Context = ExpressionLogicalAnd.RIGHT
+            };
+            VisitChildInContext(context.inclusive_or_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitLogical_or_expression_LogicalOR(CGrammarParser.Logical_or_expression_LogicalORContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            ExpressionLogicalOr orExpr = new ExpressionLogicalOr();
+
+            parent.AddChild(orExpr, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = orExpr,
+                Context = ExpressionLogicalOr.LEFT
+            };
+            VisitChildInContext(context.logical_or_expression(), paramContext);
+            
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = orExpr,
+                Context = ExpressionLogicalOr.RIGHT
+            };
+            VisitChildInContext(context.logical_and_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitAnd_expression_BitwiseAND(CGrammarParser.And_expression_BitwiseANDContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Expression_BitwiseAND bitwiseAnd = new Expression_BitwiseAND();
+
+            parent.AddChild(bitwiseAnd, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = bitwiseAnd,
+                Context = Expression_BitwiseAND.LEFT
+            };
+            VisitChildInContext(context.and_expression(), paramContext);
+            
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = bitwiseAnd,
+                Context = Expression_BitwiseAND.RIGHT
+            };
+            VisitChildInContext(context.equality_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitInclusive_or_expression_BitwiseOR(CGrammarParser.Inclusive_or_expression_BitwiseORContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Expression_BitwiseOR bitwiseOr = new Expression_BitwiseOR();
+
+            parent.AddChild(bitwiseOr, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = bitwiseOr,
+                Context = Expression_BitwiseOR.LEFT
+            };
+            VisitChildInContext(context.inclusive_or_expression(), paramContext);
+
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = bitwiseOr,
+                Context = Expression_BitwiseOR.RIGHT
+            };
+            VisitChildInContext(context.exclusive_or_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitExclusive_or_expression_BitwiseXOR(CGrammarParser.Exclusive_or_expression_BitwiseXORContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Expression_BitwiseXOR bitwiseXor = new Expression_BitwiseXOR();
+
+            parent.AddChild(bitwiseXor, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = bitwiseXor,
+                Context = Expression_BitwiseXOR.LEFT
+            };
+            VisitChildInContext(context.exclusive_or_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = bitwiseXor,
+                Context = Expression_BitwiseXOR.RIGHT
+            };
+            VisitChildInContext(context.and_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitUnary_expression_UnaryOperator(CGrammarParser.Unary_expression_UnaryOperatorContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            CExpression expressionNode = null;
+            int exprContext = -1;
+
+            int opType = context.unary_operator().op.Type;
+
+            switch (opType)
+            {
+                case CGrammarLexer.AMBERSAND:
+                    expressionNode = new UnaryExpressionUnaryOperatorAmbersand();
+                    exprContext = UnaryExpressionUnaryOperatorAmbersand.EXPRESSION;
+                    break;
+                case CGrammarLexer.ASTERISK:
+                    expressionNode = new UnaryExpressionUnaryOperatorAsterisk();
+                    exprContext = UnaryExpressionUnaryOperatorAsterisk.EXPRESSION;
+                    break;
+                case CGrammarLexer.PLUS:
+                    expressionNode = new UnaryExpressionUnaryOperatorPLUS();
+                    exprContext = UnaryExpressionUnaryOperatorPLUS.EXPRESSION;
+                    break;
+                case CGrammarLexer.HYPHEN:
+                    expressionNode = new UnaryExpressionUnaryOperatorMINUS();
+                    exprContext = UnaryExpressionUnaryOperatorMINUS.EXPRESSION;
+                    break;
+                case CGrammarLexer.TILDE:
+                    expressionNode = new UnaryExpressionUnaryOperatorTilde();
+                    exprContext = UnaryExpressionUnaryOperatorTilde.EXPRESSION;
+                    break;
+                case CGrammarLexer.NOT:
+                    expressionNode = new UnaryExpressionUnaryOperatorNOT();
+                    exprContext = UnaryExpressionUnaryOperatorNOT.EXPRESSION;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid Operand");
+            }
+            parent.AddChild(expressionNode, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = expressionNode,
+                Context = (uint)exprContext
+            };
+            VisitChildInContext(context.cast_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitCast_expression_Cast(CGrammarParser.Cast_expression_CastContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Expression_Cast exprCast = new Expression_Cast();
+
+            parent.AddChild(exprCast, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprCast,
+                Context = Expression_Cast.TYPE
+            };
+            VisitChildInContext(context.type_name(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprCast,
+                Context = Expression_Cast.EXPRESSION
+            };
+            VisitChildInContext(context.cast_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitRelational_expression_LessThan(CGrammarParser.Relational_expression_LessThanContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            ExpressionRelationalLess exprLess = new ExpressionRelationalLess();
+
+            parent.AddChild(exprLess, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprLess,
+                Context = ExpressionRelationalLess.LEFT
+            };
+            VisitChildInContext(context.relational_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprLess,
+                Context = ExpressionRelationalLess.RIGHT
+            };
+            VisitChildInContext(context.shift_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitRelational_expression_GreaterThan(CGrammarParser.Relational_expression_GreaterThanContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            ExpressionRelationalGreater exprGreat = new ExpressionRelationalGreater();
+
+            parent.AddChild(exprGreat, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprGreat,
+                Context = ExpressionRelationalGreater.LEFT
+            };
+            VisitChildInContext(context.relational_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprGreat,
+                Context = ExpressionRelationalGreater.RIGHT
+            };
+            VisitChildInContext(context.shift_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitEquality_expression_Equal(CGrammarParser.Equality_expression_EqualContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Expression_EqualityEqual exprEQ = new Expression_EqualityEqual();
+
+            parent.AddChild(exprEQ, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprEQ,
+                Context = Expression_EqualityEqual.LEFT
+            };
+            VisitChildInContext(context.equality_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprEQ,
+                Context = Expression_EqualityEqual.RIGHT
+            };
+            VisitChildInContext(context.relational_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitEquality_expression_NotEqual(CGrammarParser.Equality_expression_NotEqualContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            Expression_EqualityNotEqual exprNEQ = new Expression_EqualityNotEqual();
+
+            parent.AddChild(exprNEQ, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprNEQ,
+                Context = Expression_EqualityNotEqual.LEFT
+            };
+            VisitChildInContext(context.equality_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprNEQ,
+                Context = Expression_EqualityNotEqual.RIGHT
+            };
+            VisitChildInContext(context.relational_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitRelational_expression_GreaterThanOrEqual(CGrammarParser.Relational_expression_GreaterThanOrEqualContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            ExpressionRelationalGreaterOrEqual exprGTE = new ExpressionRelationalGreaterOrEqual();
+
+            parent.AddChild(exprGTE, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprGTE,
+                Context = ExpressionRelationalGreaterOrEqual.LEFT
+            };
+            VisitChildInContext(context.relational_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprGTE,
+                Context = ExpressionRelationalGreaterOrEqual.RIGHT
+            };
+            VisitChildInContext(context.shift_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitRelational_expression_LessThanOrEqual(CGrammarParser.Relational_expression_LessThanOrEqualContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            ExpressionRelationalLessOrEqual exprLTE = new ExpressionRelationalLessOrEqual();
+
+            parent.AddChild(exprLTE, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprLTE,
+                Context = ExpressionRelationalLessOrEqual.LEFT
+            };
+            VisitChildInContext(context.relational_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = exprLTE,
+                Context = ExpressionRelationalLessOrEqual.RIGHT
+            };
+            VisitChildInContext(context.shift_expression(), paramContext);
+
+            return 0;
+        }
+
+        public override int VisitConditional_expression_Conditional(CGrammarParser.Conditional_expression_ConditionalContext context)
+        {
+            ASTGenerationBuildParameters currentContext = m_contexts.Peek();
+            ASTComposite parent = currentContext.Parent;
+
+            ConditionalExpression condExpr = new ConditionalExpression();
+
+            parent.AddChild(condExpr, currentContext.Context);
+            ASTGenerationBuildParameters paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = condExpr,
+                Context = ConditionalExpression.CONDITION
+            };
+            VisitChildInContext(context.logical_or_expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = condExpr,
+                Context = ConditionalExpression.TRUE_EXPRESSION
+            };
+            VisitChildInContext(context.expression(), paramContext);
+
+            paramContext = new ASTGenerationBuildParameters()
+            {
+                Parent = condExpr,
+                Context = ConditionalExpression.FALSE_EXPRESSION
+            };
+            VisitChildInContext(context.conditional_expression(), paramContext);
 
             return 0;
         }

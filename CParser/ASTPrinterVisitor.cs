@@ -278,6 +278,7 @@ namespace CParser {
         public override int Visitpostfix_expression_MemberAccess(Postfixexpression_MemberAccess node, ASTComposite info)
         {
             CreateContext(node, Postfixexpression_MemberAccess.ACCESS, "Member Access");
+            CreateContext(node, Postfixexpression_MemberAccess.MEMBER, "Member");
 
             m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
             VisitChildren(node, node);
@@ -287,6 +288,7 @@ namespace CParser {
         public override int Visitpostfix_expression_PointerMemberAccess(Postfixexpression_PointerMemberAccess node, ASTComposite info)
         {
             CreateContext(node, Postfixexpression_PointerMemberAccess.ACCESS, "Pointer member Access");
+            CreateContext(node, Postfixexpression_PointerMemberAccess.MEMBER, "Member");
 
             m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
             VisitChildren(node, node);
@@ -306,6 +308,315 @@ namespace CParser {
         public override int Visitpostfix_expression_Decrement(Postfixexpression_Decrement node, ASTComposite info)
         {
             CreateContext(node, Postfixexpression_Decrement.ACCESS, "Decrement");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionLogicalOR(ExpressionLogicalOr node, ASTComposite info)
+        {
+            CreateContext(node, ExpressionLogicalOr.LEFT, "LEFT"); 
+            CreateContext(node, ExpressionLogicalOr.RIGHT, "RIGHT");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionLogicalAND(ExpressionLogicalAnd node, ASTComposite info)
+        {
+            CreateContext(node, ExpressionLogicalAnd.LEFT, "LEFT");
+            CreateContext(node, ExpressionLogicalAnd.RIGHT, "RIGHT");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionBitwiseAND(Expression_BitwiseAND node, ASTComposite info)
+        {
+            CreateContext(node, Expression_BitwiseAND.LEFT, "LEFT");
+            CreateContext(node, Expression_BitwiseAND.RIGHT, "RIGHT");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionBitwiseOR(Expression_BitwiseOR node, ASTComposite info)
+        {
+            CreateContext(node, Expression_BitwiseOR.LEFT, "LEFT");
+            CreateContext(node, Expression_BitwiseOR.RIGHT, "RIGHT");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionBitwiseXOR(Expression_BitwiseXOR node, ASTComposite info)
+        {
+            CreateContext(node, Expression_BitwiseXOR.LEFT, "LEFT");
+            CreateContext(node, Expression_BitwiseXOR.RIGHT, "RIGHT");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitUnaryExpressionOperatorAmbersand(UnaryExpressionUnaryOperatorAmbersand node, ASTComposite info)
+        {
+            CreateContext(node, UnaryExpressionUnaryOperatorAmbersand.EXPRESSION, "Expression");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitUnaryExpressionOperatorAsterisk(UnaryExpressionUnaryOperatorAsterisk node, ASTComposite info)
+        {
+            CreateContext(node, UnaryExpressionUnaryOperatorAsterisk.EXPRESSION, "Expression");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitUnaryExpressionOperatorPLUS(UnaryExpressionUnaryOperatorPLUS node, ASTComposite info)
+        {
+            CreateContext(node, UnaryExpressionUnaryOperatorPLUS.EXPRESSION, "Expression");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitUnaryExpressionOperatorMINUS(UnaryExpressionUnaryOperatorMINUS node, ASTComposite info)
+        {
+            CreateContext(node, UnaryExpressionUnaryOperatorMINUS.EXPRESSION, "Expression");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitUnaryExpressionOperatorTilde(UnaryExpressionUnaryOperatorTilde node, ASTComposite info)
+        {
+            CreateContext(node, UnaryExpressionUnaryOperatorTilde.EXPRESSION, "Expression");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitUnaryExpressionOperatorNOT(UnaryExpressionUnaryOperatorNOT node, ASTComposite info)
+        {
+            CreateContext(node, UnaryExpressionUnaryOperatorNOT.EXPRESSION, "Expression");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitExpressionCast(Expression_Cast node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Cast.TYPE, "Type");
+            CreateContext(node, Expression_Cast.EXPRESSION, "Expression");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+            return 0;
+        }
+
+        public override int VisitRelationalLess(ExpressionRelationalLess node, ASTComposite info)
+        {
+            CreateContext(node, ExpressionRelationalLess.LEFT, "Left");
+            CreateContext(node, ExpressionRelationalLess.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitRelationalGreater(ExpressionRelationalGreater node, ASTComposite info)
+        {
+            CreateContext(node, ExpressionRelationalGreater.LEFT, "Left");
+            CreateContext(node, ExpressionRelationalGreater.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitRelationalLessEqual(ExpressionRelationalLessOrEqual node, ASTComposite info)
+        {
+            CreateContext(node, ExpressionRelationalLessOrEqual.LEFT, "Left");
+            CreateContext(node, ExpressionRelationalLessOrEqual.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitRelationalGreaterEqual(ExpressionRelationalGreaterOrEqual node, ASTComposite info)
+        {
+            CreateContext(node, ExpressionRelationalGreaterOrEqual.LEFT, "Left");
+            CreateContext(node, ExpressionRelationalGreaterOrEqual.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionEqualityEqual(Expression_EqualityEqual node, ASTComposite info)
+        {
+            CreateContext(node, Expression_EqualityEqual.LEFT, "Left");
+            CreateContext(node, Expression_EqualityEqual.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionEqualityNotEqual(Expression_EqualityNotEqual node, ASTComposite info)
+        {
+            CreateContext(node, Expression_EqualityNotEqual.LEFT, "Left");
+            CreateContext(node, Expression_EqualityNotEqual.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentAnd(Expression_AssignmentAnd node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentXor(Expression_AssignmentXor node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentOr(Expression_AssignmentOr node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentDivision(ExpressionAssignmentDivision node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentMultiplication(ExpressionAssignmentMultiplication node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentModulo(ExpressionAssignmentModulo node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentAddition(ExpressionAssignmentAddition node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentSubtraction(ExpressionAssignmentSubtraction node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentLeft(Expression_AssignmentLeft node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitExpressionAssignmentRight(Expression_AssignmentRight node, ASTComposite info)
+        {
+            CreateContext(node, Expression_Assignment.LEFT, "Left");
+            CreateContext(node, Expression_Assignment.RIGHT, "Right");
+
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
+        public override int VisitConditionalExpression(ConditionalExpression node, ASTComposite info)
+        {
+            CreateContext(node, ConditionalExpression.CONDITION, "Condition");
+            CreateContext(node, ConditionalExpression.TRUE_EXPRESSION, "True");
+            CreateContext(node, ConditionalExpression.FALSE_EXPRESSION, "False");
+
 
             m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
             VisitChildren(node, node);
