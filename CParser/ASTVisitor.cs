@@ -101,8 +101,6 @@ namespace CParser {
         public virtual Result VisitUnaryExpressionOperatorAmbersand(UnaryExpressionUnaryOperatorAmbersand node,
             INFO info) {
 
-
-
             return VisitChildren(node, info);
         }
 
@@ -141,7 +139,7 @@ namespace CParser {
             return VisitChildren(node, info);
         }
 
-        public virtual Result VisitUnaryExpressionSizeOfExpression(UnaryExpressionSizeOfExpression node,
+        /*public virtual Result VisitUnaryExpressionSizeOfExpression(UnaryExpressionSizeOfExpression node,
             INFO info) {
             return VisitChildren(node, info);
         }
@@ -149,7 +147,7 @@ namespace CParser {
         public virtual Result VisitUnaryExpressionSizeOfTypename(UnaryExpressionSizeOfTypeName node,
             INFO info) {
             return VisitChildren(node, info);
-        }
+        }this methods are not working and they broke the tree*/
 
 
         public virtual Result VisitExpressionBitwiseAND(Expression_BitwiseAND node, INFO info) {
@@ -159,6 +157,14 @@ namespace CParser {
             return VisitChildren(node, info);
         }
         public virtual Result VisitExpressionBitwiseXOR(Expression_BitwiseXOR node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitLogicalAND(ExpressionLogicalAnd node,INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitLogicalOR(ExpressionLogicalOr node, INFO info) {
             return VisitChildren(node, info);
         }
 
@@ -274,14 +280,17 @@ namespace CParser {
         public virtual Result VisitExpressionAssignmentAnd(Expression_AssignmentAnd node, INFO info) {
             return VisitChildren(node, info);
         }
-        public virtual Result VisitExpressionAssignmentXor(Expression_AssignmentAnd node, INFO info) {
+        public virtual Result VisitExpressionAssignmentXor(Expression_AssignmentXor node, INFO info) { // ειχε Expression_AssignmntAnd και το αλλαξα
             return VisitChildren(node, info);
         }
-        public virtual Result VisitExpressionAssignmentOr(Expression_AssignmentAnd node, INFO info) {
+        public virtual Result VisitExpressionAssignmentOr(Expression_AssignmentOr node, INFO info) { // ειχε Expression_AssignmntAnd και το αλλαξα
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitExpressionAssignmentDiv(ExpressionAssignmentDivision node, INFO info) {
+            return VisitChildren(node, info);
+        } 
+        public virtual Result VisitExpressionAssignmentMul(ExpressionAssignmentMultiplication node, INFO info) {
             return VisitChildren(node, info);
         }
 
@@ -300,5 +309,22 @@ namespace CParser {
         public virtual Result VisitStatementExpression(Statement_Expression node, INFO info) {
             return VisitChildren(node, info);
         }
+
+        public virtual Result VisitCastExpressionCast(Expression_Cast node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitArrayDimensionWithSIZE(ArrayDimensionWithSIZE node, INFO info) {
+            return VisitChildren(node, info);
+        }
+        public virtual Result VisitArrayDimensionWithNOSIZE(ArrayDimensionWithNOSIZE node, INFO info) {
+            return VisitChildren(node, info);
+
+        }
+
+        public virtual Result VisitConditionalExpression(ConditionalExpression node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
     }
 }

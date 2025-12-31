@@ -118,7 +118,7 @@ namespace CParser {
             EXPRESSION_LOGICAL_AND, EXPRESSION_LOGICAL_OR_INCLUSIVE_OR,
             EXPRESSION_LOGICAL_OR, CONDITIONAL_EXPRESSION_OR,
             CONDITIONAL_EXPRESSION, ASSIGNMENT_EXPRESSION_CONDITIONAL,
-            ASSIGNMENT_EXPRESSION,
+            ASSIGNMENT_EXPRESSION,ARRAY_DIMENSION_WITH_SIZE,ARRAY_DIMENSION_WITHOUT_SIZE,
 
             CHAR_TYPE,
             UNARY_EXPRESSION_CAST,
@@ -469,9 +469,6 @@ namespace CParser {
     }
 
 
-
-
-
     public abstract class Statement : ASTComposite {
         public Statement(uint numcontexts, uint type, string name) :
             base(numcontexts, type, name) {
@@ -522,8 +519,9 @@ namespace CParser {
         }
     }
 
-    public class UnaryExpressionUnaryOperatorAmbersand : CExpression {
-
+    public class UnaryExpressionUnaryOperatorAmbersand : CExpression
+    {
+        public const int OPERAND = 0;
         public UnaryExpressionUnaryOperatorAmbersand() :
             base(2,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_AMBERSAND,
@@ -536,7 +534,7 @@ namespace CParser {
     }
 
     public class UnaryExpressionUnaryOperatorAsterisk : CExpression {
-
+        public const int OPERAND = 0;
         public UnaryExpressionUnaryOperatorAsterisk() :
             base(2,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_ASTERISK,
@@ -549,7 +547,7 @@ namespace CParser {
     }
 
     public class UnaryExpressionUnaryOperatorPLUS : CExpression {
-
+        public const int OPERAND = 0;
         public UnaryExpressionUnaryOperatorPLUS() :
             base(2,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_PLUS,
@@ -564,7 +562,7 @@ namespace CParser {
 
 
     public class UnaryExpressionUnaryOperatorMINUS : CExpression {
-
+        public const int OPERAND = 0;
         public UnaryExpressionUnaryOperatorMINUS() :
             base(2,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_HYPHEN,
@@ -579,7 +577,7 @@ namespace CParser {
 
 
     public class UnaryExpressionUnaryOperatorTilde : CExpression {
-
+        public const int OPERAND = 0;
         public UnaryExpressionUnaryOperatorTilde() :
             base(2,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_TILDE,
@@ -594,7 +592,7 @@ namespace CParser {
 
 
     public class UnaryExpressionUnaryOperatorNOT : CExpression {
-
+        public const int OPERAND = 0;
         public UnaryExpressionUnaryOperatorNOT() :
             base(2,
                 (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_UNARY_OPERATOR_NOT,
@@ -608,22 +606,24 @@ namespace CParser {
     }
 
     public class UnaryExpressionSizeOfExpression : CExpression {
-        public UnaryExpressionSizeOfExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF, "UnaryExpressionSizeOf") {
+        public const int EXPRESSION = 0;
+        public UnaryExpressionSizeOfExpression() : base(1, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF, "UnaryExpressionSizeOf") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            return visitor.VisitUnaryExpressionSizeOfExpression(this, info);
+            return visitor.VisitUnarySIZEOFExpression(this, info);
         }
     }
 
     public class UnaryExpressionSizeOfTypeName : CExpression {
-        public UnaryExpressionSizeOfTypeName() : base(2, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF_TYPE, "UnaryExpressionSizeOfType") {
+        public const int TYPE = 0;
+        public UnaryExpressionSizeOfTypeName() : base(1, (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_SIZEOF_TYPE, "UnaryExpressionSizeOfType") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            return visitor.VisitUnaryExpressionSizeOfTypename(this, info);
+            return visitor.VisitUnarySIZEOFTypeName(this, info);
         }
     }
 
@@ -654,6 +654,7 @@ namespace CParser {
     }
 
     public class ExpressionRelationalLess : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionRelationalLess() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS, "ExpressionRelationalLess") {
         }
 
@@ -663,7 +664,9 @@ namespace CParser {
         }
     }
 
-    public class ExpressionRelationalGreater : CExpression {
+    public class ExpressionRelationalGreater : CExpression
+    {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionRelationalGreater() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER, "ExpressionRelationalGreater") {
         }
 
@@ -674,6 +677,7 @@ namespace CParser {
     }
 
     public class ExpressionRelationalLessOrEqual : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionRelationalLessOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_LESS_OR_EQUAL, "ExpressionRelationalLessOrEqual") {
         }
 
@@ -684,6 +688,7 @@ namespace CParser {
     }
 
     public class ExpressionRelationalGreaterOrEqual : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionRelationalGreaterOrEqual() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_RELATIONAL_GREATER_OR_EQUAL, "ExpressionRelationalGreaterOrEqual") {
         }
 
@@ -704,12 +709,14 @@ namespace CParser {
     }
 
     public class ExpressionLogicalAnd : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionLogicalAnd() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_AND, "ExpressionLogicalAnd") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
-            INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            INFO info = default(INFO))
+        {
+            return visitor.VisitLogicalAND(this, info);
         }
     }
 
@@ -724,12 +731,14 @@ namespace CParser {
     }
 
     public class ExpressionLogicalOr : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionLogicalOr() : base(2, (uint)TranslationUnitAST.NodeTypes.EXPRESSION_LOGICAL_OR, "ExpressionLogicalOr") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
-            INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            INFO info = default(INFO))
+        {
+            return visitor.VisitLogicalOR(this, info);
         }
     }
 
@@ -744,13 +753,15 @@ namespace CParser {
     }
 
     public class ConditionalExpression : CExpression {
-        public ConditionalExpression() : base(2, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression") {
+        public const int CONDITION = 0, TRUE_EXPRESSION = 1, FALSE_EXPRESSION = 2;
+
+        public ConditionalExpression() : base(3, (uint)TranslationUnitAST.NodeTypes.CONDITIONAL_EXPRESSION, "ConditionalExpression") {
         }
 
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitConditionalExpression(this, info);
         }
     }
 
@@ -795,6 +806,28 @@ namespace CParser {
 
     }
 
+    public class ArrayDimensionWithSIZE : CExpression {
+
+        public const int ARRAY = 0,SIZE = 1;
+        public ArrayDimensionWithSIZE() : base(2,
+            (uint)TranslationUnitAST.NodeTypes.ARRAY_DIMENSION_WITH_SIZE, "ArrayDimensionWithSIZE") {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitArrayDimensionWithSIZE(this, info);
+        }
+
+    }
+
+    public class ArrayDimensionWithNOSIZE : CExpression {
+        public const int ARRAY = 0;
+        public ArrayDimensionWithNOSIZE() : base(1,
+            (uint)TranslationUnitAST.NodeTypes.ARRAY_DIMENSION_WITHOUT_SIZE, "ArrayDimensionWithoutSIZE") {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitArrayDimensionWithNOSIZE(this, info);
+        }
+    }
+
     public class Postfixexpression_FunctionCallNoArgs : CExpression {
         public const int FUNCTION = 0;
         public Postfixexpression_FunctionCallNoArgs() : base(1,
@@ -808,9 +841,9 @@ namespace CParser {
 
     public class Postfixexpression_FunctionCallWithArgs : CExpression {
 
-        public const int FUNCTION = 0;
+        public const int FUNCTION = 0 , ARGUMENTS = 1;
 
-        public Postfixexpression_FunctionCallWithArgs() : base(1,
+        public Postfixexpression_FunctionCallWithArgs() : base(2,
             (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_FUNCTIONCALLWITHARGS, "postfix_expression_FunctionCallWithArgs") {
         }
 
@@ -863,7 +896,7 @@ namespace CParser {
 
         public const int ACCESS = 0;
         public Postfixexpression_Decrement() : base(1,
-            (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_DECREMENT, "postfix_expression_Increment") {
+            (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_DECREMENT, "postfix_expression_Decrement") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
@@ -884,13 +917,14 @@ namespace CParser {
     }
 
     public class Expression_Cast : CExpression {
+        public const int TYPE = 0, EXPRESSION = 1;
         public Expression_Cast() : base(2,
             (uint)TranslationUnitAST.NodeTypes.UNARY_EXPRESSION_CAST,
             "ExpressionCast") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitCastExpressionCast(this, info);
         }
     }
 
@@ -919,7 +953,8 @@ namespace CParser {
         }
     }
 
-    public class ExpressionModulus : CExpression {
+    public class ExpressionModulus : CExpression
+    {
         public ExpressionModulus() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_MODULO,
             "ExpressionModulo") {
@@ -933,28 +968,31 @@ namespace CParser {
     }
 
     public class Expression_AssignmentLeft : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public Expression_AssignmentLeft() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_LEFT,
             "ExpressionAssignmentLeft") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentLeft(this, info);
         }
     }
 
     public class Expression_AssignmentRight : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public Expression_AssignmentRight() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_RIGHT,
             "ExpressionAssignmentRight") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentRight(this, info);
         }
     }
 
     public class Expression_AssignmentAnd : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public Expression_AssignmentAnd() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_AND,
             "ExpressionAssignmentAND") {
@@ -963,47 +1001,51 @@ namespace CParser {
 
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentAnd(this, info);
         }
     }
 
     public class Expression_AssignmentXor : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public Expression_AssignmentXor() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_XOR,
             "ExpressionAssignmentXOR") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentXor(this, info);
         }
     }
 
     public class Expression_AssignmentOr : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public Expression_AssignmentOr() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_OR,
             "ExpressionAssignmentOR") {
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentOr(this, info);
         }
     }
 
     public class ExpressionAssignmentMultiplication : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionAssignmentMultiplication() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_MULTIPLICATION,
-            "ExpressionAssignmentDiv") {
+            "ExpressionAssignmentMultiplication") {
 
         }
 
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentMul(this, info);
         }
     }
 
 
     public class ExpressionAssignmentDivision : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionAssignmentDivision() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_DIVISION,
             "ExpressionAssignmentDivision") {
@@ -1013,11 +1055,12 @@ namespace CParser {
 
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentDiv(this, info);
         }
     }
 
     public class ExpressionAssignmentModulo : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionAssignmentModulo() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_MODULO,
             "ExpressionAssignmentModulo") {
@@ -1026,11 +1069,12 @@ namespace CParser {
 
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentMod(this, info);
         }
     }
 
     public class ExpressionAssignmentAddition : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionAssignmentAddition() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_ADDITION,
             "ExpressionAssignmentAddition") {
@@ -1039,11 +1083,12 @@ namespace CParser {
 
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentAdd(this, info);
         }
     }
 
     public class ExpressionAssignmentSubtraction : CExpression {
+        public const int LEFT = 0, RIGHT = 1;
         public ExpressionAssignmentSubtraction() : base(2,
             (uint)TranslationUnitAST.NodeTypes.EXPRESSION_ASSIGNMENT_SUBTRACTION,
             "ExpressionAssignmentSubtraction") {
@@ -1052,7 +1097,7 @@ namespace CParser {
 
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
-            throw new NotImplementedException();
+            return visitor.VisitExpressionAssignmentSub(this, info);
         }
     }
 
