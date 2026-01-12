@@ -5,12 +5,20 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static CParser.Expression_Assignment;
 
 namespace CParser {
     public class BaseASTVisitor<Result, INFO>{
         public BaseASTVisitor() {
 
+        }
+
+        public Result VisitContext(ASTComposite node, uint context, INFO info) {
+            foreach (ASTElement astElement in node.MChildren[context]) {
+                Visit(astElement, info);
+            }
+            return default(Result);
         }
 
         public Result VisitChildren(ASTComposite node, INFO info) {

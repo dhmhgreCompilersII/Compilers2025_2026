@@ -99,7 +99,7 @@ namespace CParser {
             // 1.Create context clusters
             CreateContext(node, FunctionDefinitionAST.DECLARATION_SPECIFIERS, "Declaration Specifier");
             CreateContext(node, FunctionDefinitionAST.FUNCTION_BODY, "Body");
-            CreateContext(node, FunctionDefinitionAST.DECLARATOR, "Name");
+            CreateContext(node, FunctionDefinitionAST.DECLARATOR, "Declarator");
             CreateContext(node, FunctionDefinitionAST.PARAMETER_DECLARATIONS, "Parameter Declarations");
 
             // 1. Print graphviz edge from parent to this node

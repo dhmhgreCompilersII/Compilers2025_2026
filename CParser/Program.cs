@@ -33,10 +33,13 @@ namespace CParser {
 
             // Ask the parser to start parsing at rule 'compilationUnit'
             parser.Profile = true;
-            CScopeSystem.GetInstance().EnterScope(ScopeType.File);
+            
             IParseTree syntaxTree = parser.translation_unit();
-            CScopeSystem.GetInstance().ExitScope();
-            Console.WriteLine($"{CScopeSystem.GetInstance().ToString()}");
+
+            
+
+
+            //Console.WriteLine($"{CScopeSystem.GetInstance().ToString()}");
             // Print the tree in LISP format
             //Console.WriteLine(syntaxTree.ToStringTree());
 
@@ -47,13 +50,13 @@ namespace CParser {
             ANLTRST2ASTGenerationVisitor anltrst2AstGenerationVisitor = new ANLTRST2ASTGenerationVisitor();
             anltrst2AstGenerationVisitor.Visit(syntaxTree);
 
-
-
             ASTPrinterVisitor astPrinterVisitor = new ASTPrinterVisitor("ast.dot");
             astPrinterVisitor.Visit(anltrst2AstGenerationVisitor.Root, null);
 
-
-
+            // Build Scope System after parsing and AST generation
+            ScopeBuilderVisitor scopeBuilderVisitor = new ScopeBuilderVisitor();
+            scopeBuilderVisitor.Visit(anltrst2AstGenerationVisitor.Root, null);
+            Console.WriteLine($"{CScopeSystem.GetInstance().ToString()}");
         }
 
 
