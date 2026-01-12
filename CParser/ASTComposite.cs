@@ -73,6 +73,14 @@ namespace CParser {
             }
             m_children[(uint)context].Add(child);
         }
+
+        public T? GetChild<T>(uint context, uint index = 0) where T:class {
+            if (m_children[context][(int)index] is not T) {
+                throw new InvalidCastException($"Child at context {context} index {index} is not of type {typeof(T).Name}");
+            }
+            return m_children[context][(int)index] as T;
+        }
+
     }
 
     public abstract class ASTLeaf : ASTElement {
@@ -277,20 +285,12 @@ namespace CParser {
     public class FunctionDefinitionAST : ASTComposite {
         public const int DECLARATION_SPECIFIERS = 0,
             DECLARATOR = 1, PARAMETER_DECLARATIONS = 2, FUNCTION_BODY = 3;
+
+        private string m_functionName;
+
         public FunctionDefinitionAST() :
             base(4, (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION, "FunctionDefinitionAST") {
         }
-
-        public T? getChild<T>(uint? context, uint index = 0) where T : class
-        {
-            if (MChildren[(int)context][(int)index] is not T)
-            {
-                throw new InvalidCastException();
-            }
-
-            return MChildren[(uint)context][(int)index] as T;
-        }
-
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitFunctionDefinition(this, info);
         }

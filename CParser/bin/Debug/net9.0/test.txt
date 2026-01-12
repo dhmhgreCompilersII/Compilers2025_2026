@@ -1,59 +1,58 @@
 
-int main(int , char , int (*)(int a, int b));
 
-int main(int argc, char **argv, int (*foo)(int a, int b)) {
-	int a;	
+int main(int argc, char **argv) {
+	int **a;	
 	a=1;
 	b=a-2*1+b/3;
 	++a;
 
 	//PostfixOperators
-	a[7];
-	call();
-	add(5,2);
-	a.var = 1;
-	a->point = a;
-	b++;
-	b--;
+	//a[7];
+	//call();
+	//add(5,2);
+	//a.var = 1;
+	//a->point = a;
+	//b++;
+	//b--;
 	//
 
 	//LogicalOperators
-	c = A && B || C;
-	a = A & B | C;
-	a = a ^ b;
-	a = ~b;
-	b = !c;
+	//c = A && B || C;
+	//a = A & B | C;
+	//a = a ^ b;
+	//a = ~b;
+	//b = !c;
 	//
 
 	//CastOperators
-	d = (int)a;
+	//d = (int)a;
 	//
 
 	//RelationalOperator
-	x = y > x;
-	z = x < z;
-	z = x == z;
-	a = a >= b;
-	z = z <= c;
-	z = z != c;
+	//x = y > x;
+	//z = x < z;
+	//z = x == z;
+	//a = a >= b;
+	//z = z <= c;
+	//z = z != c;
 	//
 
 	//AssignmentOperators
-	a += 3;
-	a -= 2;
-	a *= 4;
-	a /= 2;
-	a %= 3;
-	a <<= 1;
-	a >>= 1;
-	a &= b;
-	a |= b;
-	a ^= b;
+	//a += 3;
+	//a -= 2;
+	//a *= 4;
+	//a /= 2;
+	//a %= 3;
+	//a <<= 1;
+	//a >>= 1;
+	//a &= b;
+	//a |= b;
+	//a ^= b;
 	//
 
 	//ConditionalOperators
-	a = (b > c) ? b : c;
-	b = (a < c) ? a : c;
-	c = a ? b : a;
+	//a = (b > c) ? b : c;
+	//b = (a < c) ? a : c;
+	//c = a ? b : a;
 	//
 }
