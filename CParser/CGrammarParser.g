@@ -7,9 +7,7 @@ options { tokenVocab = CGrammarLexer; }
 }
 
 @parser::members {
-	bool enterFunctionDeclarator = false;
-	uint declaratorsNestingLevel = 0;
-	string functioname = string.Empty;
+	
 }
 
 // Parser rules
@@ -168,22 +166,12 @@ initializer
 initializer_list: initializer (COMMA initializer)*
 	;
 
-declarator
-@init   { declaratorsNestingLevel++; }
-	: pointer direct_declarator  
+declarator: pointer direct_declarator  
 	| direct_declarator
 	;
-finally { declaratorsNestingLevel--; }
 
 direct_declarator
-	: IDENTIFIER  {
-		if(enterFunctionDeclarator && declaratorsNestingLevel==1)
-		{
-			functioname = $IDENTIFIER.text;
-		}
-	}
-	
-	#IDENTIFIER
+	: IDENTIFIER												#IDENTIFIER
 	| LPAREN declarator RPAREN									#Parenthesis
 	| direct_declarator LBRACKET constant_expression RBRACKET	#ArrayDimensionWithSIZE
 	| direct_declarator LBRACKET RBRACKET						#ArrayDimensionWithNOSIZE
@@ -227,25 +215,7 @@ direct_abstract_declarator
 	;
 
 
-function_definition	: declaration_specifiers  
-					  {
-						enterFunctionDeclarator=true;
-						declaratorsNestingLevel=0;
-					  }
-					  declarator 
-					  {
-						declaratorsNestingLevel=0;
-						enterFunctionDeclarator=false;
-						
-						Symbol newSymbol = 
-						new Symbol(functioname, Symbol.SymbolType.Function, null);
-
-						CScopeSystem.GetInstance().AddSymbol(CScope.Namespace.Ordinary,
-						functioname,newSymbol);
-						CScopeSystem.GetInstance().EnterScope(ScopeType.Function,functioname);
-					  } 
-					  compound_statement 
-					  {}
+function_definition	: declaration_specifiers  declarator  compound_statement 
 					;
 
 declaration_specifiers : (storage_class_specifier|type_specifier|type_qualifier)+

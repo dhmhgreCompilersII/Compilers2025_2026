@@ -1,4 +1,7 @@
-int main(int argc, char **argv) {
+
+int main(int , char , int (*)(int a, int b));
+
+int main(int argc, char **argv, int (*foo)(int a, int b)) {
 	int a;	
 	a=1;
 	b=a-2*1+b/3;
