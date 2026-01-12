@@ -18,6 +18,7 @@ namespace CParser {
             foreach (ASTElement astElement in node.MChildren[context]) {
                 Visit(astElement, info);
             }
+
             return default(Result);
         }
 
@@ -113,52 +114,52 @@ namespace CParser {
         }
 
         public virtual Result VisitUnaryExpressionOperatorAmbersand(UnaryExpressionUnaryOperatorAmbersand node,
-            INFO info) {
+                                                                    INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionOperatorAsterisk(UnaryExpressionUnaryOperatorAsterisk node,
-            INFO info) {
+                                                                   INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionOperatorPLUS(UnaryExpressionUnaryOperatorPLUS node,
-            INFO info) {
+                                                               INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionOperatorMINUS(UnaryExpressionUnaryOperatorMINUS node,
-            INFO info) {
+                                                                INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionOperatorTilde(UnaryExpressionUnaryOperatorTilde node,
-            INFO info) {
+                                                                INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionOperatorNOT(UnaryExpressionUnaryOperatorNOT node,
-            INFO info) {
+                                                              INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionIncrement(UnaryExpressionIncrement node,
-            INFO info) {
+                                                            INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionDecrement(UnaryExpressionDecrement node,
-            INFO info) {
+                                                            INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionSizeOfExpression(UnaryExpressionSizeOfExpression node,
-            INFO info) {
+                                                                   INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result VisitUnaryExpressionSizeOfTypename(UnaryExpressionSizeOfTypeName node,
-            INFO info) {
+                                                                 INFO info) {
             return VisitChildren(node, info);
         }
 
@@ -260,12 +261,12 @@ namespace CParser {
         }
 
         public virtual Result Visitpostfix_expression_FunctionCallNoArgs(Postfixexpression_FunctionCallNoArgs node,
-            INFO info) {
+                                                                         INFO info) {
             return VisitChildren(node, info);
         }
 
         public virtual Result Visitpostfix_expression_FunctionCallWithArgs(Postfixexpression_FunctionCallWithArgs node,
-            INFO info) {
+                                                                           INFO info) {
             return VisitChildren(node, info);
         }
 
@@ -274,7 +275,7 @@ namespace CParser {
         }
 
         public virtual Result Visitpostfix_expression_PointerMemberAccess(Postfixexpression_PointerMemberAccess node,
-            INFO info) {
+                                                                          INFO info) {
             return VisitChildren(node, info);
         }
 
@@ -313,7 +314,9 @@ namespace CParser {
         public virtual Result VisitExpressionAssignmentDivision(ExpressionAssignmentDivision node, INFO info) {
             return VisitChildren(node, info);
         }
-        public virtual Result VisitExpressionAssignmentMultiplication(ExpressionAssignmentMultiplication node, INFO info) {
+
+        public virtual Result VisitExpressionAssignmentMultiplication(ExpressionAssignmentMultiplication node,
+                                                                      INFO info) {
             return VisitChildren(node, info);
         }
 
@@ -346,6 +349,10 @@ namespace CParser {
         }
 
         public virtual Result VisitExpressionCast(Expression_Cast node, INFO info) {
+            return VisitChildren(node, info);
+        }
+
+        public virtual Result VisitDeclarationSpecifiers(Declaration_Specifiers node, INFO info) {
             return VisitChildren(node, info);
         }
     }

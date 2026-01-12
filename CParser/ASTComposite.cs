@@ -143,6 +143,8 @@ namespace CParser {
             EXPRESSION_ASSIGNMENT_XOR,
             EXPRESSION_ASSIGNMENT_OR,
 
+            DECLARATION_SPECIFIERS,
+
             STATEMENT_EXPRESSION,
             INTEGER
         }
@@ -1026,4 +1028,20 @@ namespace CParser {
             return visitor.VisitStatementExpression(this, info);
         }
     }
+
+    public class Declaration_Specifiers : ASTComposite{
+        public const int SPECIFIERS = 0;
+
+        public Declaration_Specifiers() :
+            base(1,
+                 (uint)TranslationUnitAST.NodeTypes.DECLARATION_SPECIFIERS, "Declaration_Specifiers") {
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitDeclarationSpecifiers(this, info);
+        }
+
+
+    }
+
 }

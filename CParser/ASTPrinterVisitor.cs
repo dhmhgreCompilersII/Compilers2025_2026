@@ -624,6 +624,14 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ASTComposite info) {
+            CreateContext(node, ConditionalExpression.CONDITION, "Specifiers");
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
         public override int VisitIdentifier(IDENTIFIER node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIdentifier(node, parent);
