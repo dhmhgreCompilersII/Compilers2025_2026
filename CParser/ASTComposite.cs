@@ -4,6 +4,7 @@ using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
@@ -278,6 +279,16 @@ namespace CParser {
             DECLARATOR = 1, PARAMETER_DECLARATIONS = 2, FUNCTION_BODY = 3;
         public FunctionDefinitionAST() :
             base(4, (uint)TranslationUnitAST.NodeTypes.FUNCTION_DEFINITION, "FunctionDefinitionAST") {
+        }
+
+        public T? getChild<T>(uint? context, uint index = 0) where T : class
+        {
+            if (MChildren[(int)context][(int)index] is not T)
+            {
+                throw new InvalidCastException();
+            }
+
+            return MChildren[(uint)context][(int)index] as T;
         }
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {

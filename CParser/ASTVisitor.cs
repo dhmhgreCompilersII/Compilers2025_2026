@@ -13,6 +13,14 @@ namespace CParser {
 
         }
 
+        /*public Result VisitContext(ASTComposite node, INFO info)
+        {
+            foreach (ASTElement astElement in node.MChildren)
+            {
+                
+            }
+        }*/
+
         public Result VisitChildren(ASTComposite node, INFO info) {
             for (int context = 0; context < node.MContexts; context++) {
                 foreach (ASTElement astElement in node.MChildren[context]) {
