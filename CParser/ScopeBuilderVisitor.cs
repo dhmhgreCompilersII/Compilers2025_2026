@@ -9,7 +9,8 @@ using static CParser.Symbol;
 namespace CParser
 {
 
-    public record ParentInfo(ASTComposite context) {
+    public record ParentInfo(ASTComposite context)
+    {
     }
 
 
@@ -26,16 +27,16 @@ namespace CParser
             return 0;
         }
 
-        public override int VisitFunctionDefinition(FunctionDefinitionAST node, ParentInfo info) {
+        public override int VisitDeclaration(DeclarationAST node, ParentInfo info)
+        {
 
-            // 1. Visit function name and place it to current scope (global scope)
-            IDENTIFIER? functionName =
-                node.GetChild<IDENTIFIER>(FunctionDefinitionAST.DECLARATOR);
-            if (functionName == null) {
-                throw new Exception("FunctionDefinitionAST has no function name.");
-            }
+            // 1. Visit Type Specifier
+            VisitContext(node, DeclarationAST.TYPE_SPECIFIER, info);
+            return 0;
+        }
 
-        public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ParentInfo info) {
+        public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ParentInfo info)
+        {
 
             var mtypes = node.MChildren[Declaration_Specifiers.SPECIFIERS]
                 .OfType<ASTElement>()
@@ -45,14 +46,18 @@ namespace CParser
             CType.TypeKind tp;
             int size;
 
-            switch (true) {
+            switch (true)
+            {
                 case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.LONG_TYPE) ||
                                mtypes.Contains((uint)TranslationUnitAST.NodeTypes.INTEGER_TYPE):
                     tp = CType.TypeKind.Int;
                     IntegerType.IntegerKind sign;
-                    if (mtypes.Contains((uint)TranslationUnitAST.NodeTypes.UNSIGNED_TYPE)) {
+                    if (mtypes.Contains((uint)TranslationUnitAST.NodeTypes.UNSIGNED_TYPE))
+                    {
                         sign = IntegerType.IntegerKind.Unsigned;
-                    } else {
+                    }
+                    else
+                    {
                         sign = IntegerType.IntegerKind.Signed;
                     }
                     size = mtypes.Count(t => t == (uint)TranslationUnitAST.NodeTypes.LONG_TYPE) >= 2 ? 8 : 4;
@@ -75,28 +80,26 @@ namespace CParser
             return 0;
         }
 
-        public override int VisitIdentifier(IDENTIFIER node, ParentInfo info) {
+
+
+
+        public override int VisitIdentifier(IDENTIFIER node, ParentInfo info)
+        {
 
             // Check if this identifier is a function parameter
-            if (info != null &&
-                (info.context == FunctionDefinitionAST.PARAMETER_DECLARATIONS ||
-                info.context == DeclarationAST.DECLARATORS)) {
-                // This identifier is a function parameter
-                Symbol paramSymbol = new Symbol(node.MName,
-                    Symbol.SymbolType.Variable,
-                    node);
-                CScopeSystem.GetInstance().AddSymbol(CScope.Namespace.Ordinary,
-                                                     node.MName,
-                                                     paramSymbol);
-            }
+
             return base.VisitIdentifier(node, info);
         }
 
-        public override int VisitDeclaration(DeclarationAST node, ParentInfo info) {
-            // Visit declarators to add variables to current scope
-            ParentInfo declInfo = new ParentInfo(DeclarationAST.DECLARATORS);
-            base.VisitDeclaration(node, declInfo);
-            return 0;
+        public override int VisitPointerType(PointerTypeAST node, ParentInfo info)
+        {
+
+            // 1. 
+
+
+
+
+            return base.VisitPointerType(node, info);
         }
 
 
