@@ -9,7 +9,7 @@ using static CParser.Symbol;
 namespace CParser
 {
 
-    public record ParentInfo(uint context)
+    public record ParentInfo(uint context) 
     {
     }
 
