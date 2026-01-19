@@ -59,6 +59,8 @@ namespace CParser {
                 else {
                     declContext.MParent.AddTypeParameter(declContext.MTypeSpecifier);
                 }
+                declContext.MTypeRoot.TypeDebugLog();
+
             }
 
             return 0;
