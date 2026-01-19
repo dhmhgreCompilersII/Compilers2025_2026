@@ -53,6 +53,14 @@ namespace CParser {
             return default(Result);
         }
 
+        public virtual Result VisitUnsignedType(UnsignedTypeAST node, INFO info) {
+            return default(Result);
+        }
+
+        public virtual Result VisitLongType(LongTypeAST node, INFO info) {
+            return default(Result);
+        }
+
         public virtual Result VisitCharType(CharTypeAST node, INFO info) {
             return default(Result);
         }

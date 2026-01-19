@@ -27,20 +27,56 @@ namespace CParser {
 
             // 1. Visit Type Specifier
             VisitContext(node, DeclarationAST.TYPE_SPECIFIER, info);
-
-
             return 0;
         }
 
         public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ParentInfo info) {
-            return base.VisitDeclarationSpecifiers(node, info);
+
+            var mtypes = node.MChildren[Declaration_Specifiers.SPECIFIERS]
+                .OfType<ASTElement>()
+                .Select(child => child.MType)
+                .ToList();
+
+            CType.TypeKind tp;
+            int size;
+
+            switch (true) {
+                case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.LONG_TYPE) ||
+                               mtypes.Contains((uint)TranslationUnitAST.NodeTypes.INTEGER_TYPE):
+                    tp = CType.TypeKind.Int;
+                    IntegerType.IntegerKind sign;
+                    if (mtypes.Contains((uint)TranslationUnitAST.NodeTypes.UNSIGNED_TYPE)) {
+                        sign = IntegerType.IntegerKind.Unsigned;
+                    } else {
+                        sign = IntegerType.IntegerKind.Signed;
+                    }
+                    size = mtypes.Count(t => t == (uint)TranslationUnitAST.NodeTypes.LONG_TYPE) >= 2 ? 8 : 4;
+                    IntegerType intType = new IntegerType(sign, size);
+                    break;
+
+                case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.FLOAT_TYPE) ||
+                               mtypes.Contains((uint)TranslationUnitAST.NodeTypes.DOUBLE_TYPE):
+                    tp = CType.TypeKind.Float;
+
+                    break;
+
+                default:
+                    tp = CType.TypeKind.Int;
+                    size = 4;
+                    break;
+            }
+            ;
+
+            return 0;
         }
+
+
 
 
         public override int VisitIdentifier(IDENTIFIER node, ParentInfo info) {
 
             // Check if this identifier is a function parameter
-            
+
             return base.VisitIdentifier(node, info);
         }
 
@@ -54,7 +90,7 @@ namespace CParser {
             return base.VisitPointerType(node, info);
         }
 
-        
+
 
 
     }

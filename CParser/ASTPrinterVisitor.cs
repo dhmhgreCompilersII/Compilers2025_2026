@@ -646,6 +646,17 @@ namespace CParser {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIntegerType(node, parent);
         }
+
+        public override int VisitUnsignedType(UnsignedTypeAST node, ASTComposite parent) {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitUnsignedType(node, parent);
+        }
+
+        public override int VisitLongType(LongTypeAST node, ASTComposite parent) {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitLongType(node, parent);
+        }
+
         public override int VisitCharType(CharTypeAST node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitCharType(node, parent);

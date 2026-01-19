@@ -303,7 +303,14 @@ namespace CParser {
                 case CGrammarParser.CHAR:
                     CharTypeAST charNode = new CharTypeAST(node.GetText());
                     parent.AddChild(charNode, currentContext.Context); // assuming context INT for simplicity
-
+                    break;
+                case CGrammarParser.LONG:
+                    LongTypeAST longNode = new LongTypeAST(node.GetText());
+                    parent.AddChild(longNode, currentContext.Context); // assuming context LONG for simplicity
+                    break;
+                case CGrammarParser.UNSIGNED:
+                    UnsignedTypeAST unsignedNode = new UnsignedTypeAST(node.GetText());
+                    parent.AddChild(unsignedNode, currentContext.Context); // assuming context LONG for simplicity
                     break;
                 case CGrammarParser.CONSTANT: 
                     INTEGER conNode = new INTEGER(node.GetText());

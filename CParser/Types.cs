@@ -116,6 +116,7 @@ namespace CParser {
         }
         private IntegerKind m_integerkind;
         private int m_size; // in bytes
+
         public IntegerType(IntegerKind ikind, int size)
             : base(TypeKind.Int) {
             m_integerkind = ikind;
@@ -132,6 +133,7 @@ namespace CParser {
             }
             return false;
         }
+
     }
 
     public class FloatingPointType : CType {

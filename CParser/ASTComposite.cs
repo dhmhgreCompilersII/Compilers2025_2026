@@ -96,34 +96,35 @@ namespace CParser {
     public class TranslationUnitAST : ASTComposite {
 
         public enum NodeTypes {
-            TRANSLATION_UNIT = 0, DECLARATION = 1, FUNCTION_DEFINITION = 2,
-            COMPOUNDSTATEMENT = 3, POINTER_TYPE = 4, FUNCTION_TYPE = 5,
-            IDENTIFIER = 6, INTEGER_TYPE = 7, PARAMETER_DECLARATION = 8,
-            EXPRESSION_STATEMENT = 9, EXPRESSION_IDENTIFIER = 10,
-            EXPRESSION_ASSIGNMENT = 11, EXPRESSION_NUMBER = 12,
-            EXPRESSION_ADDITION = 13,
-            EXPRESSION_STRINGLITERAL = 14,
-            EXPRESSION_MULTIPLICATION = 15, EXPRESSION_SUBTRACTION = 16,
-            EXPRESSION_DIVISION = 17, EXPRESSION_MODULO = 18,
-            EXPRESSION_EQUALITY_EQUAL = 19, EXPRESSION_EQUALITY_NOTEQUAL = 20,
-            EXPRESSION_BITWISE_AND = 21, EXPRESSION_BITWISE_OR = 22, EXPRESSION_BITWISE_XOR = 23,
+            TRANSLATION_UNIT , DECLARATION , FUNCTION_DEFINITION ,
+            COMPOUNDSTATEMENT , POINTER_TYPE , FUNCTION_TYPE ,
+            IDENTIFIER , INTEGER_TYPE ,LONG_TYPE,UNSIGNED_TYPE,SIGNED_TYPE,
+            FLOAT_TYPE, DOUBLE_TYPE, PARAMETER_DECLARATION ,
+            EXPRESSION_STATEMENT , EXPRESSION_IDENTIFIER ,
+            EXPRESSION_ASSIGNMENT , EXPRESSION_NUMBER ,
+            EXPRESSION_ADDITION ,
+            EXPRESSION_STRINGLITERAL ,
+            EXPRESSION_MULTIPLICATION , EXPRESSION_SUBTRACTION ,
+            EXPRESSION_DIVISION , EXPRESSION_MODULO ,
+            EXPRESSION_EQUALITY_EQUAL , EXPRESSION_EQUALITY_NOTEQUAL ,
+            EXPRESSION_BITWISE_AND , EXPRESSION_BITWISE_OR , EXPRESSION_BITWISE_XOR ,
 
-            POSTFIX_EXPRESSION_ARRAYSUBSCRIPT = 24, POSTFIX_EXPRESSION_FUNCTIONCALLNOARGS = 25,
-            POSTFIX_EXPRESSION_FUNCTIONCALLWITHARGS = 26, POSTFIX_EXPRESSION_MEMBERACCESS = 27,
-            POSTFIX_EXPRESSION_POINTERMEMBERACCESS = 28, POSTFIX_EXPRESSION_INCREMENT = 29,
-            POSTFIX_EXPRESSION_DECREMENT = 30, EXPRESSION_COMMAEXPRESSION = 31,
+            POSTFIX_EXPRESSION_ARRAYSUBSCRIPT , POSTFIX_EXPRESSION_FUNCTIONCALLNOARGS ,
+            POSTFIX_EXPRESSION_FUNCTIONCALLWITHARGS , POSTFIX_EXPRESSION_MEMBERACCESS ,
+            POSTFIX_EXPRESSION_POINTERMEMBERACCESS , POSTFIX_EXPRESSION_INCREMENT ,
+            POSTFIX_EXPRESSION_DECREMENT , EXPRESSION_COMMAEXPRESSION ,
 
-            UNARY_EXPRESSION_INCREMENT = 32,
-            UNARY_EXPRESSION_DECREMENT = 33,
-            UNARY_EXPRESSION_UNARY_OPERATOR_AMBERSAND = 34,
-            UNARY_EXPRESSION_UNARY_OPERATOR_ASTERISK = 35,
-            UNARY_EXPRESSION_UNARY_OPERATOR_PLUS = 36,
-            UNARY_EXPRESSION_UNARY_OPERATOR_HYPHEN = 37,
-            UNARY_EXPRESSION_UNARY_OPERATOR_TILDE = 38,
-            UNARY_EXPRESSION_UNARY_OPERATOR_NOT = 39,
+            UNARY_EXPRESSION_INCREMENT ,
+            UNARY_EXPRESSION_DECREMENT ,
+            UNARY_EXPRESSION_UNARY_OPERATOR_AMBERSAND ,
+            UNARY_EXPRESSION_UNARY_OPERATOR_ASTERISK ,
+            UNARY_EXPRESSION_UNARY_OPERATOR_PLUS ,
+            UNARY_EXPRESSION_UNARY_OPERATOR_HYPHEN ,
+            UNARY_EXPRESSION_UNARY_OPERATOR_TILDE ,
+            UNARY_EXPRESSION_UNARY_OPERATOR_NOT ,
 
 
-            UNARY_EXPRESSION_SIZEOF = 40, UNARY_EXPRESSION_SIZEOF_TYPE = 41,
+            UNARY_EXPRESSION_SIZEOF , UNARY_EXPRESSION_SIZEOF_TYPE ,
             EXPRESSION_RELATIONAL_SHIFTL, EXPRESSION_RELATIONAL_SHIFTR,
             EXPRESSION_RELATIONAL_LESS,
             EXPRESSION_RELATIONAL_GREATER, EXPRESSION_RELATIONAL_LESS_OR_EQUAL,
@@ -229,6 +230,32 @@ namespace CParser {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitIntegerType(this, info);
+        }
+
+        protected override void SetNodeTypeName(string name) {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+    }
+
+    public class LongTypeAST : ASTLeaf {
+        public LongTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.LONG_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitLongType(this, info);
+        }
+
+        protected override void SetNodeTypeName(string name) {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+    }
+
+    public class UnsignedTypeAST : ASTLeaf {
+        public UnsignedTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.UNSIGNED_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitUnsignedType(this, info);
         }
 
         protected override void SetNodeTypeName(string name) {
