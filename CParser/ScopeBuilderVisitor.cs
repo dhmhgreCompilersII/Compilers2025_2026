@@ -9,8 +9,7 @@ using static CParser.Symbol;
 namespace CParser
 {
 
-    public record ParentInfo(uint context) 
-    {
+    public record ParentInfo(ASTComposite context) {
     }
 
 
@@ -27,49 +26,61 @@ namespace CParser
             return 0;
         }
 
-        public override int VisitFunctionDefinition(FunctionDefinitionAST node, ParentInfo info)
-        {
+        public override int VisitFunctionDefinition(FunctionDefinitionAST node, ParentInfo info) {
 
             // 1. Visit function name and place it to current scope (global scope)
             IDENTIFIER? functionName =
                 node.GetChild<IDENTIFIER>(FunctionDefinitionAST.DECLARATOR);
-            if (functionName == null)
-            {
+            if (functionName == null) {
                 throw new Exception("FunctionDefinitionAST has no function name.");
             }
 
-            // 1. Add function symbol to current scope
-            Symbol functionSymbol = new Symbol(functionName.MName,
-                Symbol.SymbolType.Function,
-                node);
-            CScopeSystem.GetInstance().AddSymbol(CScope.Namespace.Ordinary,
-                                                 functionName.MName,
-                                                 functionSymbol);
+        public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ParentInfo info) {
 
-            // 2. Enter function scope
-            CScopeSystem.GetInstance().EnterScope(ScopeType.Function, functionName.MName);
+            var mtypes = node.MChildren[Declaration_Specifiers.SPECIFIERS]
+                .OfType<ASTElement>()
+                .Select(child => child.MType)
+                .ToList();
 
-            // 3. Visit parameters and place them to function scope
-            ParentInfo paramInfo = new ParentInfo(FunctionDefinitionAST.PARAMETER_DECLARATIONS);
-            VisitContext(node, FunctionDefinitionAST.PARAMETER_DECLARATIONS, paramInfo);
+            CType.TypeKind tp;
+            int size;
 
-            // 4. Visit function body
-            VisitContext(node, FunctionDefinitionAST.FUNCTION_BODY, info);
+            switch (true) {
+                case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.LONG_TYPE) ||
+                               mtypes.Contains((uint)TranslationUnitAST.NodeTypes.INTEGER_TYPE):
+                    tp = CType.TypeKind.Int;
+                    IntegerType.IntegerKind sign;
+                    if (mtypes.Contains((uint)TranslationUnitAST.NodeTypes.UNSIGNED_TYPE)) {
+                        sign = IntegerType.IntegerKind.Unsigned;
+                    } else {
+                        sign = IntegerType.IntegerKind.Signed;
+                    }
+                    size = mtypes.Count(t => t == (uint)TranslationUnitAST.NodeTypes.LONG_TYPE) >= 2 ? 8 : 4;
+                    IntegerType intType = new IntegerType(sign, size);
+                    break;
 
-            // 5. Exit function scope
-            CScopeSystem.GetInstance().ExitScope();
+                case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.FLOAT_TYPE) ||
+                               mtypes.Contains((uint)TranslationUnitAST.NodeTypes.DOUBLE_TYPE):
+                    tp = CType.TypeKind.Float;
+
+                    break;
+
+                default:
+                    tp = CType.TypeKind.Int;
+                    size = 4;
+                    break;
+            }
+            ;
 
             return 0;
         }
 
-        public override int VisitIdentifier(IDENTIFIER node, ParentInfo info)
-        {
+        public override int VisitIdentifier(IDENTIFIER node, ParentInfo info) {
 
             // Check if this identifier is a function parameter
             if (info != null &&
                 (info.context == FunctionDefinitionAST.PARAMETER_DECLARATIONS ||
-                info.context == DeclarationAST.DECLARATORS))
-            {
+                info.context == DeclarationAST.DECLARATORS)) {
                 // This identifier is a function parameter
                 Symbol paramSymbol = new Symbol(node.MName,
                     Symbol.SymbolType.Variable,
@@ -81,12 +92,15 @@ namespace CParser
             return base.VisitIdentifier(node, info);
         }
 
-        public override int VisitDeclaration(DeclarationAST node, ParentInfo info)
-        {
+        public override int VisitDeclaration(DeclarationAST node, ParentInfo info) {
             // Visit declarators to add variables to current scope
             ParentInfo declInfo = new ParentInfo(DeclarationAST.DECLARATORS);
             base.VisitDeclaration(node, declInfo);
             return 0;
         }
+
+
+
+
     }
 }

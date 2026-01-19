@@ -624,6 +624,14 @@ namespace CParser {
             return 0;
         }
 
+        public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ASTComposite info) {
+            CreateContext(node, ConditionalExpression.CONDITION, "Specifiers");
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            VisitChildren(node, node);
+
+            return 0;
+        }
+
         public override int VisitIdentifier(IDENTIFIER node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIdentifier(node, parent);
@@ -638,6 +646,17 @@ namespace CParser {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitIntegerType(node, parent);
         }
+
+        public override int VisitUnsignedType(UnsignedTypeAST node, ASTComposite parent) {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitUnsignedType(node, parent);
+        }
+
+        public override int VisitLongType(LongTypeAST node, ASTComposite parent) {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitLongType(node, parent);
+        }
+
         public override int VisitCharType(CharTypeAST node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitCharType(node, parent);
