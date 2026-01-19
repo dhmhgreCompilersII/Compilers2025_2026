@@ -43,6 +43,10 @@ namespace CParser {
             m_typeparams = new List<CType>();
         }
 
+        public void AddTypeParameter(CType param) {
+            m_typeparams.Add(param);
+        }
+
 
         public override bool Equals(object? obj) {
             if (obj != null && obj is CType other) {
