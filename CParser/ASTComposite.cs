@@ -33,14 +33,15 @@ namespace CParser {
 
         public ASTElement(uint type, string name) {
             m_type = type;
+            SetNodeTypeName(name);
             m_serialNumber = m_serialNumberCounter++;
-            m_name = name + $"_{m_serialNumberCounter}";
+            m_name = MName + $"_{m_serialNumberCounter}";
         }
 
-        public override string ToString() {
-            return $"ASTElement(Name: {m_name})";
+        protected virtual void SetNodeTypeName(string name) {
+            m_name = name;
         }
-
+        
         public abstract Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO));
 
     }
@@ -229,6 +230,10 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitIntegerType(this, info);
         }
+
+        protected override void SetNodeTypeName(string name) {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
     }
 
     public class CharTypeAST : ASTLeaf {
@@ -237,6 +242,9 @@ namespace CParser {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitCharType(this, info);
+        }
+        protected override void SetNodeTypeName(string name) {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
         }
     }
 

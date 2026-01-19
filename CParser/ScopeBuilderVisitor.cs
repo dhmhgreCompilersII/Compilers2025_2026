@@ -23,7 +23,19 @@ namespace CParser {
             return 0;
         }
 
-        
+        public override int VisitDeclaration(DeclarationAST node, ParentInfo info) {
+
+            // 1. Visit Type Specifier
+            VisitContext(node, DeclarationAST.TYPE_SPECIFIER, info);
+
+
+            return 0;
+        }
+
+        public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ParentInfo info) {
+            return base.VisitDeclarationSpecifiers(node, info);
+        }
+
 
         public override int VisitIdentifier(IDENTIFIER node, ParentInfo info) {
 
@@ -42,14 +54,7 @@ namespace CParser {
             return base.VisitPointerType(node, info);
         }
 
-        public override int VisitDeclaration(DeclarationAST node, ParentInfo info) {
-
-            // 1. Visit Type Specifier
-            VisitContext(node, DeclarationAST.TYPE_SPECIFIER, info);
-
-
-            return 0;
-        }
+        
 
 
     }

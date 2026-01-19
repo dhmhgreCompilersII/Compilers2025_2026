@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CParser;
 
 namespace CParser {
     public class CType {
@@ -34,7 +35,8 @@ namespace CParser {
         protected string m_typename;
         protected TypeKind m_typekind;
         protected TypeGranularity m_granularity;
-        protected List<CType> m_typeparams;
+        private CType m_parent;
+        protected List<CType> m_typeparams; // e.g., function parameter types, struct member types, etc.
 
         public CType(TypeKind mTypekind) {
             m_typekind = mTypekind;
@@ -84,6 +86,28 @@ namespace CParser {
         }
     }
 
+    public class PointerType : CType{
+        public PointerType(): base(TypeKind.Pointer){
+        }
+
+        public override bool Equals(object? obj) {
+            return base.Equals(obj);
+        }
+        public bool Equals(CType t) {
+            if (t is PointerType pt) {
+                if ( pt.m_typeparams.Count != m_typeparams.Count) {
+                    return false;
+                }
+                for (int i = 0; i < m_typeparams.Count; i++) {
+                    if (!m_typeparams[i].Equals(pt.m_typeparams[i])) {
+                        return false;
+                    }
+                }
+            }
+            return false;
+
+        }
+    }
 
     public class IntegerType : CType {
         public enum IntegerKind {
