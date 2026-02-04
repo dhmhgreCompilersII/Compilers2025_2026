@@ -802,9 +802,14 @@ namespace CParser {
         }
     }
     
-    public class IDENTIFIER : ASTLeaf {
+    public class IDENTIFIER : ASTLeaf{
+
+        public string m_lexeme;
+        public string MLexeme => m_lexeme;
+
         public IDENTIFIER(string lexeme) :
             base(lexeme, (uint)TranslationUnitAST.NodeTypes.IDENTIFIER, lexeme) {
+            m_lexeme = lexeme;
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitIdentifier(this, info);

@@ -33,6 +33,7 @@
     <Content Include="bin\Debug\net9.0\test.dot.gif" />
     <Content Include="bin\Debug\net9.0\test.txt" />
     <Content Include="bin\debug\net9.0\test1.txt" />
+    <Content Include="bin\Debug\net9.0\type_log.gif" />
   </ItemGroup>
 
   <ItemGroup>

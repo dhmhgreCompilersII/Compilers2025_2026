@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CParser;
+using System.Diagnostics;
+using System.IO;
 
 namespace CParser {
     public class CType {
@@ -38,16 +36,67 @@ namespace CParser {
         private CType m_parent;
         protected List<CType> m_typeparams; // e.g., function parameter types, struct member types, etc.
 
+        // For Debugging purposes
+        private int m_typeserial;
+        private static int ms_typeserialCounter;
+
         public CType(TypeKind mTypekind) {
             m_typekind = mTypekind;
             m_typeparams = new List<CType>();
+            // For debugging
+            m_typeserial = ms_typeserialCounter++;
         }
 
+        public void AddTypeParameter(CType param) {
+            param.m_parent = this;
+            m_typeparams.Add(param);
+        }
+
+        public virtual void TypeDebugLog(StreamWriter m_logFile=null) {
+            if (m_parent == null) {
+                m_logFile = new StreamWriter("type_log.dot");
+                m_logFile.WriteLine("digraph G{ ");
+                m_logFile.WriteLine($"\"{ToString()}_{m_typeserial}\"");
+            } else {
+                m_logFile.WriteLine($"\"{m_parent.ToString()}_{m_parent.m_typeserial}\"->\"{ToString()}_{m_typeserial}\"");
+            }
+
+            foreach (CType typeparam in m_typeparams) {
+                typeparam.TypeDebugLog(m_logFile);
+            }
+
+            if (m_parent == null) {
+                m_logFile.WriteLine("};");
+                m_logFile.Close();
+                TryGenerateTypeGraphImage("type_log.dot", "type_log.gif");
+            }
+        }
+
+        private static void TryGenerateTypeGraphImage(string dotFilePath, string outputImagePath) {
+            try {
+                var processStartInfo = new ProcessStartInfo {
+                    FileName = "dot",
+                    Arguments = $"-Tgif \"{dotFilePath}\" -o \"{outputImagePath}\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                };
+
+                using (var process = new Process { StartInfo = processStartInfo }) {
+                    process.Start();
+                    
+                }
+            } catch {
+                // Intentionally ignore failures in debug helper
+            }
+        }
 
         public override bool Equals(object? obj) {
             if (obj != null && obj is CType other) {
-                return this.GetType() == other.GetType();
+                return GetType() == other.GetType();
             }
+
             return base.Equals(obj);
         }
 
@@ -60,15 +109,16 @@ namespace CParser {
                 return false;
             }
 
-
             if (m_typeparams.Count != t.m_typeparams.Count) {
                 return false;
             }
+
             for (int j = 0; j < m_typeparams.Count; j++) {
                 if (!m_typeparams[j].Equals(t.m_typeparams[j])) {
                     return false;
                 }
             }
+
             return true;
         }
 
@@ -76,36 +126,47 @@ namespace CParser {
             if (ReferenceEquals(a, b)) {
                 return true;
             }
+
             if (a is null || b is null) {
                 return false;
             }
+
             return a.Equals(b);
         }
+
         public static bool operator !=(CType? a, CType? b) {
             return !(a == b);
         }
+        
     }
 
-    public class PointerType : CType{
-        public PointerType(): base(TypeKind.Pointer){
+    public class PointerType : CType {
+        public PointerType()
+            : base(TypeKind.Pointer) {
         }
 
         public override bool Equals(object? obj) {
             return base.Equals(obj);
         }
+
         public bool Equals(CType t) {
             if (t is PointerType pt) {
-                if ( pt.m_typeparams.Count != m_typeparams.Count) {
+                if (pt.m_typeparams.Count != m_typeparams.Count) {
                     return false;
                 }
+
                 for (int i = 0; i < m_typeparams.Count; i++) {
                     if (!m_typeparams[i].Equals(pt.m_typeparams[i])) {
                         return false;
                     }
                 }
             }
-            return false;
 
+            return false;
+        }
+
+        public override string ToString() {
+            return "pointer";
         }
     }
 
@@ -114,6 +175,7 @@ namespace CParser {
             Signed,
             Unsigned
         }
+
         private IntegerKind m_integerkind;
         private int m_size; // in bytes
 
@@ -122,34 +184,60 @@ namespace CParser {
             m_integerkind = ikind;
             m_size = size;
         }
+
         public override bool Equals(object? obj) {
             return base.Equals(obj);
         }
 
         public bool Equals(CType t) {
             if (t is IntegerType it) {
-                return this.m_integerkind == it.m_integerkind &&
-                       this.m_size == it.m_size;
+                return m_integerkind == it.m_integerkind &&
+                       m_size == it.m_size;
             }
+
             return false;
         }
 
+        public override string ToString() {
+            if (!string.IsNullOrEmpty(m_typename)) {
+                return m_typename;
+            }
+
+            string sign = m_integerkind == IntegerKind.Unsigned ? "unsigned " : "signed ";
+            return $"{sign}int{m_size * 8}";
+        }
     }
 
     public class FloatingPointType : CType {
         private int m_size; // in bytes
+
         public FloatingPointType(int size)
             : base(TypeKind.Float) {
             m_size = size;
         }
+
         public override bool Equals(object? obj) {
             return base.Equals(obj);
         }
+
         public bool Equals(CType t) {
             if (t is FloatingPointType ft) {
-                return this.m_size == ft.m_size;
+                return m_size == ft.m_size;
             }
+
             return false;
+        }
+
+        public override string ToString() {
+            if (!string.IsNullOrEmpty(m_typename)) {
+                return m_typename;
+            }
+
+            return m_size switch {
+                4 => "float",
+                8 => "double",
+                _ => $"float{m_size * 8}"
+            };
         }
     }
 
@@ -157,19 +245,31 @@ namespace CParser {
         public StructType()
             : base(TypeKind.Struct) {
         }
+
         public bool Equals(CType t) {
             if (t is StructType st) {
                 if (st.m_typeparams.Count != m_typeparams.Count) {
                     return false;
                 }
+
                 for (int i = 0; i < m_typeparams.Count; i++) {
                     if (!m_typeparams[i].Equals(st.m_typeparams[i])) {
                         return false;
                     }
                 }
+
                 return true;
             }
+
             return false;
+        }
+
+        public override string ToString() {
+            if (!string.IsNullOrEmpty(m_typename)) {
+                return $"struct {m_typename}";
+            }
+
+            return "struct";
         }
     }
 
@@ -177,19 +277,31 @@ namespace CParser {
         public UnionType()
             : base(TypeKind.Union) {
         }
+
         public bool Equals(CType t) {
             if (t is UnionType ut) {
                 if (ut.m_typeparams.Count != m_typeparams.Count) {
                     return false;
                 }
+
                 for (int i = 0; i < m_typeparams.Count; i++) {
                     if (!m_typeparams[i].Equals(ut.m_typeparams[i])) {
                         return false;
                     }
                 }
+
                 return true;
             }
+
             return false;
+        }
+
+        public override string ToString() {
+            if (!string.IsNullOrEmpty(m_typename)) {
+                return $"union {m_typename}";
+            }
+
+            return "union";
         }
     }
 
@@ -197,39 +309,54 @@ namespace CParser {
         public EnumType()
             : base(TypeKind.Enum) {
         }
+
         public bool Equals(CType t) {
             if (t is EnumType et) {
                 if (et.m_typeparams.Count != m_typeparams.Count) {
                     return false;
                 }
+
                 for (int i = 0; i < m_typeparams.Count; i++) {
                     if (!m_typeparams[i].Equals(et.m_typeparams[i])) {
                         return false;
                     }
                 }
+
                 return true;
             }
+
             return false;
         }
-    }
 
+        public override string ToString() {
+            if (!string.IsNullOrEmpty(m_typename)) {
+                return $"enum {m_typename}";
+            }
+
+            return "enum";
+        }
+    }
 
     public class FunctionType : CType {
         public FunctionType()
             : base(TypeKind.Function) {
         }
+
         public bool Equals(CType t) {
             if (t is FunctionType ft) {
-                if (this.m_typeparams.Count != ft.m_typeparams.Count) {
+                if (m_typeparams.Count != ft.m_typeparams.Count) {
                     return false;
                 }
+
                 for (int i = 0; i < m_typeparams.Count; i++) {
                     if (!m_typeparams[i].Equals(ft.m_typeparams[i])) {
                         return false;
                     }
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -237,6 +364,21 @@ namespace CParser {
             m_typeparams.Add(pt);
         }
 
+        public override string ToString() {
+            if (m_typeparams.Count == 0) {
+                return "function()";
+            }
+
+            CType returnType = m_typeparams[0];
+            List<string> paramStrings = new List<string>();
+
+            for (int i = 1; i < m_typeparams.Count; i++) {
+                paramStrings.Add(m_typeparams[i].ToString());
+            }
+
+            string parameters = string.Join(", ", paramStrings);
+            return $"{returnType} ({parameters})";
+        }
     }
 
     public class ArrayType : CType {
@@ -265,26 +407,38 @@ namespace CParser {
         public void AddLowerLevelDimensionSize(int size) {
             // place at the beginning
             m_dimensionSize.Insert(0, size);
-
         }
 
         public bool Equals(CType t) {
             if (t is ArrayType at) {
-                if (!this.m_elementType.Equals(at.m_elementType)) {
+                if (!m_elementType.Equals(at.m_elementType)) {
                     return false;
                 }
-                if (this.m_dimensionSize.Count != at.m_dimensionSize.Count) {
+
+                if (m_dimensionSize.Count != at.m_dimensionSize.Count) {
                     return false;
                 }
-                for (int i = 0; i < this.m_dimensionSize.Count; i++) {
-                    if (this.m_dimensionSize[i] != at.m_dimensionSize[i]) {
+
+                for (int i = 0; i < m_dimensionSize.Count; i++) {
+                    if (m_dimensionSize[i] != at.m_dimensionSize[i]) {
                         return false;
                     }
                 }
+
                 return true;
             }
-            return false;
 
+            return false;
+        }
+
+        public override string ToString() {
+            string result = m_elementType.ToString();
+
+            foreach (int size in m_dimensionSize) {
+                result += size > 0 ? $"[{size}]" : "[]";
+            }
+
+            return result;
         }
     }
 }
