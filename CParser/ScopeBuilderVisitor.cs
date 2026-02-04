@@ -9,10 +9,19 @@ using static CParser.Symbol;
 namespace CParser
 {
 
-    public record ParentInfo(ASTComposite context)
+    public class ParentInfo(ASTComposite context)
     {
     }
 
+    public class DeclarationContext()
+    {
+        public CType? MDeclaredType { get; set; }
+    }
+
+    public class DeclarationContectContext : DeclarationContext
+    {
+
+    }
 
     public class ScopeBuilderVisitor : BaseASTVisitor<int, ParentInfo>
     {
