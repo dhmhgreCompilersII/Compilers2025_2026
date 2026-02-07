@@ -647,14 +647,50 @@ namespace CParser {
             return base.VisitIntegerType(node, parent);
         }
 
+        public override int VisitSignedType(SignedTypeAST node, ASTComposite info)
+        {
+            m_writer.WriteLine($"    \"{info.MName}\" -> \"{node.MName}\";");
+            return base.VisitSignedType(node, info);
+        }
+
         public override int VisitUnsignedType(UnsignedTypeAST node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitUnsignedType(node, parent);
         }
 
+        public override int VisitShortType(ShortTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitShortType(node, parent);
+        }
+
         public override int VisitLongType(LongTypeAST node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitLongType(node, parent);
+        }
+
+        public override int VisitFloatType(FloatTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitFloatType(node, parent);
+        }
+
+        public override int VisitDoubleType(DoubleTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitDoubleType(node, parent);
+        }
+
+        public override int VisitStructType(StructTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitStructType(node, parent);
+        }
+
+        public override int VisitUnionType(UnionTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitUnionType(node, parent);
         }
 
         public override int VisitCharType(CharTypeAST node, ASTComposite parent) {

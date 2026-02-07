@@ -39,6 +39,7 @@
   <ItemGroup>
     <None Include="bin\Debug\net9.0\ast.dot" />
     <None Include="bin\Debug\net9.0\test.dot" />
+    <None Include="bin\Debug\net9.0\type_log.dot" />
     <None Include="obj\Debug\net9.0\CGrammarParser.tokens" />
   </ItemGroup>
 

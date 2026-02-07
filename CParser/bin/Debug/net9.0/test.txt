@@ -1,2 +1,9 @@
 unsigned long int *b, **c;
-
+unsigned long long*** a;
+/*double **d;
+float ***e;
+long double f;
+short **g;*/
+signed int a;
+struct node *a;
+union node2 **b;

@@ -10,7 +10,6 @@ using static CParser.CScope;
 
 namespace CParser {
 
-
     public class Symbol {
         public enum SymbolType {
             Variable,
@@ -48,7 +47,6 @@ namespace CParser {
         }
     }
     
-
     public class SymbolTable{
         private SymbolTable m_parent;
 

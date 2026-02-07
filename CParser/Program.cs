@@ -5,8 +5,6 @@ using Antlr4.Runtime.Atn;
 
 namespace CParser {
 
-
-
     public class Program {
         static void Main(string[] args) {
             // C# class to read from a text file

@@ -87,6 +87,8 @@ namespace CParser {
     public abstract class ASTLeaf : ASTElement {
         private string m_lexeme;
 
+        public string Lexeme => m_lexeme;
+
         public ASTLeaf(string lexeme, uint type, string name) :
             base(type, name) {
             m_lexeme = lexeme;
@@ -99,8 +101,8 @@ namespace CParser {
         public enum NodeTypes {
             TRANSLATION_UNIT , DECLARATION , FUNCTION_DEFINITION ,
             COMPOUNDSTATEMENT , POINTER_TYPE , FUNCTION_TYPE ,
-            IDENTIFIER , INTEGER_TYPE ,LONG_TYPE,UNSIGNED_TYPE,SIGNED_TYPE,
-            FLOAT_TYPE, DOUBLE_TYPE, PARAMETER_DECLARATION ,
+            IDENTIFIER , INTEGER_TYPE, SHORT_TYPE, LONG_TYPE, UNSIGNED_TYPE, SIGNED_TYPE,
+            FLOAT_TYPE, DOUBLE_TYPE, STRUCT_TYPE, UNION_TYPE, PARAMETER_DECLARATION ,
             EXPRESSION_STATEMENT , EXPRESSION_IDENTIFIER ,
             EXPRESSION_ASSIGNMENT , EXPRESSION_NUMBER ,
             EXPRESSION_ADDITION ,
@@ -238,6 +240,21 @@ namespace CParser {
         }
     }
 
+    public class ShortTypeAST : ASTLeaf {
+
+        public ShortTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.SHORT_TYPE, lexeme) {
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitShortType(this, info);
+        }
+
+        protected override void SetNodeTypeName(string name) {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+    }
+
     public class LongTypeAST : ASTLeaf {
         public LongTypeAST(string lexeme) :
             base(lexeme, (uint)TranslationUnitAST.NodeTypes.LONG_TYPE, lexeme) {
@@ -246,6 +263,18 @@ namespace CParser {
             return visitor.VisitLongType(this, info);
         }
 
+        protected override void SetNodeTypeName(string name) {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+    }
+
+    public class SignedTypeAST : ASTLeaf {
+        public SignedTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.SIGNED_TYPE, lexeme) {
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
+            return visitor.VisitSignedType(this, info);
+        }
         protected override void SetNodeTypeName(string name) {
             base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
         }
@@ -264,7 +293,39 @@ namespace CParser {
         }
     }
 
+    public class FloatTypeAST : ASTLeaf
+    {
+        public FloatTypeAST(string lexeme) : 
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.FLOAT_TYPE, lexeme) {}
+
+        protected override void SetNodeTypeName(string name)
+        {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            return visitor.VisitFloatType(this, info);
+        }
+    }
+
+    public class DoubleTypeAST : ASTLeaf
+    {
+        public DoubleTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.DOUBLE_TYPE, lexeme) { }
+
+        protected override void SetNodeTypeName(string name)
+        {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            return visitor.VisitDoubleType(this, info);
+        }
+    }
+
     public class CharTypeAST : ASTLeaf {
+        
         public CharTypeAST(string lexeme) :
             base(lexeme, (uint)TranslationUnitAST.NodeTypes.CHAR_TYPE, lexeme) {
         }
@@ -276,6 +337,37 @@ namespace CParser {
         }
     }
 
+    public class StructTypeAST : ASTLeaf
+    {
+        public StructTypeAST(string lexeme) : 
+            base("struct", (uint)TranslationUnitAST.NodeTypes.STRUCT_TYPE, lexeme) {}
+
+        protected override void SetNodeTypeName(string name)
+        {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            return visitor.VisitStructType(this, info);
+        }
+    }
+
+    public class UnionTypeAST : ASTLeaf
+    {
+        public UnionTypeAST(string lexeme) : 
+            base("union", (uint)TranslationUnitAST.NodeTypes.UNION_TYPE, lexeme) {}
+        
+        protected override void SetNodeTypeName(string name)
+        {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        { 
+            return visitor.VisitUnionType(this, info);
+        }
+    }
 
     public class PointerTypeAST : ASTComposite {
         public const int POINTER_TARGET = 0;

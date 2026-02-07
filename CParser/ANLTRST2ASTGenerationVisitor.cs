@@ -300,21 +300,55 @@ namespace CParser {
                     parent.AddChild(intNode, currentContext.Context); // assuming context INT for simplicity
 
                     break;
+                case CGrammarParser.FLOAT:
+                    FloatTypeAST floatNode = new FloatTypeAST(node.GetText());
+                    parent.AddChild(floatNode, currentContext.Context); // assuming context FLOAT for simplicity
+                    
+                    break;
+                case CGrammarParser.DOUBLE:
+                    DoubleTypeAST doubleNode = new DoubleTypeAST(node.GetText());
+                    parent.AddChild(doubleNode, currentContext.Context); // assuming context DOUBLE for simplicity
+
+                    break;
                 case CGrammarParser.CHAR:
                     CharTypeAST charNode = new CharTypeAST(node.GetText());
                     parent.AddChild(charNode, currentContext.Context); // assuming context INT for simplicity
+                    
+                    break;
+                case CGrammarParser.SHORT:
+                    ShortTypeAST shortNode = new ShortTypeAST(node.GetText());
+                    parent.AddChild(shortNode, currentContext.Context); // assuming context SHORT for simplicity
+                    
                     break;
                 case CGrammarParser.LONG:
                     LongTypeAST longNode = new LongTypeAST(node.GetText());
                     parent.AddChild(longNode, currentContext.Context); // assuming context LONG for simplicity
+                    
+                    break;
+                case CGrammarParser.SIGNED:
+                    SignedTypeAST signedNode = new SignedTypeAST(node.GetText());
+                    parent.AddChild(signedNode, currentContext.Context); // assuming context LONG for simplicity
+
                     break;
                 case CGrammarParser.UNSIGNED:
                     UnsignedTypeAST unsignedNode = new UnsignedTypeAST(node.GetText());
                     parent.AddChild(unsignedNode, currentContext.Context); // assuming context LONG for simplicity
+                    
+                    break;
+                case CGrammarParser.STRUCT:
+                    StructTypeAST structNode = new StructTypeAST(node.GetText());
+                    parent.AddChild(structNode, currentContext.Context); // assuming context STRUCT for simplicity
+                    
+                    break;
+                case CGrammarParser.UNION:
+                    UnionTypeAST unionNode = new UnionTypeAST(node.GetText());
+                    parent.AddChild(unionNode, currentContext.Context);
+
                     break;
                 case CGrammarParser.CONSTANT: 
                     INTEGER conNode = new INTEGER(node.GetText());
                     parent.AddChild(conNode, currentContext.Context); // assuming context INTEGER for simplicity
+                    
                     break;
                 default:
                     break;
@@ -322,8 +356,7 @@ namespace CParser {
 
             return 0;
         }
-
-
+        
         public override int VisitCompound_statement(CGrammarParser.Compound_statementContext context) {
 
             // 1. Get current parent node

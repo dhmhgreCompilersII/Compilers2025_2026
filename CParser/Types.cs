@@ -85,7 +85,6 @@ namespace CParser {
 
                 using (var process = new Process { StartInfo = processStartInfo }) {
                     process.Start();
-                    
                 }
             } catch {
                 // Intentionally ignore failures in debug helper
@@ -211,8 +210,8 @@ namespace CParser {
     public class FloatingPointType : CType {
         private int m_size; // in bytes
 
-        public FloatingPointType(int size)
-            : base(TypeKind.Float) {
+        public FloatingPointType(int size, TypeKind kind)
+            : base(kind) {
             m_size = size;
         }
 
@@ -234,16 +233,20 @@ namespace CParser {
             }
 
             return m_size switch {
-                4 => "float",
-                8 => "double",
-                _ => $"float{m_size * 8}"
+                4 => "float32",
+                8 => "double64",
+                _ => $"double{m_size * 8}"
             };
         }
     }
 
-    public class StructType : CType {
-        public StructType()
+    public class StructType : CType
+    {
+        private string struct_name;
+
+        public StructType(string name)
             : base(TypeKind.Struct) {
+            struct_name = name;
         }
 
         public bool Equals(CType t) {
@@ -269,13 +272,17 @@ namespace CParser {
                 return $"struct {m_typename}";
             }
 
-            return "struct";
+            return $"struct_{struct_name}";
         }
     }
 
-    public class UnionType : CType {
-        public UnionType()
+    public class UnionType : CType
+    {
+        private string union_name;
+
+        public UnionType(string name)
             : base(TypeKind.Union) {
+            union_name = name;
         }
 
         public bool Equals(CType t) {
@@ -301,7 +308,7 @@ namespace CParser {
                 return $"union {m_typename}";
             }
 
-            return "union";
+            return $"union_{union_name}";
         }
     }
 
