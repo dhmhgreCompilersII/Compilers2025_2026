@@ -105,7 +105,6 @@ namespace CParser {
             FunctionDefinitionAST funcDefNode = new FunctionDefinitionAST();
             parent.AddChild(funcDefNode, currentContext.Context);
 
-
             // 3. Visit Declaration Specifiers
             ASTGenerationBuildParameters p = new ASTGenerationBuildParameters() {
                 Parent = funcDefNode,
@@ -157,9 +156,6 @@ namespace CParser {
 
             return 0;
         }
-
-        
-
 
         public override int VisitParameter_declaration(CGrammarParser.Parameter_declarationContext context) {
 

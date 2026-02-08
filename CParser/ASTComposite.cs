@@ -95,7 +95,6 @@ namespace CParser {
         }
     }
 
-
     public class TranslationUnitAST : ASTComposite {
 
         public enum NodeTypes {
@@ -398,18 +397,15 @@ namespace CParser {
     public class FunctionTypeAST : ASTComposite {
         public const int FUNCTION_TYPE = 0, FUNCTION_NAME = 1, FUNCTION_PARAMETERS = 2;
 
-
         public FunctionTypeAST() :
             base(3, (uint)TranslationUnitAST.NodeTypes.FUNCTION_TYPE, "FunctionTypeAST") {
         }
-
 
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor,
             INFO info = default(INFO)) {
             return visitor.VisitFunctionType(this, info);
         }
     }
-
 
     public class FunctionDefinitionAST : ASTComposite {
         public const int DECLARATION_SPECIFIERS = 0,
