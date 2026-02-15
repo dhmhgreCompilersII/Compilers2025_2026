@@ -115,7 +115,7 @@ namespace CParser {
             // 4. Visit Declarator
             p = new ASTGenerationBuildParameters() {
                 Parent = funcDefNode,
-                Context = null
+                Context = FunctionDefinitionAST.DECLARATOR
             };
             VisitChildInContext(context.declarator(), p);
 
@@ -125,7 +125,6 @@ namespace CParser {
                 Context = FunctionDefinitionAST.FUNCTION_BODY
             };
             VisitChildInContext(context.compound_statement(), p);
-
 
             return 0;
         }
@@ -169,7 +168,7 @@ namespace CParser {
 
             ASTGenerationBuildParameters p = new ASTGenerationBuildParameters() {
                 Parent = pardecl,
-                Context = null
+                Context = ParameterDeclarationAST.TYPE_SPECIFIER
             };
             VisitChildInContext(context.declaration_specifiers(), p);
 
@@ -340,6 +339,11 @@ namespace CParser {
                     UnionTypeAST unionNode = new UnionTypeAST(node.GetText());
                     parent.AddChild(unionNode, currentContext.Context);
 
+                    break;
+                case CGrammarParser.VOID:
+                    VoidTypeAST voidNode = new VoidTypeAST(node.GetText());
+                    parent.AddChild(voidNode, currentContext.Context);
+                    
                     break;
                 case CGrammarParser.CONSTANT: 
                     INTEGER conNode = new INTEGER(node.GetText());

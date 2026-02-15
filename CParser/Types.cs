@@ -40,9 +40,11 @@ namespace CParser {
         private int m_typeserial;
         private static int ms_typeserialCounter;
 
-        public CType(TypeKind mTypekind) {
+        public CType(TypeKind mTypekind, string mTypename, TypeGranularity mTypeGranularity) {
             m_typekind = mTypekind;
+            m_typename = mTypename;
             m_typeparams = new List<CType>();
+            m_granularity = mTypeGranularity;
             // For debugging
             m_typeserial = ms_typeserialCounter++;
         }
@@ -52,27 +54,29 @@ namespace CParser {
             m_typeparams.Add(param);
         }
 
-        public virtual void TypeDebugLog(StreamWriter m_logFile=null) {
+        public virtual async Task TypeDebugLog(StreamWriter m_logFile=null) {
             if (m_parent == null) {
                 m_logFile = new StreamWriter("type_log.dot");
                 m_logFile.WriteLine("digraph G{ ");
                 m_logFile.WriteLine($"\"{ToString()}_{m_typeserial}\"");
             } else {
-                m_logFile.WriteLine($"\"{m_parent.ToString()}_{m_parent.m_typeserial}\"->\"{ToString()}_{m_typeserial}\"");
+                m_logFile.WriteLine(
+                    $"\"{m_parent.ToString()}_{m_parent.m_typeserial}\"->\"{ToString()}_{m_typeserial}\"");
+                
             }
 
             foreach (CType typeparam in m_typeparams) {
-                typeparam.TypeDebugLog(m_logFile);
+                await typeparam.TypeDebugLog(m_logFile);
             }
 
             if (m_parent == null) {
                 m_logFile.WriteLine("};");
                 m_logFile.Close();
-                TryGenerateTypeGraphImage("type_log.dot", "type_log.gif");
+                await TryGenerateTypeGraphImage("type_log.dot", "type_log.gif");
             }
         }
 
-        private static void TryGenerateTypeGraphImage(string dotFilePath, string outputImagePath) {
+        private static async Task TryGenerateTypeGraphImage(string dotFilePath, string outputImagePath) {
             try {
                 var processStartInfo = new ProcessStartInfo {
                     FileName = "dot",
@@ -136,12 +140,16 @@ namespace CParser {
         public static bool operator !=(CType? a, CType? b) {
             return !(a == b);
         }
-        
+
+        public override string ToString()
+        {
+            return m_typename;
+        }
     }
 
     public class PointerType : CType {
         public PointerType()
-            : base(TypeKind.Pointer) {
+            : base(TypeKind.Pointer, "pointer", TypeGranularity.Basic) {
         }
 
         public override bool Equals(object? obj) {
@@ -163,10 +171,6 @@ namespace CParser {
 
             return false;
         }
-
-        public override string ToString() {
-            return "pointer";
-        }
     }
 
     public class IntegerType : CType {
@@ -179,7 +183,7 @@ namespace CParser {
         private int m_size; // in bytes
 
         public IntegerType(IntegerKind ikind, int size)
-            : base(TypeKind.Int) {
+            : base(TypeKind.Int, "int", TypeGranularity.Basic) {
             m_integerkind = ikind;
             m_size = size;
         }
@@ -198,20 +202,16 @@ namespace CParser {
         }
 
         public override string ToString() {
-            if (!string.IsNullOrEmpty(m_typename)) {
-                return m_typename;
-            }
-
             string sign = m_integerkind == IntegerKind.Unsigned ? "unsigned " : "signed ";
-            return $"{sign}int{m_size * 8}";
+            return $"{sign}{m_typename}{m_size * 8}";
         }
     }
 
     public class FloatingPointType : CType {
         private int m_size; // in bytes
 
-        public FloatingPointType(int size, TypeKind kind)
-            : base(kind) {
+        public FloatingPointType(int size, string name, TypeKind kind)
+            : base(kind, name, TypeGranularity.Basic) {
             m_size = size;
         }
 
@@ -229,7 +229,7 @@ namespace CParser {
 
         public override string ToString() {
             if (!string.IsNullOrEmpty(m_typename)) {
-                return m_typename;
+                return $"{m_typename}{m_size * 8}";
             }
 
             return m_size switch {
@@ -242,11 +242,8 @@ namespace CParser {
 
     public class StructType : CType
     {
-        private string struct_name;
-
         public StructType(string name)
-            : base(TypeKind.Struct) {
-            struct_name = name;
+            : base(TypeKind.Struct, name, TypeGranularity.Composite) {
         }
 
         public bool Equals(CType t) {
@@ -272,17 +269,14 @@ namespace CParser {
                 return $"struct {m_typename}";
             }
 
-            return $"struct_{struct_name}";
+            return "struct";
         }
     }
 
     public class UnionType : CType
     {
-        private string union_name;
-
         public UnionType(string name)
-            : base(TypeKind.Union) {
-            union_name = name;
+            : base(TypeKind.Union, name, TypeGranularity.Composite) {
         }
 
         public bool Equals(CType t) {
@@ -308,13 +302,25 @@ namespace CParser {
                 return $"union {m_typename}";
             }
 
-            return $"union_{union_name}";
+            return $"union";
+        }
+    }
+
+    public class VoidType : CType {
+
+        public VoidType()
+            : base(TypeKind.Void, "void", TypeGranularity.Basic) {
+        }
+
+        public bool Equals(CType t) {
+            return t is VoidType;
         }
     }
 
     public class EnumType : CType {
-        public EnumType()
-            : base(TypeKind.Enum) {
+
+        public EnumType(string name)
+            : base(TypeKind.Enum, name, TypeGranularity.Basic) {
         }
 
         public bool Equals(CType t) {
@@ -346,7 +352,7 @@ namespace CParser {
 
     public class FunctionType : CType {
         public FunctionType()
-            : base(TypeKind.Function) {
+            : base(TypeKind.Function, "function", TypeGranularity.Basic) {
         }
 
         public bool Equals(CType t) {
@@ -401,7 +407,7 @@ namespace CParser {
         }
 
         public ArrayType(CType elementType)
-            : base(TypeKind.Array) {
+            : base(TypeKind.Array, null, TypeGranularity.Basic) {
             m_elementType = elementType;
             m_dimensionSize = new List<int>();
         }

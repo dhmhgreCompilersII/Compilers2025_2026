@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,6 +59,11 @@ namespace CParser
                 Visit(astElement, declContext);
                 if (declContext.MParent == null)
                 {
+                    if (declContext.MTypeSpecifier is VoidType)
+                    {
+                        throw new ArgumentException();
+                    }
+
                     declContext.MTypeRoot = declContext.MTypeSpecifier;
                     declContext.MParent = declContext.MTypeSpecifier;
                 }
@@ -111,15 +117,19 @@ namespace CParser
                     tp = mtypes.Contains((uint)TranslationUnitAST.NodeTypes.FLOAT_TYPE) ? CType.TypeKind.Float : CType.TypeKind.Double;
                     
                     size = mtypes.Contains((uint)TranslationUnitAST.NodeTypes.FLOAT_TYPE) ? 4 : 8;
-                    size = mtypes.Contains((uint)TranslationUnitAST.NodeTypes.LONG_TYPE) ? 10 : size;
-                    FloatingPointType floatType = new FloatingPointType(size, tp);
+                    size = mtypes.Contains((uint)TranslationUnitAST.NodeTypes.LONG_TYPE) && 
+                        tp != CType.TypeKind.Float ? 10 : size;
+                    
+                    string name = tp == CType.TypeKind.Float ? "float" : "double";
+
+                    FloatingPointType floatType = new FloatingPointType(size, name, tp);
                     DeclarationContext declContext2 = info as DeclarationContext;
                     declContext2.MTypeSpecifier = floatType;
                     break;
 
                 case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.STRUCT_TYPE):
-                    ASTLeaf struct_id = node.MChildren[Declaration_Specifiers.SPECIFIERS][1] as ASTLeaf;
-                    string struct_name = struct_id.Lexeme;
+                    IDENTIFIER struct_id = node.MChildren[Declaration_Specifiers.SPECIFIERS][1] as IDENTIFIER;
+                    string struct_name = struct_id.MLexeme;
 
                     StructType structType = new StructType(struct_name);
                     DeclarationContext declContext3 = info as DeclarationContext;
@@ -129,12 +139,18 @@ namespace CParser
 
                 case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.UNION_TYPE):
 
-                    ASTLeaf union_id = node.MChildren[Declaration_Specifiers.SPECIFIERS][1] as ASTLeaf;
-                    string union_name = union_id.Lexeme;
+                    IDENTIFIER union_id = node.MChildren[Declaration_Specifiers.SPECIFIERS][1] as IDENTIFIER;
+                    string union_name = union_id.MLexeme;
 
                     UnionType unionType = new UnionType(union_name);
                     DeclarationContext declContext4 = info as DeclarationContext;
                     declContext4.MTypeSpecifier = unionType;
+                    break;
+
+                case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.VOID_TYPE):
+                    VoidType voidType = new VoidType();
+                    DeclarationContext declContext5 = info as DeclarationContext;
+                    declContext5.MTypeSpecifier = voidType;
                     break;
 
                 default:

@@ -52,11 +52,10 @@ namespace CParser {
             astPrinterVisitor.Visit(anltrst2AstGenerationVisitor.Root, null);
 
             // Build Scope System after parsing and AST generation
-            ScopeBuilderVisitor scopeBuilderVisitor = new ScopeBuilderVisitor();
+            /*ScopeBuilderVisitor scopeBuilderVisitor = new ScopeBuilderVisitor();
             scopeBuilderVisitor.Visit(anltrst2AstGenerationVisitor.Root, null);
-            Console.WriteLine($"{CScopeSystem.GetInstance().ToString()}");
+            Console.WriteLine($"{CScopeSystem.GetInstance().ToString()}");*/
         }
-
 
     }
 }

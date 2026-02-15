@@ -1,3 +1,14 @@
 unsigned long int *b, **c;
 unsigned long long*** a;
-struct pt* a;
+/*short int d;
+long double *a;
+float **e;
+struct stp a;
+union un *a;
+void *a;*/
+//int func(int a);
+//int func2(int* a, int b);
+//int* func3(int a, int b, int c);
+//int func4(int a, void (*func)(int a));
+
+int array[10][5];

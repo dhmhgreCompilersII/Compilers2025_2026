@@ -87,8 +87,6 @@ namespace CParser {
     public abstract class ASTLeaf : ASTElement {
         private string m_lexeme;
 
-        public string Lexeme => m_lexeme;
-
         public ASTLeaf(string lexeme, uint type, string name) :
             base(type, name) {
             m_lexeme = lexeme;
@@ -99,7 +97,7 @@ namespace CParser {
 
         public enum NodeTypes {
             TRANSLATION_UNIT , DECLARATION , FUNCTION_DEFINITION ,
-            COMPOUNDSTATEMENT , POINTER_TYPE , FUNCTION_TYPE ,
+            COMPOUNDSTATEMENT , POINTER_TYPE , VOID_TYPE, FUNCTION_TYPE ,
             IDENTIFIER , INTEGER_TYPE, SHORT_TYPE, LONG_TYPE, UNSIGNED_TYPE, SIGNED_TYPE,
             FLOAT_TYPE, DOUBLE_TYPE, STRUCT_TYPE, UNION_TYPE, PARAMETER_DECLARATION ,
             EXPRESSION_STATEMENT , EXPRESSION_IDENTIFIER ,
@@ -381,6 +379,21 @@ namespace CParser {
         }
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitPointerType(this, info);
+        }
+    }
+
+    public class VoidTypeAST : ASTLeaf
+    {
+        public VoidTypeAST(string lexeme) :
+            base(lexeme, (uint)TranslationUnitAST.NodeTypes.VOID_TYPE, "void") {
+        }
+        protected override void SetNodeTypeName(string name)
+        {
+            base.SetNodeTypeName($"TYPE_SPECIFIER_{name}");
+        }
+        public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO))
+        {
+            return visitor.VisitVoidType(this, info);
         }
     }
 
@@ -905,9 +918,11 @@ namespace CParser {
     }
 
     public class INTEGER : ASTLeaf {
+
         public INTEGER(string lexeme) :
             base(lexeme, (uint)TranslationUnitAST.NodeTypes.INTEGER, lexeme) {
         }
+
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitInteger(this, info);
         }
@@ -921,7 +936,6 @@ namespace CParser {
         public override Result Accept<Result, INFO>(BaseASTVisitor<Result, INFO> visitor, INFO info = default(INFO)) {
             return visitor.VisitPostfixExpression_ArraySubscript(this, info);
         }
-
     }
 
     public class Postfixexpression_FunctionCallNoArgs : CExpression {
@@ -979,6 +993,7 @@ namespace CParser {
     public class Postfixexpression_Increment : CExpression {
 
         public const int ACCESS = 0;
+
         public Postfixexpression_Increment() : base(1,
             (uint)TranslationUnitAST.NodeTypes.POSTFIX_EXPRESSION_INCREMENT, "postfix_expression_Increment") {
         }

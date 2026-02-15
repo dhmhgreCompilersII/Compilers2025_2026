@@ -49,6 +49,11 @@ namespace CParser {
             return VisitChildren(node, info);
         }
 
+        public virtual Result VisitVoidType(VoidTypeAST node, INFO info)
+        {
+            return default(Result);
+        }
+
         public virtual Result VisitIntegerType(IntegerTypeAST node, INFO info) {
             return default(Result);
         }

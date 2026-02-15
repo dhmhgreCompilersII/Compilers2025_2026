@@ -693,6 +693,12 @@ namespace CParser {
             return base.VisitUnionType(node, parent);
         }
 
+        public override int VisitVoidType(VoidTypeAST node, ASTComposite parent)
+        {
+            m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
+            return base.VisitVoidType(node, parent);
+        }
+
         public override int VisitCharType(CharTypeAST node, ASTComposite parent) {
             m_writer.WriteLine($"    \"{parent.MName}\" -> \"{node.MName}\";");
             return base.VisitCharType(node, parent);
