@@ -398,7 +398,7 @@ namespace CParser {
     }
 
     public class ParameterDeclarationAST : ASTComposite {
-        public const int TYPE_SPECIFIER = 0, DECLARATOR = 1, TYPE_QUALIFIER = 2, STORAGE_SPECIFIER = 3;
+        public const int TYPE_SPECIFIER = 1, DECLARATOR = 0, TYPE_QUALIFIER = 2, STORAGE_SPECIFIER = 3;
         public ParameterDeclarationAST() :
             base(4, (uint)TranslationUnitAST.NodeTypes.PARAMETER_DECLARATION, "ParameterDeclaration") {
         }

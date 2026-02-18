@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Microsoft.Build.Framework;
 
 namespace CParser {
     public class CType {
@@ -33,11 +34,11 @@ namespace CParser {
         protected string m_typename;
         protected TypeKind m_typekind;
         protected TypeGranularity m_granularity;
-        private CType m_parent;
+        protected CType m_parent;
         protected List<CType> m_typeparams; // e.g., function parameter types, struct member types, etc.
 
         // For Debugging purposes
-        private int m_typeserial;
+        protected int m_typeserial;
         private static int ms_typeserialCounter;
 
         public CType(TypeKind mTypekind, string mTypename, TypeGranularity mTypeGranularity) {
@@ -49,9 +50,26 @@ namespace CParser {
             m_typeserial = ms_typeserialCounter++;
         }
 
+        protected CType(TypeKind mTypekind, string mTypename, TypeGranularity mTypeGranularity,
+            List<CType> children, CType mParent, int serialNumber)
+        {
+            m_typekind = mTypekind;
+            m_typename = mTypename;
+            m_typeparams = new List<CType>(children).ToList();
+            m_granularity = mTypeGranularity;
+            m_parent = mParent;
+            m_typeserial = serialNumber;
+        }
+
         public void AddTypeParameter(CType param) {
             param.m_parent = this;
             m_typeparams.Add(param);
+        }
+
+        public virtual CType Clone()
+        {
+            return new CType(m_typekind, m_typename, m_granularity, m_typeparams,
+                m_parent, m_typeserial);
         }
 
         public virtual async Task TypeDebugLog(StreamWriter m_logFile=null) {
@@ -152,8 +170,18 @@ namespace CParser {
             : base(TypeKind.Pointer, "pointer", TypeGranularity.Basic) {
         }
 
+        private PointerType(List<CType> children, CType mParent, int serialNumber) : 
+            base(TypeKind.Pointer, "pointer", TypeGranularity.Basic,
+            children, mParent, serialNumber) {
+        }
+
         public override bool Equals(object? obj) {
             return base.Equals(obj);
+        }
+
+        public override CType Clone()
+        {
+            return new PointerType(m_typeparams, m_parent, m_typeserial);
         }
 
         public bool Equals(CType t) {
@@ -188,6 +216,19 @@ namespace CParser {
             m_size = size;
         }
 
+        private IntegerType(IntegerKind ikind, int size,
+            List<CType> children, CType mParent, int serialNumber) : 
+            base(TypeKind.Int, "int", TypeGranularity.Basic,
+                children, mParent, serialNumber) {
+            m_integerkind = ikind;
+            m_size = size;
+        }
+
+        public override CType Clone()
+        {
+           return new IntegerType(m_integerkind, m_size, m_typeparams, m_parent, m_typeserial);
+        }
+
         public override bool Equals(object? obj) {
             return base.Equals(obj);
         }
@@ -213,6 +254,18 @@ namespace CParser {
         public FloatingPointType(int size, string name, TypeKind kind)
             : base(kind, name, TypeGranularity.Basic) {
             m_size = size;
+        }
+
+        private  FloatingPointType(int size, string name, TypeKind kind,
+            List<CType> children, CType mParent, int serialNumber) : 
+            base(kind, name, TypeGranularity.Basic, 
+                children, mParent, serialNumber) {
+            m_size = size;
+        }
+
+        public override CType Clone()
+        {
+           return new FloatingPointType(m_size, m_typename, m_typekind, m_typeparams, m_parent, m_typeserial);
         }
 
         public override bool Equals(object? obj) {
@@ -244,6 +297,17 @@ namespace CParser {
     {
         public StructType(string name)
             : base(TypeKind.Struct, name, TypeGranularity.Composite) {
+        }
+
+        private StructType(string name, List<CType> children, CType mParent,
+            int serialNumber) : 
+            base(TypeKind.Struct, name, TypeGranularity.Composite,
+                children, mParent, serialNumber) {
+        }
+
+        public override CType Clone()
+        {
+            return new StructType(m_typename, m_typeparams, m_parent, m_typeserial);
         }
 
         public bool Equals(CType t) {
@@ -279,6 +343,17 @@ namespace CParser {
             : base(TypeKind.Union, name, TypeGranularity.Composite) {
         }
 
+        private UnionType(string name, List<CType> children, CType mParent,
+                int serialNumber) : 
+                base(TypeKind.Union, name, TypeGranularity.Composite,
+                    children, mParent, serialNumber) {
+        }
+
+        public override CType Clone()
+        {
+            return new UnionType(m_typename, m_typeparams, m_parent, m_typeserial);
+        }
+
         public bool Equals(CType t) {
             if (t is UnionType ut) {
                 if (ut.m_typeparams.Count != m_typeparams.Count) {
@@ -310,6 +385,16 @@ namespace CParser {
 
         public VoidType()
             : base(TypeKind.Void, "void", TypeGranularity.Basic) {
+        }
+
+        private VoidType(List<CType> children, CType mParent, int serialNumber) : 
+            base(TypeKind.Void, "void", TypeGranularity.Basic, 
+                children, mParent, serialNumber) {
+        }
+
+        public override CType Clone()
+        {
+            return new VoidType(m_typeparams, m_parent, m_typeserial);
         }
 
         public bool Equals(CType t) {
@@ -353,6 +438,16 @@ namespace CParser {
     public class FunctionType : CType {
         public FunctionType()
             : base(TypeKind.Function, "function", TypeGranularity.Basic) {
+        }
+
+        private FunctionType(List<CType> children, CType mParent, int serialNumber) : 
+            base(TypeKind.Function, "function", TypeGranularity.Basic, 
+                children, mParent, serialNumber) {
+        }
+
+        public override CType Clone()
+        {
+            return new FunctionType(m_typeparams, m_parent, m_typeserial);
         }
 
         public bool Equals(CType t) {
