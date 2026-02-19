@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Transactions;
 using Microsoft.Build.Framework;
 
 namespace CParser {
@@ -31,11 +32,15 @@ namespace CParser {
         public TypeKind Kind => m_typekind;
         public TypeGranularity Granularity => m_granularity;
 
+        public string? Declarator { get; set; }
+
         protected string m_typename;
         protected TypeKind m_typekind;
         protected TypeGranularity m_granularity;
         protected CType m_parent;
         protected List<CType> m_typeparams; // e.g., function parameter types, struct member types, etc.
+
+        public CType M_parent => m_parent;
 
         // For Debugging purposes
         protected int m_typeserial;
@@ -64,6 +69,11 @@ namespace CParser {
         public void AddTypeParameter(CType param) {
             param.m_parent = this;
             m_typeparams.Add(param);
+        }
+
+        public int childCount()
+        {
+            return m_typeparams.Count;
         }
 
         public virtual CType Clone()
@@ -441,7 +451,7 @@ namespace CParser {
         }
 
         private FunctionType(List<CType> children, CType mParent, int serialNumber) : 
-            base(TypeKind.Function, "function", TypeGranularity.Basic, 
+            base(TypeKind.Function, "function", TypeGranularity.Basic,
                 children, mParent, serialNumber) {
         }
 
@@ -470,6 +480,20 @@ namespace CParser {
 
         public void AddParameterType(CType pt) {
             m_typeparams.Add(pt);
+        }
+
+        public bool VoidParameterBefore()
+        {
+            if (childCount() <= 2)
+            {
+                return false;
+            }
+
+            int current = childCount() - 1;
+
+            CType type = m_typeparams[current - 1];
+
+            return type.Kind == TypeKind.Void && string.IsNullOrEmpty(type.Declarator);
         }
 
         public override string ToString() {

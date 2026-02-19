@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -53,21 +54,6 @@ namespace CParser
 
             // 1. Visit Declaration Specifiers
             VisitContext(node, DeclarationAST.TYPE_SPECIFIER, declContext);
-
-            /*if (declContext.MFunctionType != null)
-            {
-                if (declContext.MParent == null)
-                {
-                    declContext.MFunctionType.AddTypeParameter(declContext.MTypeSpecifier.Clone());
-                }
-                else
-                {
-                    declContext.MParent.AddTypeParameter(declContext.MTypeSpecifier.Clone());
-                    declContext.MFunctionType.AddTypeParameter(declContext.MParent.Clone());
-                }
-
-                declContext.MParent = null;
-            }*/
             
             // 2. Visit Declarators
             foreach (ASTElement astElement in node.MChildren[DeclarationAST.DECLARATORS])
@@ -97,24 +83,44 @@ namespace CParser
 
         private void SpecifierOrParamater(CType type, DeclarationContext context)
         {
-            if (context.MFunctionType != null)
+            type.Declarator = context.MDeclarator;
+
+            if (context.MFunctionType == null)
             {
-                if (context.MParent == null)
-                {
-                    context.MFunctionType.AddTypeParameter(type.Clone());
-                }
-                else
-                {
-                    context.MParent.AddTypeParameter(type.Clone());
-                    context.MFunctionType.AddTypeParameter(context.MTypeRoot.Clone());
-                }
-                context.MParent = null;
+                context.MTypeSpecifier = type;
                 return;
             }
 
-            context.MTypeSpecifier = type;
-        }
+            if (context.MParent == null)
+            {
+                if (!string.IsNullOrEmpty(type.Declarator) && type is VoidType)
+                {
+                   throw new ArgumentException();
+                }
 
+                if (type is VoidType && context.MFunctionType.childCount() > 1)
+                {
+                    throw new ArgumentException();
+                }
+
+                context.MFunctionType.AddTypeParameter(type.Clone());
+            }
+            else
+            {
+                context.MParent.AddTypeParameter(type.Clone());
+                context.MFunctionType.AddTypeParameter(context.MTypeRoot.Clone());
+            }
+
+            FunctionType funcType = context.MFunctionType as FunctionType;
+            if (funcType.VoidParameterBefore())
+            {
+                throw new ArgumentException();
+            }
+
+            context.MParent = null;
+            context.MDeclarator = String.Empty;
+        }
+        
         public override int VisitDeclarationSpecifiers(Declaration_Specifiers node, ParentInfo info)
         {
             var mtypes = node.MChildren[Declaration_Specifiers.SPECIFIERS]
@@ -146,7 +152,6 @@ namespace CParser
 
                     IntegerType intType = new IntegerType(sign, size);
                     DeclarationContext declContext = info as DeclarationContext;
-                    //declContext.MTypeSpecifier = intType;
                     SpecifierOrParamater(intType, declContext);
                     break;
                     
@@ -163,7 +168,6 @@ namespace CParser
 
                     FloatingPointType floatType = new FloatingPointType(size, name, tp);
                     DeclarationContext declContext2 = info as DeclarationContext;
-                    //declContext2.MTypeSpecifier = floatType;
                     SpecifierOrParamater(floatType, declContext2);
                     break;
 
@@ -173,7 +177,6 @@ namespace CParser
 
                     StructType structType = new StructType(struct_name);
                     DeclarationContext declContext3 = info as DeclarationContext;
-                    //declContext3.MTypeSpecifier = structType;
                     SpecifierOrParamater(structType, declContext3);
                     break;
 
@@ -184,14 +187,12 @@ namespace CParser
 
                     UnionType unionType = new UnionType(union_name);
                     DeclarationContext declContext4 = info as DeclarationContext;
-                    //declContext4.MTypeSpecifier = unionType;
                     SpecifierOrParamater(unionType, declContext4);
                     break;
 
                 case true when mtypes.Contains((uint)TranslationUnitAST.NodeTypes.VOID_TYPE):
                     VoidType voidType = new VoidType();
                     DeclarationContext declContext5 = info as DeclarationContext;
-                    //declContext5.MTypeSpecifier = voidType;
                     SpecifierOrParamater(voidType, declContext5);
                     break;
 
