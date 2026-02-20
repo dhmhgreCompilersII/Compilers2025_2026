@@ -54,18 +54,23 @@ namespace CParser
 
             // 1. Visit Declaration Specifiers
             VisitContext(node, DeclarationAST.TYPE_SPECIFIER, declContext);
-            
+
+            declContext.Reset();
+
             // 2. Visit Declarators
             foreach (ASTElement astElement in node.MChildren[DeclarationAST.DECLARATORS])
             {
-                declContext.Reset();
+                if (astElement is not FunctionTypeAST)
+                {
+                    declContext.Reset();
+                }
 
                 Visit(astElement, declContext);
                 if (declContext.MParent == null)
                 {
                     if (declContext.MTypeSpecifier is VoidType)
                     {
-                        throw new ArgumentException();
+                        throw new InvalidOperationException();
                     }
 
                     declContext.MTypeRoot = declContext.MTypeSpecifier;
@@ -95,12 +100,12 @@ namespace CParser
             {
                 if (!string.IsNullOrEmpty(type.Declarator) && type is VoidType)
                 {
-                   throw new ArgumentException();
+                   throw new InvalidOperationException();
                 }
 
                 if (type is VoidType && context.MFunctionType.childCount() > 1)
                 {
-                    throw new ArgumentException();
+                    throw new InvalidOperationException();
                 }
 
                 context.MFunctionType.AddTypeParameter(type.Clone());
@@ -114,7 +119,7 @@ namespace CParser
             FunctionType funcType = context.MFunctionType as FunctionType;
             if (funcType.VoidParameterBefore())
             {
-                throw new ArgumentException();
+                throw new InvalidOperationException();
             }
 
             context.MParent = null;
@@ -218,7 +223,16 @@ namespace CParser
             DeclarationContext declContext = info as DeclarationContext;
 
             FunctionType funcType = new FunctionType();
-            funcType.AddTypeParameter(declContext.MTypeSpecifier.Clone());
+
+            if (declContext.MTypeRoot == null)
+            {
+                funcType.AddTypeParameter(declContext.MTypeSpecifier.Clone());
+            }
+            else
+            {
+                funcType.AddTypeParameter(declContext.MTypeRoot.Clone()); 
+                declContext.Reset();
+            }
 
             declContext.MFunctionType = funcType;
             base.VisitFunctionType(node, info);

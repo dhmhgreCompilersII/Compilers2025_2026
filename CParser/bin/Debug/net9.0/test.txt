@@ -1,9 +1,7 @@
-unsigned long int *b, **c;
-/*unsigned long long*** a;
+unsigned long int *b;
+unsigned long long*** a;
 short int d;
 long double *a;
-float **e;
-struct stp a;
-union un *a
-void *a;*/
-int** (*add)(int a, int c, float b);
+int *(**add)(int *a, int b);
+
+

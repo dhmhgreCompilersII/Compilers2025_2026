@@ -82,7 +82,7 @@ namespace CParser {
                 m_parent, m_typeserial);
         }
 
-        public virtual async Task TypeDebugLog(StreamWriter m_logFile=null) {
+        public virtual void TypeDebugLog(StreamWriter m_logFile=null) {
             if (m_parent == null) {
                 m_logFile = new StreamWriter("type_log.dot");
                 m_logFile.WriteLine("digraph G{ ");
@@ -90,21 +90,20 @@ namespace CParser {
             } else {
                 m_logFile.WriteLine(
                     $"\"{m_parent.ToString()}_{m_parent.m_typeserial}\"->\"{ToString()}_{m_typeserial}\"");
-                
             }
 
-            foreach (CType typeparam in m_typeparams) {
-                await typeparam.TypeDebugLog(m_logFile);
+            foreach (CType typeparam in m_typeparams) { 
+                typeparam.TypeDebugLog(m_logFile);
             }
 
             if (m_parent == null) {
                 m_logFile.WriteLine("};");
                 m_logFile.Close();
-                await TryGenerateTypeGraphImage("type_log.dot", "type_log.gif");
+                TryGenerateTypeGraphImage("type_log.dot", "type_log.gif");
             }
         }
 
-        private static async Task TryGenerateTypeGraphImage(string dotFilePath, string outputImagePath) {
+        private static void TryGenerateTypeGraphImage(string dotFilePath, string outputImagePath) {
             try {
                 var processStartInfo = new ProcessStartInfo {
                     FileName = "dot",
@@ -115,11 +114,13 @@ namespace CParser {
                     RedirectStandardOutput = true
                 };
 
-                using (var process = new Process { StartInfo = processStartInfo }) {
+                using (var process = new Process { StartInfo = processStartInfo }) { 
                     process.Start();
+                    process.WaitForExit();
                 }
             } catch {
                 // Intentionally ignore failures in debug helper
+                Console.WriteLine("Here");
             }
         }
 
@@ -476,10 +477,6 @@ namespace CParser {
             }
 
             return false;
-        }
-
-        public void AddParameterType(CType pt) {
-            m_typeparams.Add(pt);
         }
 
         public bool VoidParameterBefore()

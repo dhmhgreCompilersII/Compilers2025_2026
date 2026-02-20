@@ -20,7 +20,11 @@ namespace CParser {
 
         public string MName => m_name;
 
-        public ASTElement? MParent => m_parent;
+        public ASTElement? MParent
+        {
+            get => m_parent;
+            set => m_parent = value;
+        }
 
         private uint m_serialNumber; // unique serial number of this AST element to distinguish it
 
@@ -73,6 +77,7 @@ namespace CParser {
                 throw new ArgumentOutOfRangeException("context", "Context index out of range");
             }
             m_children[(uint)context].Add(child);
+            child.MParent = this;
         }
 
         public T? GetChild<T>(uint context, uint index = 0) where T:class {
