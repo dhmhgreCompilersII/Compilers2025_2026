@@ -1,0 +1,10 @@
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarLexer.cs
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarLexer.interp
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarLexer.tokens
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarParser.cs
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarParser.interp
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarParser.tokens
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarParserBaseListener.cs
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarParserBaseVisitor.cs
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarParserListener.cs
+C:/Users/drLiakos/source/repos/dhmhgreCompilersII/Compilers2025_2026/CParser/obj/Debug/net9.0/CGrammarParserVisitor.cs

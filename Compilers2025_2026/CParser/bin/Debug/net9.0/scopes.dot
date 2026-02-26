@@ -1,0 +1,6 @@
+digraph ScopeTree {
+    node [shape=record, style=filled, fillcolor=lightyellow, fontname="Consolas"];
+    node_0 [label="CScope(Type: File, Parent: No, ChildCount: 1)\l Namespace: Ordinary , SymbolTable:\l Key: main , Value: Symbol(Name: main, Type: Function, Node: CParser.FunctionDefinitionAST)\l Namespace: Tags , SymbolTable:\lCScope(Type: Function, Parent: Yes, ChildCount: 0)\l Namespace: Ordinary , SymbolTable:\l Key: x , Value: Symbol(Name: x, Type: Variable, Node: CParser.IDENTIFIER)\l Namespace: Labels , SymbolTable:\l Namespace: Tags , SymbolTable:\l"];
+    node_1 [label="CScope(Type: Function, Parent: Yes, ChildCount: 0)\l Namespace: Ordinary , SymbolTable:\l Key: x , Value: Symbol(Name: x, Type: Variable, Node: CParser.IDENTIFIER)\l Namespace: Labels , SymbolTable:\l Namespace: Tags , SymbolTable:\l"];
+    node_0 -> node_1;
+}

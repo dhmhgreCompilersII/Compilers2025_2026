@@ -1,0 +1,96 @@
+digraph AST {
+subgraph cluster0 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+
+	 label = "Declarations";
+}
+subgraph cluster1 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"FunctionDefinitionAST_2";
+	 label = "Function Definitions";
+}
+subgraph cluster2 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"Declaration_Specifiers_3";
+	 label = "Declaration Specifier";
+}
+subgraph cluster3 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"CompoundStatement_6";
+	 label = "Body";
+}
+subgraph cluster4 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"main_5";
+	 label = "Declarator";
+}
+subgraph cluster5 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+
+	 label = "Parameter Declarations";
+}
+    "TranslationUnitAST_1" -> "FunctionDefinitionAST_2";
+subgraph cluster6 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"TYPE_SPECIFIER_int_4";
+	 label = "Specifiers";
+}
+    "FunctionDefinitionAST_2" -> "Declaration_Specifiers_3";
+    "Declaration_Specifiers_3" -> "TYPE_SPECIFIER_int_4";
+    "FunctionDefinitionAST_2" -> "main_5";
+subgraph cluster7 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"DeclarationAST_7";
+	 label = "Declarations";
+}
+subgraph cluster8 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+
+	 label = "Statements";
+}
+    "FunctionDefinitionAST_2" -> "CompoundStatement_6";
+subgraph cluster9 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"x_11";
+	 label = "Declarators";
+}
+subgraph cluster10 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"Declaration_Specifiers_8";
+	 label = "Type Specifier";
+}
+subgraph cluster11 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+
+	 label = "Type Qualifier";
+}
+subgraph cluster12 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+
+	 label = "Storage Specifier";
+}
+    "CompoundStatement_6" -> "DeclarationAST_7";
+subgraph cluster13 {
+	 node [style=filled, color=white]; 
+	 style=filled; color=lightgrey;
+"STORAGE_SPECIFIER_auto_9";"TYPE_SPECIFIER_int_10";
+	 label = "Specifiers";
+}
+    "DeclarationAST_7" -> "Declaration_Specifiers_8";
+    "Declaration_Specifiers_8" -> "STORAGE_SPECIFIER_auto_9";
+    "Declaration_Specifiers_8" -> "TYPE_SPECIFIER_int_10";
+    "DeclarationAST_7" -> "x_11";
+}
